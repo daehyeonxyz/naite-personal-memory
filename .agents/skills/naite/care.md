@@ -1,0 +1,164 @@
+# /naite care
+
+나무를 돌본다. 하나의 명령 아래 두 모드가 있다:
+
+- **점검 모드 (`/naite care --check`)** — deterministic 건강 점검. report-only, 절대 고치지 않는다. secrets 발견 시 차단 게이트. 절차는 `care-check.md` 가 계약이다 — `--check` 또는 "점검만 / 상태 봐줘" 류 의도가 감지되면 `care-check.md` 를 읽고 그대로 따른다.
+- **돌봄 모드 (기본)** — 정성 검토, 직접 수선, 대규모 정리, 반복 결함의 규칙화. 본 파일이 계약이다.
+
+모드 판별: `--check` 플래그가 있으면 점검. "고쳐줘 / 다듬어줘 / 검토하고 수선까지" 면 돌봄. 애매하면 한 줄로 묻는다.
+
+## When to use
+
+Use this when the user asks to:
+
+- 검토 / 다시 훑기 / quality check / 내용 이상한 곳 찾기
+- branch 전체 또는 특정 branch 내용을 다듬기
+- care --check 로는 잡기 어려운 prose quality, source voice, link usefulness 를 판단하기
+- 반복 결함을 producer skill, care --check rule, or `CONVENTIONS.md` 에 반영하기
+
+## Scope
+
+Supported scopes:
+
+- `/naite care {slug}` — one page plus its immediate graph context.
+- `/naite care branch-{slug}` — branch meta, chapter meta, and all subchapter pages for one branch (pages are named course-{slug}-*).
+- `/naite care --branches` — all branch pages.
+- `/naite care --fruits` — decision-shape pages and their load-bearing links.
+- `/naite care --all` — whole tree qualitative sweep.
+- `/naite care --system` — durable workflow learning: update producer contracts, care --check criteria, or workflow docs from recurring failures.
+
+- `/naite care --daily` - report-only daily triage after `/naite care --check --daily`. Review the care --check handoff, read evidence for priority candidates, and write a short durable triage report without editing tree content.
+
+For large scopes, write working artifacts under `exports/{YYYY-MM-DD}-care/` or `tmp/care-{YYYY-MM-DD}/` as appropriate. `exports/` is for durable reports; `tmp/` is for disposable work logs.
+
+Daily triage writes to `exports/daily/YYYY-MM-DD-care.md` so the daily automation has a stable output location.
+
+## Context maps
+
+Before review or repair, read `CONTEXT.md` and load the generated operating maps:
+
+- `ontology/tree-manifest.json` for page coordinates and candidate narrowing.
+- `ontology/tree-dependencies.json` for inbound dependents, outbound links, soft relation idioms, high-degree pages, and orphan candidates.
+
+If either map is missing or stale for the current task, run:
+
+```powershell
+python scripts/build-tree-manifest.py
+python scripts/build-tree-dependencies.py
+```
+
+For one-page repair, inspect inbound entries for the touched slug before editing and again after rebuilding the map. Surface semantic dependent candidates; do not rewrite them unless the user asked for that repair scope.
+
+## Modes
+
+`care` is one skill with four internal modes. Pick the mode from user intent; do not ask unless intent is genuinely ambiguous.
+
+### Review
+
+Read the requested pages, their frontmatter, and the directly relevant links. Produce a prose verdict with concrete page examples. Avoid scores, grades, thresholds, and rubric language.
+
+Review answers should say:
+
+- what is already usable,
+- what is misleading or thin,
+- which pages need edits,
+- whether the issue is page-local, course-wide, or workflow-level.
+
+### Daily Triage
+
+Use this mode for `/naite care --daily`, usually immediately after `/naite care --check --daily`. It is a review mode, not repair.
+
+Step A. Read the latest `exports/daily/YYYY-MM-DD-care-check.md` if present; otherwise use the current care --check report in the conversation. Also read `ontology/tree-manifest.json` and `ontology/tree-dependencies.json`.
+
+Step B. Take the care --check report's **우선 검토 후보 3개** as the starting queue. If that section is missing, derive a queue from Tier 1 findings in this order: missing targets/stubs, output quality guard, fruit coverage, autonomy garbage.
+
+Step C. For each candidate, open the relevant source page or dependency-map source. Decide whether the finding is `false-positive`, `intentional-debt`, `repair-candidate`, or `schema-pressure`. Preserve the care --check label if it still fits.
+
+Step D. Write `exports/daily/YYYY-MM-DD-care.md` with:
+
+- what is actually worth reviewing next,
+- what should be ignored as false positive or intentional debt,
+- which candidate needs a user decision before repair,
+- which candidate should be routed to a focused `/naite care {slug}` or `/naite care --fruits` pass.
+
+Step E. Append a coarse `tree/rings.md` entry with `updated: 0 tree content pages` unless the user explicitly asked for repair. Do not edit `tree/*.md`, `tree/trunk.md`, or `seeds.md` in daily triage.
+
+### Repair
+
+When the user asks to fix, edit pages directly. Preserve source substance, existing good links, and frontmatter unless the defect is there. After editing, run the touched-page content guard and the relevant deterministic lint.
+
+After editing pages, rebuild `ontology/tree-manifest.json` when page coordinates changed and rebuild `ontology/tree-dependencies.json` when body links or soft relation idioms changed. Include both generated maps in the change if they changed.
+
+### Sweep
+
+For large scopes, first gather repeatable signals:
+
+- source/process voice in body,
+- unnecessary English sentence spine,
+- generic rubric headings,
+- raw path leaks before `## Source`,
+- mojibake,
+- shallow link lists that do not explain the relation,
+- pages whose body depends on raw notes or PDFs to be understood.
+
+Then cluster by cause and fix in batches only when the user asked for repairs. Store a durable report if the sweep result matters beyond the current turn.
+
+Use `ontology/tree-dependencies.json` to choose inbound dependents and high-degree pages. Use `ontology/tree-manifest.json` to avoid walking `tree/trunk.md` as if it were exhaustive.
+
+### System Learning
+
+Use this when the same defect appears across pages or workflows. The order of preference is:
+
+1. Strengthen producer contracts first (`grow.md`, `grow-backfill.md`, or another output-producing skill).
+2. Add deterministic care --check guard only when a pattern is reasonably machine-detectable.
+3. Update `CONVENTIONS.md` when the rule applies across workflows.
+4. Leave user-facing mental model simple: care --check + care.
+
+Schema-level changes still follow `CONVENTIONS.md § Schema evolution`; do not introduce new facet fields, enum values, or top-level domains without user decision.
+
+## Branch Content Quality Criteria
+
+Branch pages must read as lecture-native, self-contained tree pages. The body should carry the meaning directly; `## Source` is provenance, not a dependency.
+
+Required:
+
+- Body prose is Korean by default. English technical terms, formulas, model names, course-native headings, and established abbreviations are allowed when they carry precision.
+- Generic headings use Korean unless the lecture itself uses the English term as the conceptual unit.
+- Handwriting, slide emphasis, examples, and diagrams are absorbed into explanatory prose. Do not describe them as "the note says" or "the PDF shows".
+- Raw paths appear only in trailing `## Source` blocks.
+- A page must make sense without opening the raw PDF, raw note, PNG, or staging artifact.
+- Links are load-bearing: prose says why the linked page matters here.
+
+Forbidden in the body before `## Source`:
+
+- raw/source-process voice: "raw", "staging", "source bundle", "PDF page", "page range", "필기에는", "강의 노트에는", "원문에서는", "자료에서는", "이 페이지에서는".
+- explanations of how the page was produced: extraction, backfill, render, image-read, note mapping, run-log.
+- generic wiki-rubric headings such as `Core idea`, `Details`, `Overview`, `Related`, `Maps to`, `Source Staging`, `Practice & Assignments`, unless they are part of a non-course page template that explicitly allows them.
+
+## Content Guard
+
+For touched pages, inspect only the body before `## Source` unless a rule says otherwise.
+
+Flag and fix:
+
+- `roots/`, `` `raw` ``, `Staging`, `Source Staging`, `Archived source bundle`
+- `PDF page`, `raw PDF`, `source PDF`, `source page`, `lecture notes`, `page range`, `render`, `image-read`, `backfill`, `run-log`, `extraction`
+- `필기에는`, `필기에서`, `강의 노트`, `노트에서는`, `원문에서는`, `원자료`, `자료에서는`, `페이지에서는`, `이 페이지에서는`, `이 자료`
+- mojibake markers: `???`, `�`, `Ã`, `Â`
+- generic English headings on branch pages: `Status`, `Scope`, `Chapters`, `Projects`, `Connections`, `Also known as`, `Overview`, `Related`, `Sequence Logic`, `Practice & Assignments`, `Course Bridges`, `Concept Extraction`, `Source Staging`, `Names`, `Maps to`
+
+False positives are possible. Preserve legitimate technical English, formulas, commands, file paths inside `## Source`, and quoted titles that belong to the branch.
+
+## Log Format
+
+Successful care runs append one coarse entry:
+
+```markdown
+## [YYYY-MM-DD] care | <scope>
+- reviewed: <N pages>
+- updated: <N pages or none>
+- output: <report path if any>
+- summary: <one-line finding or fix>
+```
+
+When `care --system` changes workflow files, use `migration` if the change is structural, or `care` if it is a maintenance-rule update. Keep `rings.md` coarse; detailed page lists belong in reports.

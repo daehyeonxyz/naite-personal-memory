@@ -92,7 +92,7 @@ naite/
 
   .claude/skills/naite/  # Claude Code workflow contracts
   .agents/skills/naite/  # Codex mirror (scripts/sync-agents.ps1 로 재생성)
-  scripts/               # care-check validator, map build, mirror sync
+  scripts/               # ontology linter, map build, mirror sync
 ```
 
 ## Dual surface
