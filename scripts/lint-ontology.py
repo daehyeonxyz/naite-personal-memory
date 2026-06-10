@@ -420,7 +420,7 @@ def find_non_tree_dirt(repo_root):
     """Return list of (tracked_path, reason) for files matching agent/IDE scratch patterns.
 
     Surfaces accumulation of codex / agent / IDE scratch under the naite vault —
-    these should be gitignored, not committed. Per `lint.md § 7 Non-tree scratch dirt`.
+    these should be gitignored, not committed. Per `care-check.md § 7 Non-tree scratch dirt`.
     Warn-only (non-blocking).
     """
     try:
@@ -716,7 +716,7 @@ def lint(args):
     # ---------------------------------------------------------------------
     non_tree_dirt = find_non_tree_dirt(NAITE_ROOT)
     print(f'### 7 Non-tree scratch dirt: {len(non_tree_dirt)} tracked entries')
-    print('  (warn — agent/IDE scratch tracked in naite vault, see lint.md § 7)')
+    print('  (warn — agent/IDE scratch tracked in naite vault, see care-check.md § 7)')
     if non_tree_dirt:
         # group by reason
         by_reason = {}
