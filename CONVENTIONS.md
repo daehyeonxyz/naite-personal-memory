@@ -258,25 +258,22 @@ After writing or rewriting pages, run the content guard described in `/wiki cura
 
 ---
 
-## External skills — wiki-relevant shortlist
+## External skills — wiki-relevant kinds
 
-The user's environment may expose many external skills and agents. **Most are code/framework-specific and not relevant to this wiki.** Wiki-relevant shortlist (invoke proactively when situation fits; ignore the rest unless user explicitly asks):
+The user's environment may expose many external skills and agents. **Most are code/framework-specific and not relevant to this wiki.** The table below lists *kinds* of external skills that pair well with wiki work — actual names and availability vary per environment, so verify a skill actually exists in the current session before invoking it. Ignore the rest unless the user explicitly asks.
 
-| External | When to use |
+| External (kind) | When to use |
 |---|---|
-| `knowledge-ops` (skill) | General KM moves; complement `/wiki` skills. Check before inventing a workflow. |
-| `deep-research` (skill) | Fill identified wiki gaps via web research. Result feeds `/wiki ingest` or `/wiki query --file`. |
-| `search-first` (skill) | Search existing pages and web prior art before writing a new wiki page. |
-| `documentation-lookup` (skill) | Consult official docs of a tool/library before summarizing. |
-| `article-writing` (skill) | Export wiki content as a blog post or long-form piece. |
-| `context-budget` (skill) | When the wiki grows past ~50 pages and sessions hit context limits. |
-| `planner` (agent) | Non-trivial multi-step wiki tasks (large legacy migration). |
-| `conversation-analyzer` (agent) | During `/wiki capture` or `/wiki study` conversation mode — improves claim extraction. |
-| `docs-lookup` (agent) | Parallel to `documentation-lookup` skill at agent granularity. |
-| `silent-failure-hunter` (agent) | During `/wiki lint` — catches quality issues regex misses. |
-| `anthropic-skills:paper-summarizer` | PDF paper → structured summary → ingest. |
-| `anthropic-skills:lecture-translator` | YouTube transcript → Korean narrative → ingest. |
-| `anthropic-skills:pdf` | OCR/extraction inside `/wiki study` file-mode pre-step or `/wiki course` chapter-start fallback. |
+| Knowledge-management skill | General KM moves; complement `/wiki` skills. Check before inventing a workflow. |
+| Web deep-research skill | Fill identified wiki gaps via web research. Result feeds `/wiki ingest` or `/wiki query --file`. |
+| Search-first skill | Search existing pages and web prior art before writing a new wiki page. |
+| Official-docs lookup skill/agent | Consult official docs of a tool/library before summarizing. |
+| Long-form writing/export skill | Export wiki content as a blog post or long-form piece. |
+| Planning agent | Non-trivial multi-step wiki tasks (large legacy migration). |
+| Conversation-analysis agent | During `/wiki capture` or `/wiki study` conversation mode — improves claim extraction. |
+| Quality-review agent | During `/wiki lint` — catches quality issues regex misses. |
+| PDF/OCR extraction skill | OCR/extraction inside `/wiki study` file-mode pre-step or `/wiki course` chapter-start fallback. |
+| Paper-summarizer / transcript-translator skill | Paper PDF or lecture transcript → structured summary → ingest. |
 
 Ground rules:
 
@@ -284,9 +281,9 @@ Ground rules:
 - **Chained, not parallel.** External skills *produce* artifacts that get fed into `/wiki study` or `/wiki ingest`. They don't run concurrently with a wiki-writing skill.
 - **Cite, don't absorb.** Research agents may fetch the web to fill gaps, but wiki pages still need a `kind=source-record` page for citation — never a naked web claim.
 - **Outputs go outside `wiki/`** for export skills (article-writing, slides, docs). Only file the result back when the user explicitly asks.
-- **Anything outside this shortlist** should not be invoked for wiki work without user's explicit request. The plugin has TDD/frontend/backend/language agents — those are for code projects.
+- **Anything outside these kinds** should not be invoked for wiki work without user's explicit request. TDD/frontend/backend/language agents are for code projects.
 
-If a shortlisted skill conflicts with a wiki workflow, the wiki workflow wins — surface the conflict and ask how to reconcile.
+If an external skill conflicts with a wiki workflow, the wiki workflow wins — surface the conflict and ask how to reconcile.
 
 ---
 

@@ -4,7 +4,7 @@ Snapshot knowledge from the **current conversation** into `raw/conversations/`. 
 
 ## When to use
 
-The user is in a learning conversation with Claude (Desktop chat, cowork, or code) and says something like "wiki 업데이트해줘", "capture this", or "save what we just covered." This is the command's trigger.
+The user is in a learning conversation with the agent (desktop chat, cowork, or code surface) and says something like "wiki 업데이트해줘", "capture this", or "save what we just covered." This is the command's trigger.
 
 ## Hard rules
 

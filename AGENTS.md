@@ -11,7 +11,7 @@ This file is the **entrypoint**. It carries routing, triggers, and hard safety r
 산출물, 코드, 식별자는 영어 그대로 두고, 대화 응답 본문은 한국어로 작성한다.
 
 - **한국어로 답한다.** 파일 경로, 명령어, 식별자, frontmatter 키와 값, 코드 토큰은 영어 그대로 유지한다 (예: `wiki/index.md`, `kind=concept`, `[[slug]]`).
-- **존댓말로 답한다.** Codex 와 Codex 는 사용자의 직원 또는 비서이므로, 사용자에게 응답할 때는 항상 존댓말 (`~합니다`, `~입니다`, `~드립니다`) 을 사용한다. 시스템 / 운영 진단을 짧게 적는 경우에도 존댓말을 유지한다.
+- **존댓말로 답한다.** 에이전트는 사용자의 직원 또는 비서이므로, 사용자에게 응답할 때는 항상 존댓말 (`~합니다`, `~입니다`, `~드립니다`) 을 사용한다. 시스템 / 운영 진단을 짧게 적는 경우에도 존댓말을 유지한다.
 - **모든 문장은 서술어까지 적어 완결된 문장으로 끝낸다.** 명사 종결, 부사 종결, 절단된 구절을 쓰지 않는다. 예를 들어 "정량 임계 명문화" 가 아니라 "정량 임계를 명문화했습니다" 로 적고, "결론 먼저" 가 아니라 "결론을 먼저 적습니다" 로 적는다.
 - **em dash (`—`) 를 사용하지 않는다.** 한국어 문서에서는 쓰지 않는 부호이다. 쉼표, 마침표, 콜론, 괄호, 줄바꿈으로 대체한다.
 - **한국식 서술 흐름을 지향한다.** 영어식 도치, 영어식 보조 구문, 영어 문장 구조를 그대로 옮긴 표현은 피한다.
@@ -107,7 +107,7 @@ This file is the Codex-facing mirror of the Claude Code surface. Keep `.agents/`
 - **Canonical edit target**: `.claude/` and `CLAUDE.md`. Regenerate this Codex mirror with `scripts/sync-agents.ps1` when the canonical side changes.
 - **Mirror review**: after sync, review `AGENTS.md` and `.agents/skills/wiki/` for tool-specific wording before staging.
 - **Run sync in the same commit** that edits the canonical side. Both surfaces stage together.
-- **Shared (NOT mirrored)**: `CONTEXT.md`, `CONVENTIONS.md`, `docs/`, `ontology/`. Both tools read the same files. Tool-specific tokens (`.claude/`, `.agents/`, `CLAUDE.md`, `AGENTS.md`, `Claude Code`, `Codex`, etc.) are allowed where they carry meaning.
+- **Shared (NOT mirrored)**: `CONTEXT.md`, `CONVENTIONS.md`, `ARCHITECTURE.md`, `ontology/`. Both tools read the same files. Tool-specific tokens (`.claude/`, `.agents/`, `CLAUDE.md`, `AGENTS.md`, `Claude Code`, `Codex`, etc.) are allowed where they carry meaning.
 
 ---
 

@@ -209,7 +209,7 @@ c. **학생 필기 인사이트 수집**: PNG를 읽는 과정에서 학생 필�
            [hub promotion 으로 index.md 변경된 경우 wiki/index.md]
    git commit -m "course: {slug} ch{NN} — {Chapter Title} (drafter={cowork|code|codex})"
    ```
-   - **Drafter tag** (필수): `cowork` (Codex desktop app Cowork 탭), `code` (Codex CLI 또는 desktop app Code 탭), `codex` (OpenAI Codex CLI). 사후 품질 비교·트래킹용 — `git log --grep "drafter=codex"` 같은 쿼리로 surface.
+   - **Drafter tag** (필수): `cowork` (데스크톱 앱 Cowork 탭), `code` (CLI 또는 데스크톱 앱 Code 탭), `codex` (OpenAI Codex CLI). 사후 품질 비교·트래킹용 — `git log --grep "drafter=codex"` 같은 쿼리로 surface.
    - 한 commit = 한 챕터 (서브챕터 페이지 + 챕터 메타 + 과목 메타 갱신 + log entry + 해당 챕터에서 spawn 된 일반 개념 페이지).
    - schema 파일·settings 같은 무관 변경은 staging 금지 — 별도 commit.
    - **Push 안 함** — `course-finish` 시점에 누적 chapter commits + finish commit 이 한 번에 origin 으로.
