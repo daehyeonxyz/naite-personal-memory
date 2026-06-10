@@ -714,13 +714,13 @@ def lint(args):
     # ---------------------------------------------------------------------
     # § 7 Non-tree scratch dirt (warn only, non-blocking)
     # ---------------------------------------------------------------------
-    non_wiki_dirt = find_non_tree_dirt(NAITE_ROOT)
-    print(f'### 7 Non-tree scratch dirt: {len(non_wiki_dirt)} tracked entries')
+    non_tree_dirt = find_non_tree_dirt(NAITE_ROOT)
+    print(f'### 7 Non-tree scratch dirt: {len(non_tree_dirt)} tracked entries')
     print('  (warn — agent/IDE scratch tracked in naite vault, see lint.md § 7)')
-    if non_wiki_dirt:
+    if non_tree_dirt:
         # group by reason
         by_reason = {}
-        for path, reason in non_wiki_dirt:
+        for path, reason in non_tree_dirt:
             by_reason.setdefault(reason, []).append(path)
         for reason, paths in sorted(by_reason.items(), key=lambda x: -len(x[1])):
             print(f'  {reason}: {len(paths)} entries')
