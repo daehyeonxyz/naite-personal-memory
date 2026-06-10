@@ -1,24 +1,24 @@
-# /wiki synapse
+# /naite fruit
 
-의사결정 thread (DMU) 를 wiki 에 **시냅스 layer** 로 박는 dialogue scaffold. wiki 의 노드(concept/entity/source) 들이 뉴런이라면, synapse 는 그 위를 가로지르며 의사결정 흐름을 형성하는 별도 차원의 결합. 한 page 가 14 섹션을 다 담는 form 으로 나올 수도 있고, 짧은 prose 단락이 다른 concept 페이지에 박혀 그 자체가 시냅스 한 가닥이 될 수도 있다 — 둘 다 정당.
+결정 thread 를 나무의 **열매** 로 맺는 dialogue scaffold. tree 의 노드(concept/entity/source) 들이 뉴런이라면, 시냅스 layer 는 그 위를 가로지르며 의사결정 흐름을 형성하는 별도 차원의 결합. 한 page 가 14 섹션을 다 담는 form 으로 나올 수도 있고, 짧은 prose 단락이 다른 concept 페이지에 박혀 그 자체가 시냅스 한 가닥이 될 수도 있다 — 둘 다 정당.
 
-All data paths below resolve against **WIKI_ROOT** (the root of the naite repo). Sub-skill references resolve against **SKILL_DIR** (`<WIKI_ROOT>\.claude\skills\wiki`). See `SKILL.md` for context.
+All data paths below resolve against **NAITE_ROOT** (the root of the naite repo). Sub-skill references resolve against **SKILL_DIR** (`<NAITE_ROOT>\.claude\skills\naite`). See `SKILL.md` for context.
 
 ## When to use — 3 triggers
 
-1. **명시 슬래시**: `/wiki synapse [topic?]`. 사용자가 "이 결정 정리해두자" 라고 의식적으로 부를 때.
-2. **자연 감지**: 대화 중 "선택했다 / 고민했다 / 보류했다 / 실패했다 / 결정했다 / 비교했다" 신호 + trade-off 정황이 감지되면 Claude 가 한 줄로 제안 — "이거 synapse 로 정리해둘까요?" 사용자 확인 후에만 실행. study.md 의 course-vs-study pre-check 와 같은 cadence.
+1. **명시 슬래시**: `/naite fruit [topic?]`. 사용자가 "이 결정 정리해두자" 라고 의식적으로 부를 때.
+2. **자연 감지**: 대화 중 "선택했다 / 고민했다 / 보류했다 / 실패했다 / 결정했다 / 비교했다" 신호 + trade-off 정황이 감지되면 Claude 가 한 줄로 제안 — "이거 열매로 정리해둘까요?" 사용자 확인 후에만 실행. grow.md 의 course-vs-study pre-check 와 같은 cadence.
 3. **작업 종료 트리거**: 사용자가 "끝났어 / 마무리 / 완료 / 다 됐어" 신호 + 그 작업이 의사결정·trade-off 를 포함한 흐름이면 wrap-up 제안. 단순 task 종료엔 발동 안 함.
 
 세 trigger 모두 동일 워크플로로 진입. 차이는 모드 판별 단계에서 사용자 확인 한 줄 추가될 뿐.
 
 ## Hard rules
 
-- **출력은 `kind: decision` 페이지** (적합 시 `kind: concept`/`entity`/`source-record` 페이지에 decision-shape content 인라인 embed 도 가능). `form: prose`. `subject` 는 `ontology/subject-tree.md` 의 path 1개; 진짜 cross-domain 일 때만 multi (`[a/x, b/y]`). `dmu/`, `failure-*/`, `career-*/`, `synapse/` 같은 메타 subject path 또는 별도 kind enum 추가는 **금지** — 시냅스의 본질은 카테고리화 거부 (`CONVENTIONS.md § Decision thread shape` 참조). Decision-shape thread 자체는 page-level enum 으로 좁히지 않고 cross-page synapse layer 로 흐른다.
+- **출력은 `kind: decision` 페이지** (적합 시 `kind: concept`/`entity`/`source-record` 페이지에 decision-shape content 인라인 embed 도 가능). `form: prose`. `subject` 는 `ontology/subject-tree.md` 의 path 1개; 진짜 cross-domain 일 때만 multi (`[a/x, b/y]`). `dmu/`, `failure-*/`, `career-*/`, `synapse/` 같은 메타 subject path 또는 별도 kind enum 추가는 **금지** — 시냅스의 본질은 카테고리화 거부 (`CONVENTIONS.md § Decision thread shape` 참조). Decision-shape thread 자체는 page-level enum 으로 좁히지 않고 cross-page 시냅스 layer 로 흐른다.
 - **파일명**: `decision-YYYY-MM-DD-<slug>.md` 형식. `YYYY-MM-DD` 는 페이지 `created` 날짜 (frontmatter 와 일치). `<slug>` 부분은 `lowercase-kebab-case`. `DMU-` prefix 금지. 예: `decision-2026-01-15-vector-db-selection`, `decision-2026-02-03-retrieval-strategy`.
 - **본문은 DMU 14 섹션을 참조 구조** 로 사용. 사용자 답변에 따라 일부 섹션은 통째로 생략. 빈 헤더 작성 금지.
 - **최소 3개 outbound wikilink** (mechanism / related concept / project / failure mode 중 어느 조합이든). 부족하면 사용자에게 "어떤 개념 페이지에 연결되나요?" 푸시.
-- **누락 개념 발견 시** `wiki/_stubs.md` 에 stub 제안 — DMU 가 graph 의 빈 공간을 채우는 압력으로 작동.
+- **누락 개념 발견 시** `tree/seeds.md` 에 stub 제안 — DMU 가 graph 의 빈 공간을 채우는 압력으로 작동.
 - **prose idiom 박힘 강제**: 본문에 `decided X over Y when ...`, `failed when ...`, `trade-off: A vs B`, `validates`, `falsifies` 중 적어도 1~2개 등장. CONVENTIONS.md § Soft ontology 의 어휘를 반드시 재사용.
 - 기타 `CLAUDE.md § Secrets & privacy`, `CONVENTIONS.md § Schema evolution` 전부 그대로 적용.
 
@@ -36,9 +36,9 @@ skill 의 핵심 가치는 빈 헤더를 채우게 하는 게 아니라 **누락
 
 ### 0. Pre-flight (every invocation)
 
-1. Read `<WIKI_ROOT>/CLAUDE.md` — 특히 § Soft ontology, § Decision threads (synapse layer), § Personal wiki scope, § Ontology. 그리고 `ontology/subject-tree.md` (canonical paths) + `ontology/topics.md` (canonical vocabulary).
-2. Read `<WIKI_ROOT>/wiki/index.md` 전체 — 도메인·기존 hub 페이지 candidate 수집.
-3. Last ~20 lines of `<WIKI_ROOT>/wiki/log.md` — 최근 맥락.
+1. Read `<NAITE_ROOT>/CLAUDE.md` — 특히 § Soft ontology, § Decision threads (시냅스 layer), § Personal tree scope, § Ontology. 그리고 `ontology/subject-tree.md` (canonical paths) + `ontology/topics.md` (canonical vocabulary).
+2. Read `<NAITE_ROOT>/tree/trunk.md` 전체 — 도메인·기존 hub 페이지 candidate 수집.
+3. Last ~20 lines of `<NAITE_ROOT>/tree/rings.md` — 최근 맥락.
 4. Trigger 모드 판별. 자연 감지·작업 종료 모드면 사용자에게 한 줄 확인 후 진행.
 
 ### 1. Question pass (14 sections)
@@ -70,22 +70,22 @@ skill 의 핵심 가치는 빈 헤더를 채우게 하는 게 아니라 **누락
 
 ### 3. 누락 개념 → stub 제안
 
-대화 중 "이 개념은 wiki 에 아직 없네" 가 발견되면:
-- `wiki/_stubs.md` 에 한 줄 추가 제안: `- [[missing-slug]] — first seen in [[this-decision-slug]], context: ...`
+대화 중 "이 개념은 tree 에 아직 없네" 가 발견되면:
+- `tree/seeds.md` 에 한 줄 추가 제안: `- [[missing-slug]] — first seen in [[this-decision-slug]], context: ...`
 - 사용자 승인 후 추가. 강요는 안 함.
 
 ### 4. 페이지 작성
 
-`<WIKI_ROOT>/wiki/<slug>.md` 작성. 템플릿 § Templates 참조.
+`<NAITE_ROOT>/tree/<slug>.md` 작성. 템플릿 § Templates 참조.
 
 Frontmatter:
 ```yaml
 ---
-kind: decision   # standalone synapse 페이지. 다른 kind 안에 embed 도 가능 (concept/entity/source-record)
+kind: decision   # standalone 열매 페이지. 다른 kind 안에 embed 도 가능 (concept/entity/source-record)
 form: prose
 topics: [...]
 subject: [<path>]
-source-types: [conversation]   # synapse 는 대부분 conversation 산출물
+source-types: [conversation]   # fruit 는 대부분 conversation 산출물
 domains: [<one knowledge domain>]   # cross-domain 진짜일 때만 복수. dmu, decision, synapse, course-* 메타 태그 금지
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
@@ -95,18 +95,18 @@ updated: YYYY-MM-DD
 본문에 prose idiom 박혔는지 self-check:
 - `decided ... over` / `failed when` / `trade-off:` / `validates` / `falsifies` / `builds on` / `instance of` / `applies to` 중 ≥ 1.
 
-### 5. `wiki/index.md` 업데이트 (hub 자격 있을 때만)
+### 5. `tree/trunk.md` 업데이트 (hub 자격 있을 때만)
 
-이 synapse 페이지가 **hub 후보** 면 (즉 다른 페이지에서 자주 link 받을 가능성이 높으면) `## Knowledge domains § <domain>` 의 "주요" 라인에 한 줄 추가. 한도 (4-7개) 도달 시 사용자에게 어느 줄을 빼고 추가할지 물음.
+이 열매 페이지가 **hub 후보** 면 (즉 다른 페이지에서 자주 link 받을 가능성이 높으면) `## Knowledge domains § <domain>` 의 "주요" 라인에 한 줄 추가. 한도 (4-7개) 도달 시 사용자에게 어느 줄을 빼고 추가할지 물음.
 
-대부분의 synapse 페이지는 작은 결정 한 건이라 **hub 후보가 아님** — 이때는 index 미등재, 본문 wikilink 와 prose idiom 으로만 발견되게 둠. lint 의 high-degree neurons 가 자동으로 promotion candidate 를 surface.
+대부분의 열매 페이지는 작은 결정 한 건이라 **hub 후보가 아님** — 이때는 trunk 미등재, 본문 wikilink 와 prose idiom 으로만 발견되게 둠. care --check 의 high-degree neurons 가 자동으로 promotion candidate 를 surface.
 
-`CONVENTIONS.md § index.md discipline` 참조.
+`CONVENTIONS.md § trunk.md discipline` 참조.
 
-### 6. `wiki/log.md` append
+### 6. `tree/rings.md` append
 
 ```
-## [YYYY-MM-DD] synapse | <slug>
+## [YYYY-MM-DD] fruit | <slug>
 - pages created: [[<slug>]]
 - pages updated (back-prose 박은 경우): [[...]]
 - domain: <ai-fluency | ml | engineering-math | statistics>
@@ -234,5 +234,5 @@ DMU 가 별도 페이지가 될 만큼 무겁지 않으면, 기존 concept 페�
 - 파일명 `DMU-YYYYMMDD-...` prefix 안 씀.
 - 빈 14 섹션을 강제로 채우지 않음 — 누락은 생략.
 - frontmatter `domains` 에 `course`, `course-{slug}`, `dmu`, `decision`, `synapse` 등 메타·컬렉션 태그 안 씀 — 콘텐츠 도메인 1개만.
-- 모든 synapse 페이지를 자동으로 index.md 에 등재 안 함 — hub 후보일 때만.
+- 모든 열매 페이지를 자동으로 trunk.md 에 등재 안 함 — hub 후보일 때만.
 - `git commit` 안 함.
