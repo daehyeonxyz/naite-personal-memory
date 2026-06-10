@@ -38,7 +38,7 @@ Default output is a single markdown report printed to the conversation (not writ
 
 ## Token budget tiers
 
-Lint already has broad mechanical coverage. Quality comes from spending reading tokens where mechanical counts need judgement, not from adding more checks.
+care --check already has broad mechanical coverage. Quality comes from spending reading tokens where mechanical counts need judgement, not from adding more checks.
 
 ### Tier 1 - deep evidence review
 
@@ -68,7 +68,7 @@ Each non-zero finding should carry one of these labels when the distinction affe
 - `false-positive`: matched mechanically but is not a tree defect after context review.
 - `intentional-debt`: known or deliberate residue, such as historical `rings.md` links preserved for audit value.
 - `repair-candidate`: a concrete page, link, source-voice, or workflow issue that can be fixed in a later user-directed pass.
-- `schema-pressure`: repeated evidence that may justify ontology, workflow, or lint-rule evolution, subject to the schema evolution rules.
+- `schema-pressure`: repeated evidence that may justify ontology, workflow, or check-rule evolution, subject to the schema evolution rules.
 
 For `--daily`, the report should end with **우선 검토 후보 3개**. These are not automatic fixes. They are the three most useful items for a human or later `/naite care --daily` review.
 
@@ -87,7 +87,7 @@ python scripts/build-tree-dependencies.py
 
 Use `ontology/tree-manifest.json` for page coordinates and `ontology/tree-dependencies.json` for inbound/outbound link data. The maps are tracked generated files, not hand-edited canonical vocabularies.
 
-Report the generated map status in the lint report:
+Report the generated map status in the care-check report:
 
 - `manifest pages: N`
 - `dependency edges: N`
@@ -146,7 +146,7 @@ python scripts/lint-ontology.py --refresh-domains   # domains cache 갱신 안�
 - `topics`: list (페이지당 0-5 entries, 빈 배열 OK)
 - `subject`: list (1+ SKOS-lite path)
 - `source-types`: list of enum values `course | conversation | paper | article | docs | book | essay | external` (single-element list OK, 항상 list)
-- `domains`: list (cached, lint 가 derive)
+- `domains`: list (cached, care-check 가 derive)
 - `created`, `updated`: `YYYY-MM-DD`
 
 미보유 / 잘못된 enum / 빈 subject 발견 시 surface (incomplete).
@@ -183,7 +183,7 @@ python scripts/lint-ontology.py --refresh-domains   # domains cache 갱신 안�
 
 #### 3e. Kind / form / source-types distribution
 
-매 lint 가 enum 별 count 표 surface — 새 enum 도입 압력 감지:
+매 care-check 가 enum 별 count 표 surface — 새 enum 도입 압력 감지:
 
 - `kind` distribution: `concept` / `entity` / `source-record` / `project` / `decision` / `insight` / `comparison` 별 count.
 - `form` distribution: `prose` / `index` 별 count.
@@ -221,7 +221,7 @@ Do not flag:
 - formulas, code fences, commands, model names, method names, technical English terms, or course-native English titles
 - the word `source` when it is a technical concept (for example source node, source distribution, source coding) rather than provenance/process voice
 
-Report file, line, matched phrase, and whether it is before `## Source`. For touched producer output, treat as must-fix-before-completion. For full lint, report as findings and let the user decide the repair scope.
+Report file, line, matched phrase, and whether it is before `## Source`. For touched producer output, treat as must-fix-before-completion. For a full care-check run, report as findings and let the user decide the repair scope.
 
 For `--daily`, include classification for each distinct output-quality cluster: `false-positive`, `intentional-debt`, or `repair-candidate`.
 
@@ -245,7 +245,7 @@ Surface 룰 (단순 presence, false positive expected):
 - prose context 줄 (heading 아니고 code-block / math-block 밖, 알파벳·한글이 있는 줄) 에 Hangul 부재 → candidate
 - heading context 줄 (`^#+ ` 시작) 에 Latin letters 부재 → candidate
 
-수식 라인, 영어 인용 라인, 영어 정의 라인, 외국어 hub entity 등은 false positive 일 수 있다. 사람이 직접 검토 후 *정책 위반인 경우만* 수정한다. lint 자체는 line 위치만 surface 한다.
+수식 라인, 영어 인용 라인, 영어 정의 라인, 외국어 hub entity 등은 false positive 일 수 있다. 사람이 직접 검토 후 *정책 위반인 경우만* 수정한다. care-check 자체는 line 위치만 surface 한다.
 
 blocker 아님 (secrets 만 blocker). report 는 candidate line 의 위치만 출력.
 

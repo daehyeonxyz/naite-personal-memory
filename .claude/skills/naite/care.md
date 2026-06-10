@@ -85,7 +85,7 @@ Step E. Append a coarse `tree/rings.md` entry with `updated: 0 tree content page
 
 ### Repair
 
-When the user asks to fix, edit pages directly. Preserve source substance, existing good links, and frontmatter unless the defect is there. After editing, run the touched-page content guard and the relevant deterministic lint.
+When the user asks to fix, edit pages directly. Preserve source substance, existing good links, and frontmatter unless the defect is there. After editing, run the touched-page content guard and the relevant deterministic checks (care --check).
 
 After editing pages, rebuild `ontology/tree-manifest.json` when page coordinates changed and rebuild `ontology/tree-dependencies.json` when body links or soft relation idioms changed. Include both generated maps in the change if they changed.
 
