@@ -49,7 +49,7 @@ Agents should load the smallest set that can safely decide the task, then expand
 2. **Route intent**: classify the user request into a workflow or a non-mutating answer.
 3. **Context contract**: read this file when the task involves tree mutation, tree query, context selection, routing, dependency propagation, care, or care-check.
 4. **Mutation authority**: for any tree mutation, read `CONVENTIONS.md`.
-5. **Workflow procedure**: read the exact workflow file under the active surface, such as `.claude/skills/naite/grow-branch.md` or `.agents/skills/naite/ingest.md`.
+5. **Workflow procedure**: read the exact workflow file under the active surface, such as `.claude/skills/naite/grow-branch.md` or `.agents/skills/naite/care.md`.
 6. **Generated maps**: read `ontology/tree-manifest.json` before searching for target pages; read `ontology/tree-dependencies.json` before changing an existing page or reviewing semantic dependents.
 7. **Local evidence**: read only the source files, tree pages, ontology sections, and recent rings entries required by the task.
 8. **Verification**: after edits, run the relevant deterministic scripts and rebuild generated maps when page coordinates or links changed.
