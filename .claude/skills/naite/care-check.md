@@ -65,7 +65,7 @@ Read deeper only when the first pass shows a repeated signal:
 Each non-zero finding should carry one of these labels when the distinction affects user action:
 
 - `blocker`: must stop commit or repair flow until the user acts, usually secrets or data safety.
-- `false-positive`: matched mechanically but is not a wiki defect after context review.
+- `false-positive`: matched mechanically but is not a tree defect after context review.
 - `intentional-debt`: known or deliberate residue, such as historical `rings.md` links preserved for audit value.
 - `repair-candidate`: a concrete page, link, source-voice, or workflow issue that can be fixed in a later user-directed pass.
 - `schema-pressure`: repeated evidence that may justify ontology, workflow, or lint-rule evolution, subject to the schema evolution rules.
@@ -141,7 +141,7 @@ python scripts/lint-ontology.py --refresh-domains   # domains cache 갱신 안�
 
 모든 content page (`trunk.md` / `rings.md` / `seeds.md` 제외) 가 다음 필수 facet 보유 + valid enum:
 
-- `kind`: enum `concept | entity | source-record | project | decision | insight | comparison`
+- `kind`: enum `concept | entity | source-record | project | decision | insight | comparison | essay | personal`
 - `form`: enum `prose | index`
 - `topics`: list (페이지당 0-5 entries, 빈 배열 OK)
 - `subject`: list (1+ SKOS-lite path)
@@ -193,7 +193,7 @@ python scripts/lint-ontology.py --refresh-domains   # domains cache 갱신 안�
 
 #### 3i. Schema integrity (drift detector)
 
-alias phase 가 종료됐고 wiki 가 모두 새 schema. 다음 metric 은 0 이어야 정상:
+alias phase 가 종료됐고 tree 가 모두 새 schema. 다음 metric 은 0 이어야 정상:
 - `legacy_schema_count`: type/role/source-type (singular) 만 있는 페이지. > 0 이면 신규 페이지가 옛 schema 로 작성됨 → 해당 페이지를 새 schema 로 수동 전환.
 - `mixed_schema_count`: kind+role 또는 type+form 혼재. > 0 이면 manual fix.
 - `unknown_count`: 어느 schema field 도 없음. > 0 이면 frontmatter parse 오류 또는 incomplete page.
