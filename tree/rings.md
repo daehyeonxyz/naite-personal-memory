@@ -1,8 +1,8 @@
-# Log
+# Rings
 
-Append-only, coarse-grained audit trail. Entry format (`CONVENTIONS.md § log.md discipline`):
+나이테: append-only, coarse-grained 성장 기록. Entry format (`CONVENTIONS.md § rings.md discipline`):
 
 ```
 ## [YYYY-MM-DD] <op> | <title>
-- what changed (pages touched, domains added, stubs added)
+- what changed (pages touched, domains added, seeds added)
 ```
