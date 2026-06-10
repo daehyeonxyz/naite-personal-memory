@@ -31,12 +31,14 @@ naite는 살아서 자라는 나무로 이해합니다. 자료가 뿌리로 들�
 
 | 나무 | 의미 | 레이어 / kind |
 |---|---|---|
-| 씨앗 seed | 앞으로 만들 페이지 후보 | `wiki/_stubs.md` |
-| 뿌리 root | 자료 유입 | `raw/` + `kind=source-record` |
-| 줄기 trunk | 구조 | `wiki/index.md` |
+| 씨앗 seed | 앞으로 만들 페이지 후보 | `tree/seeds.md` |
+| 뿌리 root | 자료 유입 | `roots/` + `kind=source-record` |
+| 줄기 trunk | 구조 | `tree/trunk.md` |
 | 잎 leaf | 이해가 일어나는 지식 페이지 | `kind=concept`, `source-record`, `insight` |
 | 열매 fruit | 다시 쓰는 결과물 | `kind=decision` (+`insight`) |
-| 나이테 rings | 시간 성장 기록 | `wiki/log.md` |
+| 나이테 rings | 시간 성장 기록 | `tree/rings.md` |
+
+잎과 잎은 맥 (vein, `[[wikilink]]`) 으로 이어집니다.
 
 ## Quick Start
 
@@ -45,10 +47,10 @@ naite는 살아서 자라는 나무로 이해합니다. 자료가 뿌리로 들�
 3. 첫 자료를 넣고 말합니다.
 
 ```text
-/wiki study <path>     # 방금 공부한 자료(PDF, 아티클, 대화)를 위키에 반영
-/wiki course           # 과목 단위 학습 (다챕터, 학기 단위)
-/wiki query <질문>      # 쌓인 위키에 질문
-/wiki lint             # 건강 점검 (고아 페이지, 스키마 drift, secrets)
+/naite grow            # 방금 공부한 것, 던져둔 자료를 나무에 반영 (장기 과정은 자동으로 branch)
+/naite ask <질문>       # 나무에게 질문
+/naite fruit           # 결정·trade-off 를 열매로
+/naite care            # 나무 돌보기 (--check 는 점검만)
 ```
 
 처음부터 모든 경험을 정리할 필요는 없습니다. 강의자료 하나, 대화 하나, 프로젝트 회고 하나만 있어도 시작할 수 있습니다.
@@ -57,14 +59,10 @@ naite는 살아서 자라는 나무로 이해합니다. 자료가 뿌리로 들�
 
 | Command | When to use |
 |---|---|
-| `/wiki study [path?]` | 한 번의 공부, 대화, 자료 묶음을 기록으로 정리할 때 |
-| `/wiki course [args?]` | 과목, 챕터, 강의 시리즈처럼 이어지는 학습을 관리할 때 |
-| `/wiki query <question>` | 이미 쌓인 기록을 바탕으로 질문할 때 |
-| `/wiki ingest <path>` | `raw/` 의 원본 파일 하나를 위키 페이지로 변환할 때 |
-| `/wiki capture [topic?]` | 지금 대화의 핵심 주장을 `raw/conversations/` 에 스냅샷할 때 |
-| `/wiki synapse [topic?]` | 결정·trade-off·실패 분석을 의사결정 페이지로 박을 때 |
-| `/wiki lint` | 결정적 건강 점검 (report-only) |
-| `/wiki curate [scope?]` | 정성적 검토, 수선, 대규모 정리 |
+| `/naite grow [path?]` | 학습·자료를 나무에 반영할 때. 대화 마무리, 파일, 과목·책·시리즈 (branch), 일단 받아두기 모두 여기로 |
+| `/naite ask <question>` | 쌓인 기록을 바탕으로 질문할 때 |
+| `/naite fruit [topic?]` | 결정·trade-off·실패 분석을 남길 때 |
+| `/naite care [scope?]` | 나무를 점검 (`--check`) 하거나 다듬을 때 |
 
 ## Repository structure
 
@@ -77,29 +75,29 @@ naite/
   CONVENTIONS.md         # operating invariants
   ARCHITECTURE.md        # schema rationale
 
-  raw/                   # source of truth (content-immutable)
+  roots/                 # source of truth (content-immutable)
     articles/            # 논문·아티클 원본
     conversations/       # 대화 claim summary (+ _transcripts/)
     courses/             # 과목별 강의자료 staging
     assets/              # 이미지 등
 
-  wiki/                  # LLM-owned knowledge pages (flat)
-    index.md             # curated 진입점
-    log.md               # append-only audit trail
-    _stubs.md            # 앞으로 만들 페이지 후보
+  tree/                  # LLM-owned knowledge pages (flat)
+    trunk.md             # curated 진입점 (줄기)
+    rings.md             # append-only 성장 기록 (나이테)
+    seeds.md             # 앞으로 만들 페이지 후보 (씨앗)
 
   ontology/              # canonical vocabularies + generated agent maps
     subject-tree.md      # SKOS-lite subject taxonomy
     topics.md            # folksonomy topic governance
 
-  .claude/skills/wiki/   # Claude Code workflow contracts
-  .agents/skills/wiki/   # Codex mirror (scripts/sync-agents.ps1 로 재생성)
-  scripts/               # lint, map build, mirror sync
+  .claude/skills/naite/  # Claude Code workflow contracts
+  .agents/skills/naite/  # Codex mirror (scripts/sync-agents.ps1 로 재생성)
+  scripts/               # care-check validator, map build, mirror sync
 ```
 
 ## Dual surface
 
-naite 는 두 에이전트 표면을 동기화합니다. `.claude/` + `CLAUDE.md` 가 canonical 편집 대상이고, `.agents/` + `AGENTS.md` 는 `scripts/sync-agents.ps1` 로 재생성하는 Codex 미러입니다. `CONTEXT.md`, `CONVENTIONS.md`, `ARCHITECTURE.md`, `ontology/` 는 양쪽이 공유합니다.
+naite 는 두 에이전트 표면을 동기화합니다. `.claude/` + `CLAUDE.md` 가 canonical 편집 대상이고, `.agents/` + `AGENTS.md` 는 `scripts/sync-agents.ps1` 로 재생성하는 Codex 미러입니다. `.claude/skills/naite/` 스킬 파일은 `.agents/skills/naite/` 로 자동 미러됩니다. `CONTEXT.md`, `CONVENTIONS.md`, `ARCHITECTURE.md`, `ontology/` 는 양쪽이 공유합니다.
 
 ## Positioning
 

@@ -1,7 +1,7 @@
 {
   "name": "naite",
   "version": "0.0.0",
-  "description": "naite — a personal knowledge system maintained by an LLM. /wiki dispatches to ingest, capture, query, lint, study, course, synapse, and curate subcommands against your naite vault.",
+  "description": "naite — a personal knowledge system maintained by an LLM. /naite dispatches to grow, ask, fruit, and care against your naite vault.",
   "repository": "https://github.com/daehyeonxyz/naite-personal-memory",
   "license": "MIT",
   "keywords": [
