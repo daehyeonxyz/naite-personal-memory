@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build ontology/wiki-dependencies.json from wikilinks and soft relation idioms."""
+"""Build ontology/tree-dependencies.json from wikilinks and soft relation idioms."""
 
 from __future__ import annotations
 
@@ -9,9 +9,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-WIKI_ROOT = Path(__file__).resolve().parent.parent
-WIKI_DIR = WIKI_ROOT / "wiki"
-OUT_PATH = WIKI_ROOT / "ontology" / "wiki-dependencies.json"
+NAITE_ROOT = Path(__file__).resolve().parent.parent
+TREE_DIR = NAITE_ROOT / "tree"
+OUT_PATH = NAITE_ROOT / "ontology" / "tree-dependencies.json"
 WIKILINK_RE = re.compile(r"\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]")
 
 RELATION_PATTERNS = [
@@ -86,7 +86,7 @@ def scan_page(path: Path, existing_slugs: set[str]) -> dict[str, object]:
 
 
 def main() -> int:
-    paths = sorted(WIKI_DIR.glob("*.md"))
+    paths = sorted(TREE_DIR.glob("*.md"))
     existing_slugs = {path.stem for path in paths}
     pages: dict[str, dict[str, object]] = {}
     inbound_sets: dict[str, set[str]] = {slug: set() for slug in existing_slugs}
@@ -98,7 +98,7 @@ def main() -> int:
         slug = path.stem
         scan = scan_page(path, existing_slugs)
         pages[slug] = {
-            "file": path.relative_to(WIKI_ROOT).as_posix(),
+            "file": path.relative_to(NAITE_ROOT).as_posix(),
             **scan,
         }
         for target in scan["outbound"]:
@@ -126,7 +126,7 @@ def main() -> int:
     data = {
         "schema_version": 1,
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "generator": "scripts/build-wiki-dependencies.py",
+        "generator": "scripts/build-tree-dependencies.py",
         "page_count": len(paths),
         "summary": {
             "edge_count": sum(len(page["outbound"]) for page in pages.values()),
@@ -161,7 +161,7 @@ def main() -> int:
         encoding="utf-8",
     )
     print(
-        f"wrote {OUT_PATH.relative_to(WIKI_ROOT)} "
+        f"wrote {OUT_PATH.relative_to(NAITE_ROOT)} "
         f"({len(paths)} pages, {data['summary']['edge_count']} edges)"
     )
     return 0
