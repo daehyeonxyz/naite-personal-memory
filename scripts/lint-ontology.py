@@ -2,7 +2,7 @@
 """
 lint-ontology.py — Deterministic ontology validator for naite.
 
-Implements the deterministic checks of `.agents/skills/wiki/lint.md § 3 Ontology validation`:
+Implements the deterministic checks of `.claude/skills/naite/care-check.md § 3 Ontology validation`:
 
   3a Frontmatter completeness  — required facets + valid enum values
   3b Subject tree validation   — subject path against ontology/subject-tree.md
@@ -16,7 +16,7 @@ Implements the deterministic checks of `.agents/skills/wiki/lint.md § 3 Ontolog
   7  Non-tree scratch dirt
 
 Cluster detection (Louvain) and topic alias clustering are LLM-driven —
-see `.agents/skills/wiki/lint.md` for the full workflow.
+see `.claude/skills/naite/care-check.md` for the full workflow.
 
 Usage:
     python scripts/lint-ontology.py                    # report only
