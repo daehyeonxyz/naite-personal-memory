@@ -44,7 +44,7 @@ If separate agents are not available, run the same three phases sequentially in 
 - **Output quality contract**: `CONVENTIONS.md § Output quality contract` 준수. 본문은 page 자체로 의미를 가져야 하며, raw/PDF/필기/source-processing 설명은 `## Source` 앞 본문에 쓰지 않는다. 필기·슬라이드 강조·예시는 본문 설명으로 흡수한다.
 - **Slug**: 영소문자·숫자 **단일 토큰** (하이픈 금지 — 레벨 구분자 `-`와 충돌). 공식 과목코드 있으면 소문자화(`MA101` → `ma101`), 없으면 prefix+NNN 임의(`aa101`, `aa102`, ...). 과목 내내 고정, 이후 절대 변경 금지.
 - **Subject**: branch 페이지는 그 과목·책·시리즈가 다루는 **콘텐츠 path 1개** (예: `[statistics]` 또는 더 narrow `[engineering-math/ode]`). 메타·챕터·서브챕터 모두 동일 단일 path 또는 narrower. Canonical tree: `ontology/subject-tree.md`. `course`, `course-{slug}` 같은 컬렉션 태그는 subject 에 절대 넣지 않는다 — `CONVENTIONS.md § Ontology` 참조. Branch 멤버십은 파일명 prefix `course-{slug}-*` 로 보장. `domains` 는 care --check 가 subject 의 top-level 을 cache.
-- **Trunk 분리**: trunk.md 에는 과목 메타 1줄만 등록 (`## Courses § <institution>` 섹션). 챕터/서브챕터 발견 경로는 `course-{slug}-00-index.md § Chapters` → `course-{slug}-ch{NN}-00-index.md § Subchapters` drill-down. **trunk.md 에 서브챕터/챕터 절대 나열하지 않는다.**
+- **Trunk 분리**: trunk.md 에는 과목 메타 1줄만 등록 (`## Branches § <institution>` 섹션). 챕터/서브챕터 발견 경로는 `course-{slug}-00-index.md § Chapters` → `course-{slug}-ch{NN}-00-index.md § Subchapters` drill-down. **trunk.md 에 서브챕터/챕터 절대 나열하지 않는다.**
 - **Grow 단위**: **서브챕터 단위 즉시 페이지 작성**. 챕터 메타는 챕터 완료 시점에 일괄. **단 rings.md 에는 서브챕터마다 쓰지 않는다** — frontmatter `created`/`updated` 가 정보 운반. rings entry 는 `branch-chapter` 마무리 시점에 1줄 (subchapter 수만 명시), `branch-start`/`branch-finish` 도 1줄씩.
 - **`ingest` 모듈 직접 호출 금지**: `ingest.md`는 "raw 파일 하나 → 여러 페이지"용 워크플로. branch 모드는 "대화 맥락 → 페이지 1개"라 구조 불일치. 단 **결과물 규격**(frontmatter, `trunk.md`·`rings.md` 업데이트 포맷)은 `ingest.md` 와 정합되게 맞춘다.
 - **Raw 보존**: `roots/courses/{slug}/*.pdf`는 서브챕터 grow 시점에 `_archive/`로 옮기지 않는다. **과목 완료(`branch-finish`) 시점에 일괄 이동.** (이유: 여러 서브챕터에서 같은 pdf를 페이지 범위로 참조하므로 챕터 진행 중엔 원본이 살아있어야 함.)
@@ -74,7 +74,7 @@ If separate agents are not available, run the same three phases sequentially in 
 
 | Op | 트리거 | Tree 변경 |
 |---|---|---|
-| `start` | 신규 과목 시작. slug가 `tree/trunk.md § Courses` 어느 institution 섹션에도 없음 | 과목 메타 생성, trunk·rings 갱신 |
+| `start` | 신규 과목 시작. slug가 `tree/trunk.md § Branches` 어느 institution 섹션에도 없음 | 과목 메타 생성, trunk·rings 갱신 |
 | `resume` | 기존 slug가 이미 존재 | 없음 (진행 상태만 요약) |
 | `chapter-start` | 새 챕터 pdf 업로드, 챕터 시작 선언 | 없음 (staging + 맥락 세팅만) |
 | `subchapter-note` | "1.3 정리해줘", "이 서브챕터 반영" | 서브챕터 노트 1개 생성 (+선택적 일반 개념 페이지). **rings.md 작성 없음.** |
@@ -92,7 +92,7 @@ If separate agents are not available, run the same three phases sequentially in 
 3. If `<NAITE_ROOT>/ontology/tree-manifest.json` is missing or stale for the current task, run `python scripts/build-tree-manifest.py`.
 4. Read `<NAITE_ROOT>/ontology/tree-manifest.json` before searching for existing course, concept, or entity pages.
 5. Read `<NAITE_ROOT>/ontology/tree-dependencies.json` before changing existing course or concept pages when semantic dependents may need review. If missing, run `python scripts/build-tree-dependencies.py`.
-6. Read `<NAITE_ROOT>/tree/trunk.md` — 특히 `## Courses` 섹션 (institution 그룹별 과목 메타 목록) 과 `## Knowledge domains § <domain>` 의 hub 페이지들.
+6. Read `<NAITE_ROOT>/tree/trunk.md` — 특히 `## Branches` 섹션 (institution 그룹별 과목 메타 목록) 과 `## Knowledge domains § <domain>` 의 hub 페이지들.
 7. Read last ~30 lines of `<NAITE_ROOT>/tree/rings.md` — 최근 `branch-*` 엔트리로 진행 상태 파악 (branch-note 는 더 이상 rings 에 없음 — frontmatter `updated` 또는 `course-{slug}-*` 파일 mtime 으로 파악).
 8. Op 결정, 사용자에게 1줄 확인.
 
@@ -106,7 +106,7 @@ If separate agents are not available, run the same three phases sequentially in 
    - syllabus / about (pdf, 텍스트, 또는 생략)
 2. Slug 결정:
    - 과목코드 있음 → 소문자화. `MA101` → `ma101`.
-   - 없음 → 기관 prefix + NNN 제안. `tree/trunk.md § Courses` 와 `roots/courses/` 디렉토리에서 기존 slug 확인 후 다음 번호.
+   - 없음 → 기관 prefix + NNN 제안. `tree/trunk.md § Branches` 와 `roots/courses/` 디렉토리에서 기존 slug 확인 후 다음 번호.
    - slug는 반드시 단일 토큰 (영소문자·숫자, 하이픈 없음).
 3. Staging: `roots/courses/{slug}/` 생성. 업로드 자료 복사 (`§ Staging rules` 참조).
 4. Takeaways 논의 (3-8 bullet):
@@ -117,7 +117,7 @@ If separate agents are not available, run the same three phases sequentially in 
    사용자 확인 후 진행.
 5. `tree/course-{slug}-00-index.md` 작성 (`kind=source-record`, `form=index`). 템플릿 `§ Templates § 과목 메타` 사용. frontmatter `subject` 는 단일 path; `domains` 는 빈 배열로 두면 care --check 가 cache 채움.
 6. `tree/trunk.md` 업데이트:
-   - `## Courses § <institution>` 섹션에 한 줄: `- [[course-{slug}-00-index]] — {과목명, 짧은 설명}`. institution 섹션이 없으면 신설.
+   - `## Branches § <institution>` 섹션에 한 줄: `- [[course-{slug}-00-index]] — {과목명, 짧은 설명}`. institution 섹션이 없으면 신설.
    - **챕터/서브챕터는 절대 trunk 에 나열하지 않는다.** drill-down 으로 발견.
 7. `tree/rings.md`:
    ```
@@ -488,7 +488,7 @@ $$
 
 - 과목 시작 시점에 빈 챕터·서브챕터 stub을 미리 생성하지 않는다 (`.claude/skills/naite/grow.md` 규칙과 동일).
 - 서브챕터 노트 없이 챕터 메타를 작성하지 않는다.
-- slug 충돌 허용하지 않는다 (`tree/trunk.md § Courses` + `ls roots/courses/` 중복 체크 필수).
+- slug 충돌 허용하지 않는다 (`tree/trunk.md § Branches` + `ls roots/courses/` 중복 체크 필수).
 - 서브챕터 grow 시점에 원본 pdf를 `_archive/`로 옮기지 않는다 (챕터·과목 완료 시점까지 보존).
 - `ingest` 나 `capture` 내부 모듈을 직접 호출하지 않는다 (구조 불일치). 결과물 규격만 정합되게 맞춘다.
 - **frontmatter `domains` 에 `course`, `course-{slug}` 같은 컬렉션 태그를 절대 넣지 않는다** (post-2026-04-28 schema). 단일 콘텐츠 도메인만.
