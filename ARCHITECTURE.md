@@ -151,7 +151,7 @@ updated: YYYY-MM-DD
 
 - **Tactical timeline** — `wiki/log.md` (작업 단위 1 줄)
 - **Action delta** — Git commit history (atomic 변경)
-- **Architectural rationale** — `docs/` (본 파일 등)
+- **Architectural rationale** — `ARCHITECTURE.md` (본 파일)
 - **Intellectual reasoning** — `wiki/` 의 synapse + decision 페이지
 
 ### 4.5 Multi-pass orchestration — 대규모 작업의 default

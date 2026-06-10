@@ -45,7 +45,7 @@ This file is the Codex-facing mirror of the Claude Code surface. Keep `.agents/`
 - **Canonical edit target**: `.claude/` and `CLAUDE.md`. Regenerate this Codex mirror with `scripts/sync-agents.ps1` when the canonical side changes.
 - **Mirror review**: after sync, review `AGENTS.md` and `.agents/skills/wiki/` for tool-specific wording before staging.
 - **Run sync in the same commit** that edits the canonical side. Both surfaces stage together.
-- **Shared (NOT mirrored)**: `CONTEXT.md`, `CONVENTIONS.md`, `docs/`, `ontology/`. Both tools read the same files. Tool-specific tokens (`.claude/`, `.agents/`, `CLAUDE.md`, `AGENTS.md`, `Claude Code`, `Codex`, etc.) are allowed where they carry meaning.
+- **Shared (NOT mirrored)**: `CONTEXT.md`, `CONVENTIONS.md`, `ARCHITECTURE.md`, `ontology/`. Both tools read the same files. Tool-specific tokens (`.claude/`, `.agents/`, `CLAUDE.md`, `AGENTS.md`, `Claude Code`, `Codex`, etc.) are allowed where they carry meaning.
 
 ---
 '@
