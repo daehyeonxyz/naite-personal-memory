@@ -68,7 +68,7 @@ roots/articles/**/*-png/
 tmp/
 
 # /naite care sweep runs — raw verdicts ignored, summary + cascade tracked.
-# Pattern: exports/{date}-care/raw/ ignored; sentinels ignored;
+# Pattern: exports/{date}-care/raw/ ignored; .lock and .phase1-complete ignored;
 # summary.md + cascade *.jsonl + cache-state.json tracked.
 exports/*-care/raw/
 exports/*-care/.lock
