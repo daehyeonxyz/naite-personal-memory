@@ -46,7 +46,7 @@ Always spend extra reading budget on these four areas when findings exist:
 
 1. **Missing targets / stubs**: for each meaningful missing target, open at least one source page that links to it. Classify whether it is a historical `rings.md` link, a placeholder/template artifact, an intentional plain-text/external reference candidate, a real broken wikilink, or a new concept-page candidate.
 2. **Output quality guard**: for each hit, read nearby context before and after the line, not just the matched phrase. Decide whether it is a real source/process-voice problem or a false positive caused by technical usage.
-3. **Synapse coverage**: separate standalone `kind=decision` pages from embedded decision-shape prose in concept/entity/source-record/project pages. Apply the decision-page standard most strictly to standalone decision pages.
+3. **Fruit coverage**: separate standalone `kind=decision` pages from embedded decision-shape prose in concept/entity/source-record/project pages. Apply the decision-page standard most strictly to standalone decision pages.
 4. **Autonomy garbage**: verify the 30-day window, usage count, and inbound count before surfacing a cleanup candidate. Do not report a topic, narrower, or spawned concept as garbage from count alone.
 
 ### Tier 2 - conditional deep review
