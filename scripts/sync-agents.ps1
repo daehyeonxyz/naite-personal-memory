@@ -43,7 +43,7 @@ function Repair-AgentsEntrypoint {
 This file is the Codex-facing mirror of the Claude Code surface. Keep `.agents/` + `AGENTS.md` aligned with `.claude/` + `CLAUDE.md`.
 
 - **Canonical edit target**: `.claude/` and `CLAUDE.md`. Regenerate this Codex mirror with `scripts/sync-agents.ps1` when the canonical side changes.
-- **Mirror review**: after sync, review `AGENTS.md` and `.agents/skills/wiki/` for tool-specific wording before staging.
+- **Mirror review**: after sync, review `AGENTS.md` and `.agents/skills/naite/` for tool-specific wording before staging.
 - **Run sync in the same commit** that edits the canonical side. Both surfaces stage together.
 - **Shared (NOT mirrored)**: `CONTEXT.md`, `CONVENTIONS.md`, `ARCHITECTURE.md`, `ontology/`. Both tools read the same files. Tool-specific tokens (`.claude/`, `.agents/`, `CLAUDE.md`, `AGENTS.md`, `Claude Code`, `Codex`, etc.) are allowed where they carry meaning.
 
@@ -54,9 +54,9 @@ This file is the Codex-facing mirror of the Claude Code surface. Keep `.agents/`
     [System.IO.File]::WriteAllText($Path, $text, $utf8)
 }
 
-# 1) Mirror skill files .claude/skills/wiki/*.md -> .agents/skills/wiki/
-$srcDir = Join-Path $repo ".claude\skills\wiki"
-$dstDir = Join-Path $repo ".agents\skills\wiki"
+# 1) Mirror skill files .claude/skills/naite/*.md -> .agents/skills/naite/
+$srcDir = Join-Path $repo ".claude\skills\naite"
+$dstDir = Join-Path $repo ".agents\skills\naite"
 New-Item -ItemType Directory -Force -Path $dstDir | Out-Null
 
 Get-ChildItem -LiteralPath $srcDir -Filter "*.md" | ForEach-Object {

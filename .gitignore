@@ -1,5 +1,5 @@
 # Secrets and private material — never commit
-raw/private/
+roots/private/
 *.env
 *.env.*
 .envrc
@@ -47,12 +47,12 @@ Python/
 python_install_*.log
 
 # Binaries — raw PDFs stay local only (CLAUDE.md § Binary files: < 1MB recommended;
-# lecture PDFs under raw/courses/{slug}/ are not tracked — GitHub 50MB limit, no LFS yet).
+# lecture PDFs under roots/courses/{slug}/ are not tracked — GitHub 50MB limit, no LFS yet).
 # Small finished PDFs can be force-tracked explicitly with git add -f.
 *.pdf
 
 # Rendered article/deck images stay local; track extracted text/markdown instead.
-raw/articles/**/*-png/
+roots/articles/**/*-png/
 
 # Agent / IDE / package-manager scratch (see lint.md § 7 Non-wiki scratch dirt).
 # .codex-work/ itself can be an intentional sub-project workspace, so it is not
@@ -67,27 +67,16 @@ raw/articles/**/*-png/
 # Used by course-backfill.md / curate.md. Not for commit.
 tmp/
 
-# /wiki curate sweep runs — raw verdicts ignored, summary + cascade tracked.
-# Pattern: exports/{date}-{skill}/raw/ ignored; sentinels ignored;
+# /naite care sweep runs — raw verdicts ignored, summary + cascade tracked.
+# Pattern: exports/{date}-care/raw/ ignored; sentinels ignored;
 # summary.md + cascade *.jsonl + cache-state.json tracked.
-exports/*-consolidate/raw/
-exports/*-consolidate/.lock
-exports/*-consolidate/.phase1-complete
-exports/*-consolidate/.consumed-by-consolidate
-exports/*-rewire/raw/
-exports/*-rewire/.lock
-exports/*-rewire/.phase1-complete
-exports/*-rewire/.consumed-by-consolidate
-
-# Sweep chunk-level raw output (orchestrator + subagent fan-out byproducts)
-exports/*-consolidate/chunks/
-exports/*-consolidate/chunk-results/
-exports/*-consolidate/chunk-summaries/
-exports/*-rewire/chunks/
-exports/*-rewire/chunk-results/
-exports/*-rewire/chunk-summaries/
+exports/*-care/raw/
+exports/*-care/.lock
+exports/*-care/.phase1-complete
+exports/*-care/chunks/
+exports/*-care/chunk-results/
+exports/*-care/chunk-summaries/
 
 # Generated manifests are large daily files (~1MB+) — avoid commit churn
-exports/*-consolidate/manifest.jsonl
-exports/*-rewire/manifest.jsonl
+exports/*-care/manifest.jsonl
 .gstack/
