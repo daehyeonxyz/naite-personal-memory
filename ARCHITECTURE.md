@@ -90,7 +90,7 @@ updated: YYYY-MM-DD
 
 | Field | 본질 | 진화 방식 |
 |---|---|---|
-| `kind` | 페이지의 *referent* — 무엇을 가리키는가 (7-enum) | enum 확장 가능 (care-check surface 후 사용자 결정 — C-level) |
+| `kind` | 페이지의 *referent* — 무엇을 가리키는가 (9-enum) | enum 확장 가능 (care-check surface 후 사용자 결정 — C-level) |
 | `form` | 페이지의 *모양* — 본문이 어떻게 제시되는가 (2-enum) | enum 거의 불변 (prose / index 외 거의 없음) |
 | `topics` | 재사용 가능 키워드 | folksonomic emerge + 주기적 canonicalize |
 | `subject` | SKOS-lite tree 위치 | narrower 추가 자유, page 무변경 |

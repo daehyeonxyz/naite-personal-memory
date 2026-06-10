@@ -336,7 +336,7 @@ Evolution channels:
 
 - **General concept page**: must be reusable concept-level. NOT page-specific (`course-ma101-ch03-binomial`), NOT broad domain (`ml`, `statistics`). Same granularity rule as topics — see `ontology/topics.md § Topic granularity guidance`.
 - **Canonical topic**: same granularity gate. LLM must check `ontology/topics.md § Topic granularity guidance` before appending. Reusable concept/technique/pattern level only.
-- **Topic alias**: only when synonymy is obvious (`cot ↔ chain-of-thought`, `hitl ↔ human-in-the-loop`). Ambiguous synonyms surface to lint cluster detection (Levenshtein + co-occurrence) for user confirmation, NOT autonomous addition.
+- **Topic alias**: only when synonymy is obvious (`cot ↔ chain-of-thought`, `hitl ↔ human-in-the-loop`). Ambiguous synonyms surface to care-check cluster detection (Levenshtein + co-occurrence) for user confirmation, NOT autonomous addition.
 
 **care-check as garbage collector** (post-hoc protection — `/naite care --check` § 3b / § 3c / § 14):
 
