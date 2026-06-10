@@ -21,7 +21,7 @@ Use this when the user asks to:
 Supported scopes:
 
 - `/naite care {slug}` — one page plus its immediate graph context.
-- `/naite care branch-{slug}` — branch meta, chapter meta, and all subchapter pages for one branch.
+- `/naite care branch-{slug}` — branch meta, chapter meta, and all subchapter pages for one branch (pages are named course-{slug}-*).
 - `/naite care --branches` — all branch pages.
 - `/naite care --fruits` — decision-shape pages and their load-bearing links.
 - `/naite care --all` — whole tree qualitative sweep.
