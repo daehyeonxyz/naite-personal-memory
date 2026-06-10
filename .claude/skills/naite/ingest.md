@@ -31,7 +31,7 @@ Use physical subagents when the active tool surface supports them and the user h
 - If `ontology/tree-manifest.json` is missing or stale for the current task, run `python scripts/build-tree-manifest.py`.
 - Read `ontology/tree-manifest.json` and use it to narrow candidate existing pages before loading full page bodies.
 - Read `ontology/tree-dependencies.json` before editing an existing page when the change could affect pages that depend on it. If the file is missing, run `python scripts/build-tree-dependencies.py`.
-- Read `tree/trunk.md` in full so you know which **knowledge domains** exist (`## Knowledge domains` section) and which **course meta pages** exist (`## Courses`). Note: trunk is curated, not exhaustive — `tree/*.md` glob is the truth for slugs.
+- Read `tree/trunk.md` in full so you know which **knowledge domains** exist (`## Knowledge domains` section) and which **branch meta pages** exist (`## Branches`). Note: trunk is curated, not exhaustive — `tree/*.md` glob is the truth for slugs.
 - Read `tree/seeds.md` — a matching stub means a page is expected and this source may fulfill it.
 - Read the last ~20 lines of `tree/rings.md` for recent context (what was grown, any pending threads).
 
