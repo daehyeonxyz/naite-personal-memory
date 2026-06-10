@@ -1,0 +1,93 @@
+# Secrets and private material — never commit
+raw/private/
+*.env
+*.env.*
+.envrc
+credentials.json
+secrets.json
+*.pem
+*.key
+*_rsa
+*_dsa
+*_ed25519
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+.idea/
+.vscode/
+
+# Obsidian — per-machine UI state. Keep community-plugins.json, core-plugins.json,
+# app.json, appearance.json, and per-plugin data.json tracked (config).
+# Ignore plugin code (re-downloadable) and themes.
+.obsidian/app.json
+.obsidian/workspace*
+.obsidian/cache
+.obsidian/hotkeys.json
+.obsidian/graph.json
+.obsidian/plugins/*/main.js
+.obsidian/plugins/*/styles.css
+.obsidian/plugins/*/manifest.json
+.obsidian/plugins/*/cache/
+.obsidian/themes/
+
+# Claude Code local state (if any leaks in — skills themselves ARE committed)
+.claude/local/
+.claude/settings.local.json
+.claude/worktrees/
+
+# Python — bytecode + install artifacts
+__pycache__/
+*.pyc
+*.pyo
+Python/
+python_install_*.log
+
+# Binaries — raw PDFs stay local only (CLAUDE.md § Binary files: < 1MB recommended;
+# lecture PDFs under raw/courses/{slug}/ are not tracked — GitHub 50MB limit, no LFS yet).
+# Small finished PDFs can be force-tracked explicitly with git add -f.
+*.pdf
+
+# Rendered article/deck images stay local; track extracted text/markdown instead.
+raw/articles/**/*-png/
+
+# Agent / IDE / package-manager scratch (see lint.md § 7 Non-wiki scratch dirt).
+# .codex-work/ itself can be an intentional sub-project workspace, so it is not
+# blocked wholesale — only node_modules inside it is.
+**/node_modules/
+.codex-cache/
+.aider/
+.cursor/
+.windsurfai/
+
+# Operational scratch — disposable wiki maintenance artifacts (run logs, working files).
+# Used by course-backfill.md / curate.md. Not for commit.
+tmp/
+
+# /wiki curate sweep runs — raw verdicts ignored, summary + cascade tracked.
+# Pattern: exports/{date}-{skill}/raw/ ignored; sentinels ignored;
+# summary.md + cascade *.jsonl + cache-state.json tracked.
+exports/*-consolidate/raw/
+exports/*-consolidate/.lock
+exports/*-consolidate/.phase1-complete
+exports/*-consolidate/.consumed-by-consolidate
+exports/*-rewire/raw/
+exports/*-rewire/.lock
+exports/*-rewire/.phase1-complete
+exports/*-rewire/.consumed-by-consolidate
+
+# Sweep chunk-level raw output (orchestrator + subagent fan-out byproducts)
+exports/*-consolidate/chunks/
+exports/*-consolidate/chunk-results/
+exports/*-consolidate/chunk-summaries/
+exports/*-rewire/chunks/
+exports/*-rewire/chunk-results/
+exports/*-rewire/chunk-summaries/
+
+# Generated manifests are large daily files (~1MB+) — avoid commit churn
+exports/*-consolidate/manifest.jsonl
+exports/*-rewire/manifest.jsonl
+.gstack/
