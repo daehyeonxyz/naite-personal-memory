@@ -138,7 +138,7 @@ Don't spam — only suggest when the tree genuinely has or should have something
 Tree ontology evolves with content under **cardinality-graded autonomy**:
 
 - **A — autonomous (low-impact, reversible by edit)**: 새 일반 개념 페이지, canonical topic, 명백한 alias. 입자도 가드 통과 시 LLM 직접 작성. care-check § 14 가비지 컬렉터가 30 일 윈도우로 사후 검증.
-- **B — propose (tree structure, future pages 영향)**: subject narrower / rename / move. LLM 이 ontology 파일에 candidate append + ingest summary 에 surface, 사용자 confirm/revert.
+- **B — propose (tree structure, future pages 영향)**: subject narrower / rename / move. LLM 이 ontology 파일에 candidate append + grow summary 에 surface, 사용자 confirm/revert.
 - **C — user decision (trunk schema)**: 새 `kind` / `form` / `source-types` enum 값, 새 facet field, 새 top-level domain, subject deprecation. **LLM 절대 추가 금지** — surface 만.
 
 Speculative trunk-schema additions (C-level) corrupt the graph. Autonomy A 는 care-check cadence 가 사후 회수하므로 안전. 자세한 정책 + 입자도 가드: `CONVENTIONS.md § Schema evolution`. 설계 근거: `ARCHITECTURE.md § 4.3`.

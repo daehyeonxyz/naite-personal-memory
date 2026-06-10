@@ -287,7 +287,7 @@ updated: 2026-05-03
 
 미래 care --check 또는 care 가 surface 하면 검토할 항목 (현재 도입 안 함):
 
-- **§ 14 autonomy garbage collector deterministic 구현** — 현재 LLM-driven spec 만. 30 일 윈도우 검증 cadence 가 안정되면 `scripts/lint-autonomy-gc.py` 추가 검토.
+- **§ 14 autonomy garbage collector deterministic 구현** — 현재 LLM-driven spec 만. 30 일 윈도우 검증 cadence 가 안정되면 `scripts/autonomy-gc.py` 추가 검토.
 - **`as-of: <date>` facet** — `source-types ∋ docs` 페이지의 staleness 추적용. 현재는 본문 provenance 로 충분.
 - **`classifications:` wrapper** — facet 5 개 이상 (예: `audience`, `certainty`, `maturity` 추가) 으로 늘어나면 검토. 현재 5 facet 안정.
 - **새 `kind` value** — 누적 page-shape pain ≥5 페이지 + 사용자 결정 후. 이전 `role=question` (corpus 0) 은 redesign 에서 새 `kind` enum 에 옮기지 않음 — needs surface 시 C-level decision.

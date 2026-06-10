@@ -20,7 +20,7 @@ naite vault 하나 = 나무 한 그루. 부위 이름의 단일 기준은 이 �
 | trunk 줄기 | 특수 파일 | `tree/trunk.md` — 큐레이션 진입점 |
 | rings 나이테 | 특수 파일 | `tree/rings.md` — append-only 성장 기록 |
 | seeds 씨앗 | 특수 파일 | `tree/seeds.md` — 만들 페이지 후보 |
-| leaf 잎 | kind | `kind=concept / entity / source-record / insight / comparison` 페이지 |
+| leaf 잎 | kind | `kind=concept / entity / source-record / insight / comparison / project / essay / personal` 페이지 (전체 enum: § Ontology) |
 | fruit 열매 | kind | `kind=decision` 페이지 — `/naite fruit` 가 맺는다 |
 | branch 가지 | 군집 | `course-{slug}-*` 파일명 prefix 하나 = 가지 하나. grow 의 장기 모드 |
 | vein 맥 | 링크 | 페이지 간 `[[wikilink]]`. 저장은 wikilink + `ontology/tree-dependencies.json` |
