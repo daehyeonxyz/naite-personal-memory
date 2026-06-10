@@ -63,12 +63,12 @@ Frontmatter 의 `domains:` field 는 **care-check 가 자동 갱신** — `subje
 
 | 시나리오 | 등급 | 액션 | 페이지 변경 |
 |---|---|---|---|
-| Subject narrower 추가 (예: `ml/agents/multi-agent` 신설) | **B** | LLM 이 candidate append + ingest summary 에 surface, 사용자 confirm/revert | 없음 — 새 페이지부터 narrower path |
+| Subject narrower 추가 (예: `ml/agents/multi-agent` 신설) | **B** | LLM 이 candidate append + grow summary 에 surface, 사용자 confirm/revert | 없음 — 새 페이지부터 narrower path |
 | Subject rename (예: `ml` → `machine-learning`) | **B** | LLM 이 canonical 변경 + altLabel 후보 제안, 사용자 confirm | 없음 — care-check 가 alias 해석 |
 | Subject move/reparent | **B** | LLM 이 candidate 제안 + altLabels 양방향 | 없음 (점진 갱신 가능, 강제 X) |
 | Subject deprecation | **C** | 사용자 결정 → tree 에서 remove + LLM-driven script | **페이지 rewrite 필요** (유일 케이스, 마지막 수단) |
 | 새 top-level domain | **C** | 사용자 결정 → tree 에 추가 | 없음 |
 
-**Autonomy B 후보는 LLM 이 직접 트리에 append + surface; autonomy C 는 LLM 절대 추가 안 함.** Lint 가 cluster detection (Louvain modularity) 으로 narrower 후보 surface, 사용자 결정 후 confirm.
+**Autonomy B 후보는 LLM 이 직접 트리에 append + surface; autonomy C 는 LLM 절대 추가 안 함.** care-check 가 cluster detection (Louvain modularity) 으로 narrower 후보 surface, 사용자 결정 후 confirm.
 
 자세한 정책: `CONVENTIONS.md § Schema evolution`.
