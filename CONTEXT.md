@@ -180,7 +180,7 @@ Not every dependency should trigger automatic edits. Use three levels:
 | Level | Examples | Action |
 |---|---|---|
 | Hard dependency | `CLAUDE.md` to `AGENTS.md`, `.claude/skills/naite/*` to `.agents/skills/naite/*` | sync with `scripts/sync-agents.ps1` |
-| Contract dependency | `CONVENTIONS.md` change affecting workflow files or lint scripts | update the affected contracts and validators in the same change |
+| Contract dependency | `CONVENTIONS.md` change affecting workflow files or validator scripts | update the affected contracts and validators in the same change |
 | Semantic dependency | concept, decision, or source-record content change affecting linked pages | surface candidates from `ontology/tree-dependencies.json`, then repair through `/naite care` only when requested |
 
 Python finds candidates. The LLM judges meaning. Do not auto-propagate semantic edits just because an inbound edge exists.
