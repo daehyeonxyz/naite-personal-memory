@@ -9,7 +9,7 @@ Canonical topic list (folksonomy layer) for naite.
 
 ## Canonical topics
 
-아래 목록은 **중립 시작 예시**다. 본인의 콘텐츠가 쌓이면서 입자도 가드 통과 시 LLM 이 직접 append 하고 (autonomy A), lint § 14 garbage collector 가 30 일 윈도우로 underused canonical 을 회수한다.
+아래 목록은 **중립 시작 예시**다. 본인의 콘텐츠가 쌓이면서 입자도 가드 통과 시 LLM 이 직접 append 하고 (autonomy A), care-check § 14 garbage collector 가 30 일 윈도우로 underused canonical 을 회수한다.
 
 ```yaml
 canonical_topics:
@@ -30,7 +30,7 @@ canonical_topics:
 
 ## Aliases (canonical only)
 
-확실한 것만. 애매한 동의어는 lint 가 누적 surface 후 사용자 결정.
+확실한 것만. 애매한 동의어는 care-check 가 누적 surface 후 사용자 결정.
 
 ```yaml
 aliases:
@@ -40,9 +40,9 @@ aliases:
 
 ## Evolution rules
 
-- **Add canonical**: lint 가 미등록 topic 이 ≥3 페이지에서 등장 surface → 사용자 confirm → 본 파일 `canonical_topics:` 끝에 추가. 입자도 가드 통과 시 LLM 직접 append 도 허용 (autonomy A).
-- **Add alias**: lint 가 synonym cluster (Levenshtein + co-occurrence) surface → 사용자가 canonical 결정 → 본 파일 `aliases:` 추가. 명백한 morphology / 약어는 LLM 자율 (autonomy A).
-- **Rename canonical**: 새 canonical 선택, 기존 이름은 alias 로 redirect. 페이지 frontmatter 변경 불필요 (lint 가 alias 해석).
+- **Add canonical**: care-check 가 미등록 topic 이 ≥3 페이지에서 등장 surface → 사용자 confirm → 본 파일 `canonical_topics:` 끝에 추가. 입자도 가드 통과 시 LLM 직접 append 도 허용 (autonomy A).
+- **Add alias**: care-check 가 synonym cluster (Levenshtein + co-occurrence) surface → 사용자가 canonical 결정 → 본 파일 `aliases:` 추가. 명백한 morphology / 약어는 LLM 자율 (autonomy A).
+- **Rename canonical**: 새 canonical 선택, 기존 이름은 alias 로 redirect. 페이지 frontmatter 변경 불필요 (care-check 가 alias 해석).
 - **Remove canonical**: deprecation. 모든 인용 페이지 page rewrite 필요 — 마지막 수단.
 
 자세한 governance workflow: `ARCHITECTURE.md § 3.4`.
