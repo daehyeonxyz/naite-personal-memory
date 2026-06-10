@@ -13,7 +13,7 @@ Implements the deterministic checks of `.agents/skills/wiki/lint.md § 3 Ontolog
   3g Legacy collection drift   — pre-migration tags surfaced
   3h Language-shape review candidates
   3j Output quality contract guard
-  7  Non-wiki scratch dirt
+  7  Non-tree scratch dirt
 
 Cluster detection (Louvain) and topic alias clustering are LLM-driven —
 see `.agents/skills/wiki/lint.md` for the full workflow.
@@ -38,10 +38,10 @@ from pathlib import Path
 # Paths + canonical sources
 # ---------------------------------------------------------------------------
 
-WIKI_ROOT = Path(__file__).resolve().parent.parent
-WIKI_DIR = WIKI_ROOT / 'wiki'
-ONTOLOGY_DIR = WIKI_ROOT / 'ontology'
-SPECIALS = {'index.md', 'log.md', '_stubs.md'}
+NAITE_ROOT = Path(__file__).resolve().parent.parent
+TREE_DIR = NAITE_ROOT / 'tree'
+ONTOLOGY_DIR = NAITE_ROOT / 'ontology'
+SPECIALS = {'trunk.md', 'rings.md', 'seeds.md'}
 BOM = b'\xef\xbb\xbf'
 
 # Schema enums (current facet schema).
@@ -416,11 +416,11 @@ def find_output_quality_findings(path):
     return findings
 
 
-def find_non_wiki_dirt(repo_root):
+def find_non_tree_dirt(repo_root):
     """Return list of (tracked_path, reason) for files matching agent/IDE scratch patterns.
 
-    Surfaces accumulation of codex / agent / IDE scratch under the wiki repo —
-    these should be gitignored, not committed. Per `lint.md § 7 Non-wiki scratch dirt`.
+    Surfaces accumulation of codex / agent / IDE scratch under the naite vault —
+    these should be gitignored, not committed. Per `lint.md § 7 Non-tree scratch dirt`.
     Warn-only (non-blocking).
     """
     try:
@@ -431,7 +431,7 @@ def find_non_wiki_dirt(repo_root):
     except (FileNotFoundError, subprocess.CalledProcessError):
         return []
 
-    # Strong-signal scratch dirs (almost never intentional in wiki repo).
+    # Strong-signal scratch dirs (almost never intentional in naite vault).
     # NOTE: .codex-work/ is intentionally NOT in this list — the user may use it
     # as a deliberate sub-project workspace. node_modules/ at any depth is the
     # canonical dirt signal.
@@ -466,7 +466,7 @@ def find_non_wiki_dirt(repo_root):
 
 def lint(args):
     canonical_topics, aliases = load_topic_governance()
-    pages = sorted(p for p in WIKI_DIR.glob('*.md') if p.name not in SPECIALS)
+    pages = sorted(p for p in TREE_DIR.glob('*.md') if p.name not in SPECIALS)
 
     incomplete = []
     invalid_subject = []
@@ -712,11 +712,11 @@ def lint(args):
     print()
 
     # ---------------------------------------------------------------------
-    # § 7 Non-wiki scratch dirt (warn only, non-blocking)
+    # § 7 Non-tree scratch dirt (warn only, non-blocking)
     # ---------------------------------------------------------------------
-    non_wiki_dirt = find_non_wiki_dirt(WIKI_ROOT)
-    print(f'### 7 Non-wiki scratch dirt: {len(non_wiki_dirt)} tracked entries')
-    print('  (warn — agent/IDE scratch tracked in wiki repo, see lint.md § 7)')
+    non_wiki_dirt = find_non_tree_dirt(NAITE_ROOT)
+    print(f'### 7 Non-tree scratch dirt: {len(non_wiki_dirt)} tracked entries')
+    print('  (warn — agent/IDE scratch tracked in naite vault, see lint.md § 7)')
     if non_wiki_dirt:
         # group by reason
         by_reason = {}
@@ -739,7 +739,7 @@ def lint(args):
     if args.strip_bom and bom_files:
         print(f'### Stripping BOM from {len(bom_files)} files...')
         for name in bom_files:
-            p = WIKI_DIR / name
+            p = TREE_DIR / name
             raw = p.read_bytes()
             if raw.startswith(BOM):
                 p.write_bytes(raw[len(BOM):])

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build ontology/wiki-manifest.json for fast agent routing."""
+"""Build ontology/tree-manifest.json for fast agent routing."""
 
 from __future__ import annotations
 
@@ -9,10 +9,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-WIKI_ROOT = Path(__file__).resolve().parent.parent
-WIKI_DIR = WIKI_ROOT / "wiki"
-OUT_PATH = WIKI_ROOT / "ontology" / "wiki-manifest.json"
-SPECIALS = {"index.md", "log.md", "_stubs.md"}
+NAITE_ROOT = Path(__file__).resolve().parent.parent
+TREE_DIR = NAITE_ROOT / "tree"
+OUT_PATH = NAITE_ROOT / "ontology" / "tree-manifest.json"
+SPECIALS = {"trunk.md", "rings.md", "seeds.md"}
 
 
 def parse_flow_list(value: str) -> list[str]:
@@ -84,7 +84,7 @@ def page_record(path: Path) -> dict[str, object]:
     title = first_heading(body, slug)
     record: dict[str, object] = {
         "slug": slug,
-        "file": path.relative_to(WIKI_ROOT).as_posix(),
+        "file": path.relative_to(NAITE_ROOT).as_posix(),
         "title": title,
         "special": path.name in SPECIALS,
         "aliases": collect_aliases(body),
@@ -112,7 +112,7 @@ def page_record(path: Path) -> dict[str, object]:
 
 
 def main() -> int:
-    pages = [page_record(path) for path in sorted(WIKI_DIR.glob("*.md"))]
+    pages = [page_record(path) for path in sorted(TREE_DIR.glob("*.md"))]
     by_kind: dict[str, int] = {}
     by_domain: dict[str, int] = {}
     by_source_type: dict[str, int] = {}
@@ -127,7 +127,7 @@ def main() -> int:
     data = {
         "schema_version": 1,
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "generator": "scripts/build-wiki-manifest.py",
+        "generator": "scripts/build-tree-manifest.py",
         "page_count": len(pages),
         "content_page_count": sum(1 for page in pages if not page["special"]),
         "summary": {
@@ -141,7 +141,7 @@ def main() -> int:
         json.dumps(data, ensure_ascii=False, separators=(",", ":")) + "\n",
         encoding="utf-8",
     )
-    print(f"wrote {OUT_PATH.relative_to(WIKI_ROOT)} ({len(pages)} pages)")
+    print(f"wrote {OUT_PATH.relative_to(NAITE_ROOT)} ({len(pages)} pages)")
     return 0
 
 
