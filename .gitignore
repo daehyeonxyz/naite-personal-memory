@@ -54,7 +54,7 @@ python_install_*.log
 # Rendered article/deck images stay local; track extracted text/markdown instead.
 roots/articles/**/*-png/
 
-# Agent / IDE / package-manager scratch (see lint.md § 7 Non-wiki scratch dirt).
+# Agent / IDE / package-manager scratch (see care-check.md § 7 Non-tree scratch dirt).
 # .codex-work/ itself can be an intentional sub-project workspace, so it is not
 # blocked wholesale — only node_modules inside it is.
 **/node_modules/
@@ -63,8 +63,8 @@ roots/articles/**/*-png/
 .cursor/
 .windsurfai/
 
-# Operational scratch — disposable wiki maintenance artifacts (run logs, working files).
-# Used by course-backfill.md / curate.md. Not for commit.
+# Operational scratch — disposable tree maintenance artifacts (run logs, working files).
+# Used by grow-backfill.md / care.md. Not for commit.
 tmp/
 
 # /naite care sweep runs — raw verdicts ignored, summary + cascade tracked.
