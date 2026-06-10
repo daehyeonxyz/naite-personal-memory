@@ -7,7 +7,7 @@ All data paths below resolve against **NAITE_ROOT** (the root of the naite repo)
 ## When to use — 3 triggers
 
 1. **명시 슬래시**: `/naite fruit [topic?]`. 사용자가 "이 결정 정리해두자" 라고 의식적으로 부를 때.
-2. **자연 감지**: 대화 중 "선택했다 / 고민했다 / 보류했다 / 실패했다 / 결정했다 / 비교했다" 신호 + trade-off 정황이 감지되면 Claude 가 한 줄로 제안 — "이거 열매로 정리해둘까요?" 사용자 확인 후에만 실행. grow.md 의 course-vs-study pre-check 와 같은 cadence.
+2. **자연 감지**: 대화 중 "선택했다 / 고민했다 / 보류했다 / 실패했다 / 결정했다 / 비교했다" 신호 + trade-off 정황이 감지되면 Claude 가 한 줄로 제안 — "이거 열매로 정리해둘까요?" 사용자 확인 후에만 실행. grow.md § Branch pre-check 와 같은 cadence.
 3. **작업 종료 트리거**: 사용자가 "끝났어 / 마무리 / 완료 / 다 됐어" 신호 + 그 작업이 의사결정·trade-off 를 포함한 흐름이면 wrap-up 제안. 단순 task 종료엔 발동 안 함.
 
 세 trigger 모두 동일 워크플로로 진입. 차이는 모드 판별 단계에서 사용자 확인 한 줄 추가될 뿐.
@@ -30,7 +30,7 @@ skill 의 핵심 가치는 빈 헤더를 채우게 하는 게 아니라 **누락
 - **표면 답변 거부**: "좋아 보여서 / 유명해서 / 사람들이 많이 써서 / 그냥 해보고 싶어서" 류는 받지 않고 다시 push — "그 선택의 trade-off 는 무엇이었나요? latency? maintenance cost? data quality? rollback 가능성?"
 - **실패 조건은 조건문 형태로 강제**: "잘 안 됐다" 거부 → "어떤 입력일 때 깨졌나요? / 어떤 사용자 행동 패턴에서 무너졌나요?"
 - **Invariant 는 형식 강요**: `[조건/상황]에서는 [구조/전략]이 [효과]를 만들지만, [제약/실패 조건]에서는 [보완책]이 필요하다`. 이 형식 안 맞으면 다시 적게 함.
-- **Cross-link 부족 시**: 사용자에게 "이 결정이 wiki 의 어떤 개념과 닿아 있나요? `[[laplace-transform]]`, `[[chain-of-thought]]` 같은 기존 페이지 중에" 같이 candidate 제시.
+- **Cross-link 부족 시**: 사용자에게 "이 결정이 tree 의 어떤 개념과 닿아 있나요? `[[laplace-transform]]`, `[[chain-of-thought]]` 같은 기존 페이지 중에" 같이 candidate 제시.
 
 ## Workflow
 
@@ -65,7 +65,7 @@ skill 의 핵심 가치는 빈 헤더를 채우게 하는 게 아니라 **누락
 ### 2. Cross-link 검수
 
 본문의 outbound wikilink 개수 셈. < 3 이면:
-- 사용자에게 "이 결정이 닿는 기존 wiki 페이지 더 없나요? 후보: `[[...]]` `[[...]]`" 제시.
+- 사용자에게 "이 결정이 닿는 기존 tree 페이지 더 없나요? 후보: `[[...]]` `[[...]]`" 제시.
 - 응답 받아 본문에 prose idiom 으로 박음 (`builds on`, `applies to`, `trade-off: A vs B` 등).
 
 ### 3. 누락 개념 → stub 제안
