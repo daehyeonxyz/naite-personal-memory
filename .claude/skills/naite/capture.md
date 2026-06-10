@@ -1,30 +1,32 @@
-# /wiki capture
+# capture — grow internal module
 
-Snapshot knowledge from the **current conversation** into `raw/conversations/`. Does not touch `wiki/`. Merging into the wiki happens in a separate `/wiki ingest` step, user-initiated.
+사용자 노출 명령이 아니다. /naite grow 가 위임하는 내부 모듈이다.
+
+Snapshot knowledge from the **current conversation** into `roots/conversations/`. Does not touch `tree/`. Merging into the tree happens in a separate grow ingest step, user-initiated.
 
 ## When to use
 
-The user is in a learning conversation with the agent (desktop chat, cowork, or code surface) and says something like "wiki 업데이트해줘", "capture this", or "save what we just covered." This is the command's trigger.
+The user is in a learning conversation with the agent (desktop chat, cowork, or code surface) and says something like "tree 업데이트해줘", "capture this", or "save what we just covered." This is the trigger.
 
 ## Hard rules
 
-- **Write only under `raw/conversations/`.** Never create or modify pages under `wiki/`. Never edit `index.md`, `log.md`, or `_stubs.md`.
+- **Write only under `roots/conversations/`.** Never create or modify pages under `tree/`. Never edit `trunk.md`, `rings.md`, or `seeds.md`.
 - **Two files per capture**, with different lifetimes:
-  - **Claim summary** at `raw/conversations/YYYY-MM-DD-<slug>.md` — **ephemeral staging**. `/wiki ingest` deletes it after successful ingest (see `ingest.md § 8`). Think of this file as a handoff envelope for the ingester, not a long-term artifact.
-  - **Verbatim transcript twin** at `raw/conversations/_transcripts/YYYY-MM-DD-<slug>.md` — **permanent insurance copy**. Never deleted by any skill. If the claim summary's extraction was lossy, the transcript enables re-capture.
+  - **Claim summary** at `roots/conversations/YYYY-MM-DD-<slug>.md` — **ephemeral staging**. The grow ingest step deletes it after successful grow (see `ingest.md § 8`). Think of this file as a handoff envelope for the ingester, not a long-term artifact.
+  - **Verbatim transcript twin** at `roots/conversations/_transcripts/YYYY-MM-DD-<slug>.md` — **permanent insurance copy**. Never deleted by any skill. If the claim summary's extraction was lossy, the transcript enables re-capture.
   Both files are required — the transcript alone is not a capture.
 - **Filename slug**: `YYYY-MM-DD-<topic-kebab>.md`. If the slug already exists for today, append `-2`, `-3`, …
-- **Tell the user the follow-up step** at the end: "run `/wiki ingest raw/conversations/<file>` to fold this in."
+- **Tell the user the follow-up step** at the end: "run `/naite grow roots/conversations/<file>` to fold this in."
 
 ## Workflow
 
 ### 1. Decide the topic slug
 
-If the user named a topic (`/wiki capture transformer-attention`), kebab-case it and use it directly. Otherwise, propose a slug based on the conversation's focus and confirm with the user in one line before writing.
+If the user named a topic (`/naite grow transformer-attention`), kebab-case it and use it directly. Otherwise, propose a slug based on the conversation's focus and confirm with the user in one line before writing.
 
 ### 2. Write the claim-level summary
 
-Path: `raw/conversations/YYYY-MM-DD-<topic-kebab>.md`
+Path: `roots/conversations/YYYY-MM-DD-<topic-kebab>.md`
 
 Frontmatter:
 
@@ -53,16 +55,16 @@ One or two sentences on what the user was doing or thinking about.
 ## Open threads
 - <Things the user wanted to look into later, unresolved questions.>
 
-## Proposed wiki touchpoints
+## Proposed tree touchpoints
 - new: `[[proposed-slug]]` (type) — one-line rationale
 - update: `[[existing-slug]]` — what changes
 ```
 
-Keep claims **atomic and source-attributable** — a claim should be something that could live on its own in a wiki page. Skip small talk, tool-use logs, and anything you couldn't cite later.
+Keep claims **atomic and source-attributable** — a claim should be something that could live on its own in a tree page. Skip small talk, tool-use logs, and anything you couldn't cite later.
 
 ### 3. Write the verbatim transcript twin
 
-Path: `raw/conversations/_transcripts/YYYY-MM-DD-<topic-kebab>.md` (same slug as step 2).
+Path: `roots/conversations/_transcripts/YYYY-MM-DD-<topic-kebab>.md` (same slug as step 2).
 
 This is the insurance file. If your claim extraction is lossy or wrong, the full transcript is preserved for re-capture later.
 
@@ -81,15 +83,15 @@ If anything matches: **do not write**. Report to the user and offer to redact.
 
 Finish with exactly one sentence:
 
-> Captured to `raw/conversations/YYYY-MM-DD-<topic>.md`. To fold into the wiki, run `/wiki ingest raw/conversations/YYYY-MM-DD-<topic>.md` (or `/wiki ingest raw/conversations/` to drain all pending).
+> Captured to roots/conversations/YYYY-MM-DD-<topic>.md. 심으려면 /naite grow roots/conversations/YYYY-MM-DD-<topic>.md 를 실행한다 (또는 /naite grow roots/conversations/ 로 전부).
 
-### 6. No log entry
+### 6. No rings entry
 
-`/wiki capture` does **not** write to `wiki/log.md`. The log belongs to wiki-layer mutations. The subsequent `/wiki ingest` is what gets logged.
+The capture step does **not** write to `tree/rings.md`. The rings log belongs to tree-layer mutations. The subsequent grow ingest step is what gets logged.
 
 ## What this command never does
 
-- Never writes under `wiki/`.
+- Never writes under `tree/`.
 - Never commits to git.
-- Never decides on its own to ingest — only captures.
+- Never decides on its own to grow — only captures.
 - Never overwrites an existing file with the same slug — it appends `-2`, `-3` to disambiguate.
