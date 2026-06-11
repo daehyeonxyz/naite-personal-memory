@@ -29,6 +29,7 @@ Exit codes:
 """
 
 import argparse
+import json
 import re
 import subprocess
 import sys
@@ -45,13 +46,27 @@ SPECIALS = {'trunk.md', 'rings.md', 'seeds.md'}
 BOM = b'\xef\xbb\xbf'
 
 # Schema enums (current facet schema).
-# kind: page essence (9 values), form: presentation shape (2 values),
-# source-types: provenance list (8 values, always list).
+# Single source: .naite/ontology/facets.json (shared with naite-app filter UI).
+# Hardcoded tuples below are the fallback when facets.json is missing/corrupt.
 # Rationale: docs/ARCHITECTURE.md § 3 (facet redesign).
 # personal (C-level addition): user self-reference meta hub (personal-profile, career).
-KINDS = ('concept', 'entity', 'source-record', 'project', 'decision', 'insight', 'comparison', 'essay', 'personal')
-FORMS = ('prose', 'index')
-SOURCE_TYPES_NEW = ('course', 'conversation', 'paper', 'article', 'docs', 'book', 'essay', 'external')
+FACETS_PATH = ONTOLOGY_DIR / 'facets.json'
+
+
+def _facet_values(name, fallback):
+    try:
+        data = json.loads(FACETS_PATH.read_text(encoding='utf-8'))
+        values = data['facets'][name]['values']
+        if isinstance(values, list) and values:
+            return tuple(values)
+    except (OSError, ValueError, KeyError, TypeError):
+        pass
+    return fallback
+
+
+KINDS = _facet_values('kind', ('concept', 'entity', 'source-record', 'project', 'decision', 'insight', 'comparison', 'essay', 'personal'))
+FORMS = _facet_values('form', ('prose', 'index'))
+SOURCE_TYPES_NEW = _facet_values('source-types', ('course', 'conversation', 'paper', 'article', 'docs', 'book', 'essay', 'external'))
 
 # Legacy schema enums — kept ONLY for diagnostic (detect_schema returns 'legacy' to flag drift).
 # Legacy schema fields from an earlier design. Legacy pages are errors.

@@ -63,6 +63,8 @@ These map to the `kind` facet enum (§ Ontology). The `kind` facet is *page esse
 
 ## Ontology — quick reference
 
+기계 가독 facet 정의는 `.naite/ontology/facets.json` 하나가 단일 소스다 (enum 값, 단일/복수, 검색 타입). lint 검증기와 naite-app 필터 UI 가 같은 파일을 읽는다. enum 변경은 여전히 C-level (사용자 결정) 이다.
+
 Every page has these frontmatter facets:
 
 ```yaml
