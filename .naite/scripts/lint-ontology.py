@@ -47,7 +47,7 @@ BOM = b'\xef\xbb\xbf'
 # Schema enums (current facet schema).
 # kind: page essence (9 values), form: presentation shape (2 values),
 # source-types: provenance list (8 values, always list).
-# Rationale: ARCHITECTURE.md § 3 (facet redesign).
+# Rationale: docs/ARCHITECTURE.md § 3 (facet redesign).
 # personal (C-level addition): user self-reference meta hub (personal-profile, career).
 KINDS = ('concept', 'entity', 'source-record', 'project', 'decision', 'insight', 'comparison', 'essay', 'personal')
 FORMS = ('prose', 'index')
@@ -286,7 +286,7 @@ def is_latin_letter(ch):
 def find_language_shape_candidates(path):
     """Return list of (line_no, kind) where kind in {'prose-no-hangul', 'heading-no-latin'}.
 
-    Surface candidate lines per CONVENTIONS.md § Naming policy (Korean prose +
+    Surface candidate lines per docs/CONVENTIONS.md § Naming policy (Korean prose +
     English headings/terms). false positive expected — manual review required.
     No ratios, no thresholds.
     """
@@ -671,7 +671,7 @@ def lint(args):
     print()
 
     print(f'### 3h Language-shape review candidates: {len(language_candidates)} lines')
-    print('  (false positive expected — manual review per CONVENTIONS.md § Naming)')
+    print('  (false positive expected — manual review per docs/CONVENTIONS.md § Naming)')
     # group by page for readability
     by_page = {}
     for name, line_no, kind in language_candidates:
