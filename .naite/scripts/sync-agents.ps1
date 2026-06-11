@@ -1,7 +1,7 @@
 # Sync .claude/ canonical skill set to .agents/ (Codex mirror) with text substitutions.
 #
 # Usage (from repo root):
-#     .\scripts\sync-agents.ps1
+#     .\.naite\scripts\sync-agents.ps1
 #
 # Substitutions applied to every mirrored file (case-sensitive, UTF-8 preserved):
 #   - "CLAUDE.md"              -> "AGENTS.md"            (must run BEFORE Claude->Codex)
@@ -15,7 +15,7 @@
 # git add the regenerated .agents/ and AGENTS.md.
 
 $ErrorActionPreference = "Stop"
-$repo = (Resolve-Path "$PSScriptRoot\..").Path
+$repo = (Resolve-Path "$PSScriptRoot\..\..").Path
 
 # UTF-8 no-BOM (matches our skill / md files)
 $utf8 = New-Object System.Text.UTF8Encoding($false)
@@ -42,10 +42,10 @@ function Repair-AgentsEntrypoint {
 
 This file is the Codex-facing mirror of the Claude Code surface. Keep `.agents/` + `AGENTS.md` aligned with `.claude/` + `CLAUDE.md`.
 
-- **Canonical edit target**: `.claude/` and `CLAUDE.md`. Regenerate this Codex mirror with `scripts/sync-agents.ps1` when the canonical side changes.
+- **Canonical edit target**: `.claude/` and `CLAUDE.md`. Regenerate this Codex mirror with `.naite/scripts/sync-agents.ps1` when the canonical side changes.
 - **Mirror review**: after sync, review `AGENTS.md` and `.agents/skills/naite/` for tool-specific wording before staging.
 - **Run sync in the same commit** that edits the canonical side. Both surfaces stage together.
-- **Shared (NOT mirrored)**: `CONTEXT.md`, `CONVENTIONS.md`, `ARCHITECTURE.md`, `ontology/`. Both tools read the same files. Tool-specific tokens (`.claude/`, `.agents/`, `CLAUDE.md`, `AGENTS.md`, `Claude Code`, `Codex`, etc.) are allowed where they carry meaning.
+- **Shared (NOT mirrored)**: `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, `docs/ARCHITECTURE.md`, `.naite/`. Both tools read the same files. Tool-specific tokens (`.claude/`, `.agents/`, `CLAUDE.md`, `AGENTS.md`, `Claude Code`, `Codex`, etc.) are allowed where they carry meaning.
 
 ---
 '@

@@ -14,13 +14,13 @@ All data paths below resolve against **NAITE_ROOT** (the root of the naite repo)
 
 ## Hard rules
 
-- **출력은 `kind: decision` 페이지** (적합 시 `kind: concept`/`entity`/`source-record` 페이지에 decision-shape content 인라인 embed 도 가능). `form: prose`. `subject` 는 `ontology/subject-tree.md` 의 path 1개; 진짜 cross-domain 일 때만 multi (`[a/x, b/y]`). `dmu/`, `failure-*/`, `career-*/`, `synapse/` 같은 메타 subject path 또는 별도 kind enum 추가는 **금지** — 시냅스의 본질은 카테고리화 거부 (`CONVENTIONS.md § Decision thread shape` 참조). Decision-shape thread 자체는 page-level enum 으로 좁히지 않고 cross-page 시냅스 layer 로 흐른다.
+- **출력은 `kind: decision` 페이지** (적합 시 `kind: concept`/`entity`/`source-record` 페이지에 decision-shape content 인라인 embed 도 가능). `form: prose`. `subject` 는 `.naite/ontology/subject-tree.md` 의 path 1개; 진짜 cross-domain 일 때만 multi (`[a/x, b/y]`). `dmu/`, `failure-*/`, `career-*/`, `synapse/` 같은 메타 subject path 또는 별도 kind enum 추가는 **금지** — 시냅스의 본질은 카테고리화 거부 (`docs/CONVENTIONS.md § Decision thread shape` 참조). Decision-shape thread 자체는 page-level enum 으로 좁히지 않고 cross-page 시냅스 layer 로 흐른다.
 - **파일명**: `decision-YYYY-MM-DD-<slug>.md` 형식. `YYYY-MM-DD` 는 페이지 `created` 날짜 (frontmatter 와 일치). `<slug>` 부분은 `lowercase-kebab-case`. `DMU-` prefix 금지. 예: `decision-2026-01-15-vector-db-selection`, `decision-2026-02-03-retrieval-strategy`.
 - **본문은 DMU 14 섹션을 참조 구조** 로 사용. 사용자 답변에 따라 일부 섹션은 통째로 생략. 빈 헤더 작성 금지.
 - **최소 3개 outbound wikilink** (mechanism / related concept / project / failure mode 중 어느 조합이든). 부족하면 사용자에게 "어떤 개념 페이지에 연결되나요?" 푸시.
 - **누락 개념 발견 시** `tree/seeds.md` 에 stub 제안 — DMU 가 graph 의 빈 공간을 채우는 압력으로 작동.
-- **prose idiom 박힘 강제**: 본문에 `decided X over Y when ...`, `failed when ...`, `trade-off: A vs B`, `validates`, `falsifies` 중 적어도 1~2개 등장. CONVENTIONS.md § Soft ontology 의 어휘를 반드시 재사용.
-- 기타 `AGENTS.md § Secrets & privacy`, `CONVENTIONS.md § Schema evolution` 전부 그대로 적용.
+- **prose idiom 박힘 강제**: 본문에 `decided X over Y when ...`, `failed when ...`, `trade-off: A vs B`, `validates`, `falsifies` 중 적어도 1~2개 등장. docs/CONVENTIONS.md § Soft ontology 의 어휘를 반드시 재사용.
+- 기타 `AGENTS.md § Secrets & privacy`, `docs/CONVENTIONS.md § Schema evolution` 전부 그대로 적용.
 
 ## Dialogue scaffold (template filler 가 아니라 사고 캐묻기)
 
@@ -36,7 +36,7 @@ skill 의 핵심 가치는 빈 헤더를 채우게 하는 게 아니라 **누락
 
 ### 0. Pre-flight (every invocation)
 
-1. Read `<NAITE_ROOT>/AGENTS.md` — 특히 § Soft ontology, § Decision threads (시냅스 layer), § Personal tree scope, § Ontology. 그리고 `ontology/subject-tree.md` (canonical paths) + `ontology/topics.md` (canonical vocabulary).
+1. Read `<NAITE_ROOT>/AGENTS.md` — 특히 § Soft ontology, § Decision threads (시냅스 layer), § Personal tree scope, § Ontology. 그리고 `.naite/ontology/subject-tree.md` (canonical paths) + `.naite/ontology/topics.md` (canonical vocabulary).
 2. Read `<NAITE_ROOT>/tree/trunk.md` 전체 — 도메인·기존 hub 페이지 candidate 수집.
 3. Last ~20 lines of `<NAITE_ROOT>/tree/rings.md` — 최근 맥락.
 4. Trigger 모드 판별. 자연 감지·작업 종료 모드면 사용자에게 한 줄 확인 후 진행.
@@ -101,7 +101,7 @@ updated: YYYY-MM-DD
 
 대부분의 열매 페이지는 작은 결정 한 건이라 **hub 후보가 아님** — 이때는 trunk 미등재, 본문 wikilink 와 prose idiom 으로만 발견되게 둠. care --check 의 high-degree neurons 가 자동으로 promotion candidate 를 surface.
 
-`CONVENTIONS.md § trunk.md discipline` 참조.
+`docs/CONVENTIONS.md § trunk.md discipline` 참조.
 
 ### 6. `tree/rings.md` append
 
@@ -230,7 +230,7 @@ DMU 가 별도 페이지가 될 만큼 무겁지 않으면, 기존 concept 페�
 
 - 새 type / 새 frontmatter 필드 / 새 메타 도메인 태그 신설 안 함.
 - DMU shape 페이지를 별도 인덱스 (`## Domain: dmu`) 로 분리 안 함 (애초 그 섹션은 폐기됨).
-- Career 관련 frontmatter / `[[fde-skill-*]]` 페이지 사전 생성 안 함 (CONVENTIONS.md § Decision thread shape 의 grep-on-demand 원칙 준수).
+- Career 관련 frontmatter / `[[fde-skill-*]]` 페이지 사전 생성 안 함 (docs/CONVENTIONS.md § Decision thread shape 의 grep-on-demand 원칙 준수).
 - 파일명 `DMU-YYYYMMDD-...` prefix 안 씀.
 - 빈 14 섹션을 강제로 채우지 않음 — 누락은 생략.
 - frontmatter `domains` 에 `course`, `course-{slug}`, `dmu`, `decision`, `synapse` 등 메타·컬렉션 태그 안 씀 — 콘텐츠 도메인 1개만.

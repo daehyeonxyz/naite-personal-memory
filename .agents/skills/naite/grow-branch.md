@@ -6,11 +6,11 @@ All data paths below resolve against **NAITE_ROOT** (the root of the naite vault
 
 ## Context routing and role split
 
-Read `CONTEXT.md` before any branch mutation. Branch work is source-heavy and contract-heavy, so `subchapter-note` and `backfill` should use the Reader / Writer / Verifier split from `CONTEXT.md` whenever the active tool surface supports it and the user has authorized delegation.
+Read `docs/CONTEXT.md` before any branch mutation. Branch work is source-heavy and contract-heavy, so `subchapter-note` and `backfill` should use the Reader / Writer / Verifier split from `docs/CONTEXT.md` whenever the active tool surface supports it and the user has authorized delegation.
 
 - **Reader** reads the lecture PDF, transcript, notes, rendered images, and current dialogue. It returns compact claims, concepts, examples, equations, handwriting insights, and candidate wikilinks.
-- **Writer** reads this workflow, `CONVENTIONS.md`, generated maps, ontology files, style references, and the Reader chunk. It writes `course-*` pages and any autonomy A concept pages.
-- **Verifier** runs content guard, rebuilds `ontology/tree-manifest.json` and `ontology/tree-dependencies.json`, checks touched pages, and surfaces inbound semantic dependents.
+- **Writer** reads this workflow, `docs/CONVENTIONS.md`, generated maps, ontology files, style references, and the Reader chunk. It writes `course-*` pages and any autonomy A concept pages.
+- **Verifier** runs content guard, rebuilds `.naite/ontology/tree-manifest.json` and `.naite/ontology/tree-dependencies.json`, checks touched pages, and surfaces inbound semantic dependents.
 
 If separate agents are not available, run the same three phases sequentially in one session. Do not let the full source bundle displace this workflow's output contract from context.
 
@@ -37,31 +37,31 @@ If separate agents are not available, run the same three phases sequentially in 
 ## Hard rules
 
 - **Staging**: 강의자료 pdf/이미지는 `roots/courses/{slug}/` 아래 **정규화된 파일명**으로 staging. flat 구조.
-- **Filename convention (tree pages)** — `CONVENTIONS.md § Naming` (lowercase-kebab-case, 영문) 준수:
+- **Filename convention (tree pages)** — `docs/CONVENTIONS.md § Naming` (lowercase-kebab-case, 영문) 준수:
   - 과목 메타: `course-{slug}-00-index.md` (`kind=source-record`, `form=index`)
   - 챕터 메타: `course-{slug}-ch{NN}-00-index.md` (`kind=source-record`, `form=index`)
   - 서브챕터 노트: `course-{slug}-ch{NN}-{SS}-{title-slug}.md` (`kind=source-record`, `form=prose`)
-- **Output quality contract**: `CONVENTIONS.md § Output quality contract` 준수. 본문은 page 자체로 의미를 가져야 하며, raw/PDF/필기/source-processing 설명은 `## Source` 앞 본문에 쓰지 않는다. 필기·슬라이드 강조·예시는 본문 설명으로 흡수한다.
+- **Output quality contract**: `docs/CONVENTIONS.md § Output quality contract` 준수. 본문은 page 자체로 의미를 가져야 하며, raw/PDF/필기/source-processing 설명은 `## Source` 앞 본문에 쓰지 않는다. 필기·슬라이드 강조·예시는 본문 설명으로 흡수한다.
 - **Slug**: 영소문자·숫자 **단일 토큰** (하이픈 금지 — 레벨 구분자 `-`와 충돌). 공식 과목코드 있으면 소문자화(`MA101` → `ma101`), 없으면 prefix+NNN 임의(`aa101`, `aa102`, ...). 과목 내내 고정, 이후 절대 변경 금지.
-- **Subject**: branch 페이지는 그 과목·책·시리즈가 다루는 **콘텐츠 path 1개** (예: `[statistics]` 또는 더 narrow `[engineering-math/ode]`). 메타·챕터·서브챕터 모두 동일 단일 path 또는 narrower. Canonical tree: `ontology/subject-tree.md`. `course`, `course-{slug}` 같은 컬렉션 태그는 subject 에 절대 넣지 않는다 — `CONVENTIONS.md § Ontology` 참조. Branch 멤버십은 파일명 prefix `course-{slug}-*` 로 보장. `domains` 는 care --check 가 subject 의 top-level 을 cache.
+- **Subject**: branch 페이지는 그 과목·책·시리즈가 다루는 **콘텐츠 path 1개** (예: `[statistics]` 또는 더 narrow `[engineering-math/ode]`). 메타·챕터·서브챕터 모두 동일 단일 path 또는 narrower. Canonical tree: `.naite/ontology/subject-tree.md`. `course`, `course-{slug}` 같은 컬렉션 태그는 subject 에 절대 넣지 않는다 — `docs/CONVENTIONS.md § Ontology` 참조. Branch 멤버십은 파일명 prefix `course-{slug}-*` 로 보장. `domains` 는 care --check 가 subject 의 top-level 을 cache.
 - **Trunk 분리**: trunk.md 에는 과목 메타 1줄만 등록 (`## Branches § <institution>` 섹션). 챕터/서브챕터 발견 경로는 `course-{slug}-00-index.md § Chapters` → `course-{slug}-ch{NN}-00-index.md § Subchapters` drill-down. **trunk.md 에 서브챕터/챕터 절대 나열하지 않는다.**
 - **Grow 단위**: **서브챕터 단위 즉시 페이지 작성**. 챕터 메타는 챕터 완료 시점에 일괄. **단 rings.md 에는 서브챕터마다 쓰지 않는다** — frontmatter `created`/`updated` 가 정보 운반. rings entry 는 `branch-chapter` 마무리 시점에 1줄 (subchapter 수만 명시), `branch-start`/`branch-finish` 도 1줄씩.
 - **`ingest` 모듈 직접 호출 금지**: `ingest.md`는 "raw 파일 하나 → 여러 페이지"용 워크플로. branch 모드는 "대화 맥락 → 페이지 1개"라 구조 불일치. 단 **결과물 규격**(frontmatter, `trunk.md`·`rings.md` 업데이트 포맷)은 `ingest.md` 와 정합되게 맞춘다.
 - **Raw 보존**: `roots/courses/{slug}/*.pdf`는 서브챕터 grow 시점에 `_archive/`로 옮기지 않는다. **과목 완료(`branch-finish`) 시점에 일괄 이동.** (이유: 여러 서브챕터에서 같은 pdf를 페이지 범위로 참조하므로 챕터 진행 중엔 원본이 살아있어야 함.)
-- **유일한 archive**: `roots/courses/_archive/` 는 이 프로젝트 전체에서 **유일하게 존재하는 `_archive/` 디렉토리**다. `roots/articles/` 와 `roots/conversations/` 에는 archive layer 가 없다 (파일은 제자리 상주, `conversations/` 의 claim summary 만 grow 후 삭제). `CONVENTIONS.md § Post-grow handling` 참조.
+- **유일한 archive**: `roots/courses/_archive/` 는 이 프로젝트 전체에서 **유일하게 존재하는 `_archive/` 디렉토리**다. `roots/articles/` 와 `roots/conversations/` 에는 archive layer 가 없다 (파일은 제자리 상주, `conversations/` 의 claim summary 만 grow 후 삭제). `docs/CONVENTIONS.md § Post-grow handling` 참조.
 - **학술 정보만**: syllabus/about에서 수업 시간, 교수명, 시험 일정, 평가 기준 등 행정 정보는 tree에 담지 않는다. 내용·범위·선후수 관계만.
-- 기타 `AGENTS.md § Secrets & privacy`, `§ Obsidian co-editing` (operational gotchas), `CONVENTIONS.md § Schema evolution` 전부 그대로 적용.
+- 기타 `AGENTS.md § Secrets & privacy`, `§ Obsidian co-editing` (operational gotchas), `docs/CONVENTIONS.md § Schema evolution` 전부 그대로 적용.
 
 ## Schema autonomy
 
-이 skill 은 `CONVENTIONS.md § Schema evolution` 의 graded autonomy 를 따른다. 요약:
+이 skill 은 `docs/CONVENTIONS.md § Schema evolution` 의 graded autonomy 를 따른다. 요약:
 
 - **Autonomy A (자율 추가)** — 사용자 confirm 없이 작성:
-  - 새 일반 개념 페이지 (`[[bayes-theorem]]` 같은 추출 페이지). 입자도 가드 통과 필수 — `ontology/topics.md § Topic granularity guidance` (broad domain 도 page-specific 도 아닐 것).
-  - 새 canonical topic — `ontology/topics.md § canonical_topics` 에 직접 append.
-  - 명백한 topic alias (`cot ↔ chain-of-thought` 처럼 morphology 또는 well-known abbrev) — `ontology/topics.md § aliases` 에 직접 append.
+  - 새 일반 개념 페이지 (`[[bayes-theorem]]` 같은 추출 페이지). 입자도 가드 통과 필수 — `.naite/ontology/topics.md § Topic granularity guidance` (broad domain 도 page-specific 도 아닐 것).
+  - 새 canonical topic — `.naite/ontology/topics.md § canonical_topics` 에 직접 append.
+  - 명백한 topic alias (`cot ↔ chain-of-thought` 처럼 morphology 또는 well-known abbrev) — `.naite/ontology/topics.md § aliases` 에 직접 append.
 - **Autonomy B (제안)** — 후보 추가 + summary 에 surface, 사용자가 다음 검토 사이클에 confirm/revert:
-  - 새 subject narrower — `ontology/subject-tree.md § narrower:` 에 candidate append.
+  - 새 subject narrower — `.naite/ontology/subject-tree.md § narrower:` 에 candidate append.
   - Subject rename / move (reparent) — altLabel 함께 제안.
 - **Autonomy C (사용자 결정)** — LLM 절대 추가 금지:
   - 새 top-level domain, 새 enum 값 (`type` / `role` / `source-type`), 새 facet field, subject deprecation.
@@ -88,10 +88,10 @@ If separate agents are not available, run the same three phases sequentially in 
 ### 0. Pre-flight (every invocation)
 
 1. Read `<NAITE_ROOT>/AGENTS.md`.
-2. Read `<NAITE_ROOT>/CONTEXT.md`.
-3. If `<NAITE_ROOT>/ontology/tree-manifest.json` is missing or stale for the current task, run `python scripts/build-tree-manifest.py`.
-4. Read `<NAITE_ROOT>/ontology/tree-manifest.json` before searching for existing course, concept, or entity pages.
-5. Read `<NAITE_ROOT>/ontology/tree-dependencies.json` before changing existing course or concept pages when semantic dependents may need review. If missing, run `python scripts/build-tree-dependencies.py`.
+2. Read `<NAITE_ROOT>/docs/CONTEXT.md`.
+3. If `<NAITE_ROOT>/.naite/ontology/tree-manifest.json` is missing or stale for the current task, run `python .naite/scripts/build-tree-manifest.py`.
+4. Read `<NAITE_ROOT>/.naite/ontology/tree-manifest.json` before searching for existing course, concept, or entity pages.
+5. Read `<NAITE_ROOT>/.naite/ontology/tree-dependencies.json` before changing existing course or concept pages when semantic dependents may need review. If missing, run `python .naite/scripts/build-tree-dependencies.py`.
 6. Read `<NAITE_ROOT>/tree/trunk.md` — 특히 `## Branches` 섹션 (institution 그룹별 과목 메타 목록) 과 `## Knowledge domains § <domain>` 의 hub 페이지들.
 7. Read last ~30 lines of `<NAITE_ROOT>/tree/rings.md` — 최근 `branch-*` 엔트리로 진행 상태 파악 (branch-note 는 더 이상 rings 에 없음 — frontmatter `updated` 또는 `course-{slug}-*` 파일 mtime 으로 파악).
 8. Op 결정, 사용자에게 1줄 확인.
@@ -111,7 +111,7 @@ If separate agents are not available, run the same three phases sequentially in 
 3. Staging: `roots/courses/{slug}/` 생성. 업로드 자료 복사 (`§ Staging rules` 참조).
 4. Takeaways 논의 (3-8 bullet):
    - 이 과목이 다루는 범위·핵심 thread
-   - **Subject path 결정**: `ontology/subject-tree.md` 의 path 1개 (예: `[statistics]` 또는 `[engineering-math/ode]`). 어느 path 에도 분류 곤란하면 사용자와 새 narrower 또는 top-level 도입 결정 후 `ontology/subject-tree.md` 갱신부터.
+   - **Subject path 결정**: `.naite/ontology/subject-tree.md` 의 path 1개 (예: `[statistics]` 또는 `[engineering-math/ode]`). 어느 path 에도 분류 곤란하면 사용자와 새 narrower 또는 top-level 도입 결정 후 `.naite/ontology/subject-tree.md` 갱신부터.
    - 기존 tree 개념 페이지와의 접점 (`[[probability]]` 있으면 메타 페이지에서 링크)
    - 유사 과목/선후수 관계
    사용자 확인 후 진행.
@@ -123,7 +123,7 @@ If separate agents are not available, run the same three phases sequentially in 
    ```
    ## [YYYY-MM-DD] branch-start | course-{slug}
    - pages created: [[course-{slug}-00-index]]
-   - subject: <path>  (ontology/subject-tree.md 참조)
+   - subject: <path>  (.naite/ontology/subject-tree.md 참조)
    - staged: roots/courses/{slug}/<files>
    ```
 8. Checkpoint: "과목 셋업 완료. 첫 챕터 자료 주면 `chapter-start` 로 넘어갈게."
@@ -161,15 +161,15 @@ c. **학생 필기 인사이트 수집**: PNG를 읽는 과정에서 학생 필�
 2. `tree/trunk.md` 재확인 — 관련 기존 hub 컨셉 페이지가 있는지 (`[[laplace-transform]]`, `[[generative-ai]]` 등). `[[...]]` 연결 후보 수집.
 3. 사용자에게 **takeaways 3-8 bullet** 제시 (`ingest.md § 4` 원칙 그대로):
    - 이 서브챕터에 담을 내용
-   - **일반 개념 페이지 추출 후보** — 강의에서 등장한 개념 중 *재사용 가능한 입자도* 에 부합하는 것을 LLM 이 식별해 제시 (예: `Bayes' Theorem`, `chain-of-thought`). 기준: `ontology/topics.md § Topic granularity guidance` — broad domain 도 page-specific 도 아닐 것. `§ Schema autonomy` 의 autonomy A 권한으로 step 5 에서 자동 생성한다 — 사용자가 명시적으로 빼라고 하지 않는 한 진행.
+   - **일반 개념 페이지 추출 후보** — 강의에서 등장한 개념 중 *재사용 가능한 입자도* 에 부합하는 것을 LLM 이 식별해 제시 (예: `Bayes' Theorem`, `chain-of-thought`). 기준: `.naite/ontology/topics.md § Topic granularity guidance` — broad domain 도 page-specific 도 아닐 것. `§ Schema autonomy` 의 autonomy A 권한으로 step 5 에서 자동 생성한다 — 사용자가 명시적으로 빼라고 하지 않는 한 진행.
    - 기존 페이지 **업데이트** 필요한 것 (예: 기존 `[[laplace-transform]]`에 이번 강의의 formulation을 추가)
-   - 강의 내용에 **trade-off / 결정 / 실패 분석**이 들어가 있으면 서브챕터 노트와 별도로 `/naite fruit` 페이지로 분리할지 — `CONVENTIONS.md § Decision thread shape` 참조.
+   - 강의 내용에 **trade-off / 결정 / 실패 분석**이 들어가 있으면 서브챕터 노트와 별도로 `/naite fruit` 페이지로 분리할지 — `docs/CONVENTIONS.md § Decision thread shape` 참조.
    사용자 확인 후 진행.
 4. 서브챕터 노트 파일 작성:
    - 경로: `tree/course-{slug}-ch{NN}-{SS}-{title-slug}.md`
    - Frontmatter: `kind=source-record`, `form=prose`, `domains: []` (care --check 가 subject 에서 cache)
    - 본문: `§ Templates § 서브챕터 노트` 참조.
-5. **일반 개념 페이지 자율 생성** (`§ Schema autonomy` autonomy A): step 3 에서 식별된 추출 후보 — 사용자가 명시적으로 빼라고 한 것을 제외 — 를 이 시점에 별도 Write. frontmatter 5 facet 은 `ingest.md § 5` 규격. `topics` / `subject` 는 `ontology/` canonical 우선; 미등록 새 topic 이 입자도 가드 통과하면 `ontology/topics.md § canonical_topics` 에 직접 append (autonomy A); 새 narrower 가 자연스러우면 `ontology/subject-tree.md § narrower:` 에 candidate append + chapter-finish rings 의 surface 항목으로 기록 (autonomy B). 새 일반 페이지가 hub 후보면 (다른 페이지에서 자주 link 받을 만하면) `trunk.md § Knowledge domains § <domain>` 의 "주요" 라인에 추가 검토.
+5. **일반 개념 페이지 자율 생성** (`§ Schema autonomy` autonomy A): step 3 에서 식별된 추출 후보 — 사용자가 명시적으로 빼라고 한 것을 제외 — 를 이 시점에 별도 Write. frontmatter 5 facet 은 `ingest.md § 5` 규격. `topics` / `subject` 는 `.naite/ontology/` canonical 우선; 미등록 새 topic 이 입자도 가드 통과하면 `.naite/ontology/topics.md § canonical_topics` 에 직접 append (autonomy A); 새 narrower 가 자연스러우면 `.naite/ontology/subject-tree.md § narrower:` 에 candidate append + chapter-finish rings 의 surface 항목으로 기록 (autonomy B). 새 일반 페이지가 hub 후보면 (다른 페이지에서 자주 link 받을 만하면) `trunk.md § Knowledge domains § <domain>` 의 "주요" 라인에 추가 검토.
 6. `tree/trunk.md` 업데이트:
    - **서브챕터 노트는 trunk 에 등록하지 않는다.**
    - 새 일반 개념 페이지가 hub 자격이 있다면 `## Knowledge domains § <domain>` 의 "주요" 리스트에 한 줄 추가 (4-7개 한도 내에서).
@@ -178,10 +178,10 @@ c. **학생 필기 인사이트 수집**: PNG를 읽는 과정에서 학생 필�
 8. Content guard: 방금 쓴/수정한 페이지의 `## Source` 앞 body 를 `/naite care § Content Guard` 기준으로 스캔하고, raw/source voice·불필요한 영어 generic heading·mojibake 를 즉시 고친다.
 9. Rebuild generated maps:
    ```powershell
-   python scripts/build-tree-manifest.py
-   python scripts/build-tree-dependencies.py
+   python .naite/scripts/build-tree-manifest.py
+   python .naite/scripts/build-tree-dependencies.py
    ```
-10. Inspect `ontology/tree-dependencies.json` for inbound references to touched slugs. Surface semantic dependent candidates only; do not auto-rewrite them during `subchapter-note`.
+10. Inspect `.naite/ontology/tree-dependencies.json` for inbound references to touched slugs. Surface semantic dependent candidates only; do not auto-rewrite them during `subchapter-note`.
 11. Checkpoint: "반영 완료. 다음 서브챕터?"
 
 ### E. `chapter-finish` — 챕터 마무리
@@ -203,8 +203,8 @@ c. **학생 필기 인사이트 수집**: PNG를 읽는 과정에서 학생 필�
    git add tree/course-{slug}-ch{NN}-*.md \
            tree/course-{slug}-00-index.md \
            tree/rings.md \
-           ontology/tree-manifest.json \
-           ontology/tree-dependencies.json \
+           .naite/ontology/tree-manifest.json \
+           .naite/ontology/tree-dependencies.json \
            [해당 챕터에서 spawn 된 hub 페이지 슬러그] \
            [hub promotion 으로 trunk.md 변경된 경우 tree/trunk.md]
    git commit -m "course: {slug} ch{NN} — {Chapter Title} (drafter={cowork|code|codex})"
@@ -229,7 +229,7 @@ c. **학생 필기 인사이트 수집**: PNG를 읽는 과정에서 학생 필�
 4. **Git commit + push (과목 atomic 종료 + 원격 동기)**:
    ```
    git add tree/course-{slug}-00-index.md tree/rings.md roots/courses/_archive/{slug}/
-   git add ontology/tree-manifest.json ontology/tree-dependencies.json
+   git add .naite/ontology/tree-manifest.json .naite/ontology/tree-dependencies.json
    git commit -m "course: {slug} — finished ({N} chapters, {M} pages)"
    git push origin main
    ```
@@ -325,7 +325,7 @@ Remove-Item "<NAITE_ROOT>\roots\assets\ch{NN}_p*.png" -Force
 kind: source-record
 form: index
 topics: []
-subject: [<path-from-ontology/subject-tree.md>]
+subject: [<path-from-.naite/ontology/subject-tree.md>]
 source-types: [course]
 domains: []
 created: YYYY-MM-DD
@@ -407,8 +407,8 @@ updated: YYYY-MM-DD
 - **H4**: 단일 개념·설명·공식·정리. 본문은 길이 제한 없이 충분한 설명 가능.
 - H2/H3 아래 H4 없이 prose 만 두는 것도 필요시 OK (메타 설명·연결 문장).
 - `---` 가 H2 사이 visual breakpoint.
-- Korean prose by default. English headings/terms are allowed when they are course-native technical units; generic headings should be Korean (`CONVENTIONS.md § Output quality contract`).
-- Frontmatter 5 facet 유지 (`CONVENTIONS.md § Ontology`).
+- Korean prose by default. English headings/terms are allowed when they are course-native technical units; generic headings should be Korean (`docs/CONVENTIONS.md § Output quality contract`).
+- Frontmatter 5 facet 유지 (`docs/CONVENTIONS.md § Ontology`).
 
 **`## Source` 는 H2 규칙의 예외**: trailing provenance block. 파일 path 만 작성하고 page range 는 본문에 노출하지 않는다 — 페이지 범위는 backfill run-log 또는 commit message 에서 관리한다.
 

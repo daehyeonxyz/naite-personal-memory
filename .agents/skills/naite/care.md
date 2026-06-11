@@ -14,7 +14,7 @@ Use this when the user asks to:
 - 검토 / 다시 훑기 / quality check / 내용 이상한 곳 찾기
 - branch 전체 또는 특정 branch 내용을 다듬기
 - care --check 로는 잡기 어려운 prose quality, source voice, link usefulness 를 판단하기
-- 반복 결함을 producer skill, care --check rule, or `CONVENTIONS.md` 에 반영하기
+- 반복 결함을 producer skill, care --check rule, or `docs/CONVENTIONS.md` 에 반영하기
 
 ## Scope
 
@@ -29,22 +29,22 @@ Supported scopes:
 
 - `/naite care --daily` - report-only daily triage after `/naite care --check --daily`. Review the care --check handoff, read evidence for priority candidates, and write a short durable triage report without editing tree content.
 
-For large scopes, write working artifacts under `exports/{YYYY-MM-DD}-care/` or `tmp/care-{YYYY-MM-DD}/` as appropriate. `exports/` is for durable reports; `tmp/` is for disposable work logs.
+For large scopes, write working artifacts under `.naite/reports/{YYYY-MM-DD}-care/` or `tmp/care-{YYYY-MM-DD}/` as appropriate. `.naite/reports/` is for durable reports; `tmp/` is for disposable work logs.
 
-Daily triage writes to `exports/daily/YYYY-MM-DD-care.md` so the daily automation has a stable output location.
+Daily triage writes to `.naite/reports/daily/YYYY-MM-DD-care.md` so the daily automation has a stable output location.
 
 ## Context maps
 
-Before review or repair, read `CONTEXT.md` and load the generated operating maps:
+Before review or repair, read `docs/CONTEXT.md` and load the generated operating maps:
 
-- `ontology/tree-manifest.json` for page coordinates and candidate narrowing.
-- `ontology/tree-dependencies.json` for inbound dependents, outbound links, soft relation idioms, high-degree pages, and orphan candidates.
+- `.naite/ontology/tree-manifest.json` for page coordinates and candidate narrowing.
+- `.naite/ontology/tree-dependencies.json` for inbound dependents, outbound links, soft relation idioms, high-degree pages, and orphan candidates.
 
 If either map is missing or stale for the current task, run:
 
 ```powershell
-python scripts/build-tree-manifest.py
-python scripts/build-tree-dependencies.py
+python .naite/scripts/build-tree-manifest.py
+python .naite/scripts/build-tree-dependencies.py
 ```
 
 For one-page repair, inspect inbound entries for the touched slug before editing and again after rebuilding the map. Surface semantic dependent candidates; do not rewrite them unless the user asked for that repair scope.
@@ -68,13 +68,13 @@ Review answers should say:
 
 Use this mode for `/naite care --daily`, usually immediately after `/naite care --check --daily`. It is a review mode, not repair.
 
-Step A. Read the latest `exports/daily/YYYY-MM-DD-care-check.md` if present; otherwise use the current care --check report in the conversation. Also read `ontology/tree-manifest.json` and `ontology/tree-dependencies.json`.
+Step A. Read the latest `.naite/reports/daily/YYYY-MM-DD-care-check.md` if present; otherwise use the current care --check report in the conversation. Also read `.naite/ontology/tree-manifest.json` and `.naite/ontology/tree-dependencies.json`.
 
 Step B. Take the care --check report's **우선 검토 후보 3개** as the starting queue. If that section is missing, derive a queue from Tier 1 findings in this order: missing targets/stubs, output quality guard, fruit coverage, autonomy garbage.
 
 Step C. For each candidate, open the relevant source page or dependency-map source. Decide whether the finding is `false-positive`, `intentional-debt`, `repair-candidate`, or `schema-pressure`. Preserve the care --check label if it still fits.
 
-Step D. Write `exports/daily/YYYY-MM-DD-care.md` with:
+Step D. Write `.naite/reports/daily/YYYY-MM-DD-care.md` with:
 
 - what is actually worth reviewing next,
 - what should be ignored as false positive or intentional debt,
@@ -87,7 +87,7 @@ Step E. Append a coarse `tree/rings.md` entry with `updated: 0 tree content page
 
 When the user asks to fix, edit pages directly. Preserve source substance, existing good links, and frontmatter unless the defect is there. After editing, run the touched-page content guard and the relevant deterministic checks (care --check).
 
-After editing pages, rebuild `ontology/tree-manifest.json` when page coordinates changed and rebuild `ontology/tree-dependencies.json` when body links or soft relation idioms changed. Include both generated maps in the change if they changed.
+After editing pages, rebuild `.naite/ontology/tree-manifest.json` when page coordinates changed and rebuild `.naite/ontology/tree-dependencies.json` when body links or soft relation idioms changed. Include both generated maps in the change if they changed.
 
 ### Sweep
 
@@ -103,7 +103,7 @@ For large scopes, first gather repeatable signals:
 
 Then cluster by cause and fix in batches only when the user asked for repairs. Store a durable report if the sweep result matters beyond the current turn.
 
-Use `ontology/tree-dependencies.json` to choose inbound dependents and high-degree pages. Use `ontology/tree-manifest.json` to avoid walking `tree/trunk.md` as if it were exhaustive.
+Use `.naite/ontology/tree-dependencies.json` to choose inbound dependents and high-degree pages. Use `.naite/ontology/tree-manifest.json` to avoid walking `tree/trunk.md` as if it were exhaustive.
 
 ### System Learning
 
@@ -111,10 +111,10 @@ Use this when the same defect appears across pages or workflows. The order of pr
 
 1. Strengthen producer contracts first (`grow.md`, `grow-backfill.md`, or another output-producing skill).
 2. Add deterministic care --check guard only when a pattern is reasonably machine-detectable.
-3. Update `CONVENTIONS.md` when the rule applies across workflows.
+3. Update `docs/CONVENTIONS.md` when the rule applies across workflows.
 4. Leave user-facing mental model simple: care --check + care.
 
-Schema-level changes still follow `CONVENTIONS.md § Schema evolution`; do not introduce new facet fields, enum values, or top-level domains without user decision.
+Schema-level changes still follow `docs/CONVENTIONS.md § Schema evolution`; do not introduce new facet fields, enum values, or top-level domains without user decision.
 
 ## Branch Content Quality Criteria
 

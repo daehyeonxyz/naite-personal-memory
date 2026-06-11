@@ -1,8 +1,8 @@
-# CONTEXT.md - naite context routing
+# docs/CONTEXT.md - naite context routing
 
 This file defines what an agent should load first, what it should load only on demand, and when source-heavy work should be split into separate Reader / Writer / Verifier roles.
 
-It is an operating contract. It is not schema rationale (`ARCHITECTURE.md`), mutation policy (`CONVENTIONS.md`), or workflow procedure (`.claude/skills/naite/*.md` and `.agents/skills/naite/*.md`).
+It is an operating contract. It is not schema rationale (`docs/ARCHITECTURE.md`), mutation policy (`docs/CONVENTIONS.md`), or workflow procedure (`.claude/skills/naite/*.md` and `.agents/skills/naite/*.md`).
 
 ---
 
@@ -26,20 +26,20 @@ Agents should load the smallest set that can safely decide the task, then expand
 |---|---|
 | Claude bootloader | `CLAUDE.md` |
 | Codex bootloader | `AGENTS.md` |
-| Context routing | `CONTEXT.md` |
-| Mutation invariants | `CONVENTIONS.md` |
-| Architecture rationale | `ARCHITECTURE.md` |
-| Subject taxonomy | `ontology/subject-tree.md` |
-| Topic vocabulary | `ontology/topics.md` |
-| Agent page map | `ontology/tree-manifest.json` |
-| Agent dependency map | `ontology/tree-dependencies.json` |
+| Context routing | `docs/CONTEXT.md` |
+| Mutation invariants | `docs/CONVENTIONS.md` |
+| Architecture rationale | `docs/ARCHITECTURE.md` |
+| Subject taxonomy | `.naite/ontology/subject-tree.md` |
+| Topic vocabulary | `.naite/ontology/topics.md` |
+| Agent page map | `.naite/ontology/tree-manifest.json` |
+| Agent dependency map | `.naite/ontology/tree-dependencies.json` |
 | Claude workflow contracts | `.claude/skills/naite/*.md` |
 | Codex workflow contracts | `.agents/skills/naite/*.md` |
 | Human landing page | `tree/trunk.md` |
 | Audit trail | `tree/rings.md` |
 | Missing page register | `tree/seeds.md` |
 
-`ontology/tree-manifest.json` and `ontology/tree-dependencies.json` are compact generated operating maps. They are tracked because agents need them as fast-path context, but they are never hand-edited. Regenerate them with the scripts in `scripts/`.
+`.naite/ontology/tree-manifest.json` and `.naite/ontology/tree-dependencies.json` are compact generated operating maps. They are tracked because agents need them as fast-path context, but they are never hand-edited. Regenerate them with the scripts in `.naite/scripts/`.
 
 ---
 
@@ -48,13 +48,13 @@ Agents should load the smallest set that can safely decide the task, then expand
 1. **Bootloader**: read `CLAUDE.md` or `AGENTS.md` for the active surface.
 2. **Route intent**: classify the user request into a workflow or a non-mutating answer.
 3. **Context contract**: read this file when the task involves tree mutation, tree query, context selection, routing, dependency propagation, care, or care-check.
-4. **Mutation authority**: for any tree mutation, read `CONVENTIONS.md`.
+4. **Mutation authority**: for any tree mutation, read `docs/CONVENTIONS.md`.
 5. **Workflow procedure**: read the exact workflow file under the active surface, such as `.claude/skills/naite/grow-branch.md` or `.agents/skills/naite/care.md`.
-6. **Generated maps**: read `ontology/tree-manifest.json` before searching for target pages; read `ontology/tree-dependencies.json` before changing an existing page or reviewing semantic dependents.
+6. **Generated maps**: read `.naite/ontology/tree-manifest.json` before searching for target pages; read `.naite/ontology/tree-dependencies.json` before changing an existing page or reviewing semantic dependents.
 7. **Local evidence**: read only the source files, tree pages, ontology sections, and recent rings entries required by the task.
 8. **Verification**: after edits, run the relevant deterministic scripts and rebuild generated maps when page coordinates or links changed.
 
-Do not use `tree/trunk.md` as an exhaustive search index. It is a curated human landing page. Use `ontology/tree-manifest.json` as the agent fast path, then read the specific tree pages it identifies.
+Do not use `tree/trunk.md` as an exhaustive search index. It is a curated human landing page. Use `.naite/ontology/tree-manifest.json` as the agent fast path, then read the specific tree pages it identifies.
 
 ---
 
@@ -62,12 +62,12 @@ Do not use `tree/trunk.md` as an exhaustive search index. It is a curated human 
 
 | Workflow | Always load | Load when needed |
 |---|---|---|
-| `/naite ask` | bootloader, `CONTEXT.md`, `ontology/tree-manifest.json` | `ontology/tree-dependencies.json`, target pages, `tree/rings.md` for timeline questions |
-| `/naite grow` (단발: conversation/file/stage-only) | bootloader, `CONTEXT.md`, `CONVENTIONS.md`, active `grow.md` (+ internal `ingest.md`/`capture.md` as needed), `ontology/tree-manifest.json`, `tree/trunk.md`, `tree/seeds.md`, recent `tree/rings.md` | `ontology/subject-tree.md`, `ontology/topics.md`, `ontology/tree-dependencies.json`, source files |
-| `/naite grow` (branch 모드) | bootloader, `CONTEXT.md`, `CONVENTIONS.md`, active `grow-branch.md`, `ontology/tree-manifest.json`, `tree/trunk.md`, recent `tree/rings.md` | `ontology/subject-tree.md`, `ontology/topics.md`, `ontology/tree-dependencies.json`, course source files, prior course pages |
-| `/naite fruit` | bootloader, `CONTEXT.md`, `CONVENTIONS.md`, active `fruit.md`, `ontology/tree-manifest.json`, `ontology/tree-dependencies.json` | target decision pages, related concept pages, `ARCHITECTURE.md` only for schema rationale |
-| `/naite care` / `care --check` | bootloader, `CONTEXT.md`, `CONVENTIONS.md`, active `care.md` / `care-check.md`, generated maps | scripts, ontology files, target pages, inbound dependents, `tree/rings.md`, `tree/seeds.md`, producer workflow files when defects repeat |
-| Schema or workflow redesign | bootloader, `CONTEXT.md`, `CONVENTIONS.md`, `ARCHITECTURE.md`, relevant workflow files | decision pages, validator scripts, mirror sync script |
+| `/naite ask` | bootloader, `docs/CONTEXT.md`, `.naite/ontology/tree-manifest.json` | `.naite/ontology/tree-dependencies.json`, target pages, `tree/rings.md` for timeline questions |
+| `/naite grow` (단발: conversation/file/stage-only) | bootloader, `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, active `grow.md` (+ internal `ingest.md`/`capture.md` as needed), `.naite/ontology/tree-manifest.json`, `tree/trunk.md`, `tree/seeds.md`, recent `tree/rings.md` | `.naite/ontology/subject-tree.md`, `.naite/ontology/topics.md`, `.naite/ontology/tree-dependencies.json`, source files |
+| `/naite grow` (branch 모드) | bootloader, `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, active `grow-branch.md`, `.naite/ontology/tree-manifest.json`, `tree/trunk.md`, recent `tree/rings.md` | `.naite/ontology/subject-tree.md`, `.naite/ontology/topics.md`, `.naite/ontology/tree-dependencies.json`, course source files, prior course pages |
+| `/naite fruit` | bootloader, `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, active `fruit.md`, `.naite/ontology/tree-manifest.json`, `.naite/ontology/tree-dependencies.json` | target decision pages, related concept pages, `docs/ARCHITECTURE.md` only for schema rationale |
+| `/naite care` / `care --check` | bootloader, `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, active `care.md` / `care-check.md`, generated maps | scripts, ontology files, target pages, inbound dependents, `tree/rings.md`, `tree/seeds.md`, producer workflow files when defects repeat |
+| Schema or workflow redesign | bootloader, `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, `docs/ARCHITECTURE.md`, relevant workflow files | decision pages, validator scripts, mirror sync script |
 
 ---
 
@@ -86,7 +86,7 @@ Use separate physical agents when the tool surface supports them and the user ha
 
 ### Reader role
 
-The Reader receives the source material and minimal task framing. It extracts claims, concepts, examples, equations, diagrams, terms, possible wikilinks, and uncertainty. It does not write `tree/*.md`, does not choose final frontmatter, and does not mutate `ontology/`.
+The Reader receives the source material and minimal task framing. It extracts claims, concepts, examples, equations, diagrams, terms, possible wikilinks, and uncertainty. It does not write `tree/*.md`, does not choose final frontmatter, and does not mutate `.naite/ontology/`.
 
 Reader output should be a compact raw chunk with:
 
@@ -100,7 +100,7 @@ Reader output should be a compact raw chunk with:
 
 ### Writer role
 
-The Writer receives the Reader chunk, `CONVENTIONS.md`, the active workflow file, generated maps, and relevant ontology files. It writes or updates tree pages according to the workflow contract.
+The Writer receives the Reader chunk, `docs/CONVENTIONS.md`, the active workflow file, generated maps, and relevant ontology files. It writes or updates tree pages according to the workflow contract.
 
 The Writer should avoid loading the full source again unless the Reader chunk is insufficient or the workflow requires exact verification.
 
@@ -122,12 +122,12 @@ The Verifier surfaces semantic dependents for review. It does not automatically 
 
 ## Generated map policy
 
-### `ontology/tree-manifest.json`
+### `.naite/ontology/tree-manifest.json`
 
 Build command:
 
 ```powershell
-python scripts/build-tree-manifest.py
+python .naite/scripts/build-tree-manifest.py
 ```
 
 Purpose:
@@ -146,12 +146,12 @@ Regenerate when:
 - a title or alias section changes,
 - a workflow needs a fresh search map.
 
-### `ontology/tree-dependencies.json`
+### `.naite/ontology/tree-dependencies.json`
 
 Build command:
 
 ```powershell
-python scripts/build-tree-dependencies.py
+python .naite/scripts/build-tree-dependencies.py
 ```
 
 Purpose:
@@ -179,9 +179,9 @@ Not every dependency should trigger automatic edits. Use three levels:
 
 | Level | Examples | Action |
 |---|---|---|
-| Hard dependency | `CLAUDE.md` to `AGENTS.md`, `.claude/skills/naite/*` to `.agents/skills/naite/*` | sync with `scripts/sync-agents.ps1` |
-| Contract dependency | `CONVENTIONS.md` change affecting workflow files or validator scripts | update the affected contracts and validators in the same change |
-| Semantic dependency | concept, decision, or source-record content change affecting linked pages | surface candidates from `ontology/tree-dependencies.json`, then repair through `/naite care` only when requested |
+| Hard dependency | `CLAUDE.md` to `AGENTS.md`, `.claude/skills/naite/*` to `.agents/skills/naite/*` | sync with `.naite/scripts/sync-agents.ps1` |
+| Contract dependency | `docs/CONVENTIONS.md` change affecting workflow files or validator scripts | update the affected contracts and validators in the same change |
+| Semantic dependency | concept, decision, or source-record content change affecting linked pages | surface candidates from `.naite/ontology/tree-dependencies.json`, then repair through `/naite care` only when requested |
 
 Python finds candidates. The LLM judges meaning. Do not auto-propagate semantic edits just because an inbound edge exists.
 
@@ -192,7 +192,7 @@ Python finds candidates. The LLM judges meaning. Do not auto-propagate semantic 
 For changes to operating docs or workflow files:
 
 1. Update canonical `.claude/` and root shared files first.
-2. Run `scripts/sync-agents.ps1` after `.claude/` or `CLAUDE.md` changes.
+2. Run `.naite/scripts/sync-agents.ps1` after `.claude/` or `CLAUDE.md` changes.
 3. Rebuild generated maps if tree page coordinates or links changed.
 4. Run the relevant deterministic scripts.
 5. Review `git diff` before staging.
@@ -200,7 +200,7 @@ For changes to operating docs or workflow files:
 For changes to tree pages:
 
 1. Run content guard from `/naite care`.
-2. Run `python scripts/build-tree-manifest.py` if page coordinates changed.
-3. Run `python scripts/build-tree-dependencies.py` if wikilinks or body relations changed.
+2. Run `python .naite/scripts/build-tree-manifest.py` if page coordinates changed.
+3. Run `python .naite/scripts/build-tree-dependencies.py` if wikilinks or body relations changed.
 4. Inspect inbound dependents for touched slugs.
 5. Run the relevant care-check before claiming completion.

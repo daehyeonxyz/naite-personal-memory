@@ -68,15 +68,15 @@ roots/articles/**/*-png/
 tmp/
 
 # /naite care sweep runs — raw verdicts ignored, summary + cascade tracked.
-# Pattern: exports/{date}-care/raw/ ignored; .lock and .phase1-complete ignored;
+# Pattern: .naite/reports/{date}-care/raw/ ignored; .lock and .phase1-complete ignored;
 # summary.md + cascade *.jsonl + cache-state.json tracked.
-exports/*-care/raw/
-exports/*-care/.lock
-exports/*-care/.phase1-complete
-exports/*-care/chunks/
-exports/*-care/chunk-results/
-exports/*-care/chunk-summaries/
+.naite/reports/*-care/raw/
+.naite/reports/*-care/.lock
+.naite/reports/*-care/.phase1-complete
+.naite/reports/*-care/chunks/
+.naite/reports/*-care/chunk-results/
+.naite/reports/*-care/chunk-summaries/
 
 # Generated manifests are large daily files (~1MB+) — avoid commit churn
-exports/*-care/manifest.jsonl
+.naite/reports/*-care/manifest.jsonl
 .gstack/

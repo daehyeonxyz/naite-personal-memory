@@ -2,7 +2,7 @@
 
 You are the maintainer of this tree. The user curates sources and asks questions; you read, write, and keep the tree coherent.
 
-This file is the **entrypoint**. It carries routing, triggers, and hard safety rules — nothing else. Context loading rules live in `CONTEXT.md`. Detailed operating rules live in `CONVENTIONS.md`. Workflow procedures live in `.agents/skills/naite/<workflow>.md`. Schema rationale lives in `ARCHITECTURE.md`. Canonical vocabularies and generated agent maps live in `ontology/`.
+This file is the **entrypoint**. It carries routing, triggers, and hard safety rules — nothing else. Context loading rules live in `docs/CONTEXT.md`. Detailed operating rules live in `docs/CONVENTIONS.md`. Workflow procedures live in `.agents/skills/naite/<workflow>.md`. Schema rationale lives in `docs/ARCHITECTURE.md`. Canonical vocabularies and generated agent maps live in `.naite/ontology/`.
 
 ---
 
@@ -29,16 +29,15 @@ This file is the **entrypoint**. It carries routing, triggers, and hard safety r
 
 - `roots/` — **source of truth**. Content-immutable; grow ingest tracked in `rings.md`. Subdirs: `articles/`, `conversations/` (+ permanent `_transcripts/`), `courses/{slug}/` (wholesale-archives to `_archive/{slug}/` at branch-finish), `assets/`.
 - `tree/` — **LLM-owned**. Flat structure, no subdirs. Markdown pages that grow over time. Special files: `trunk.md`, `rings.md`, `seeds.md`. The user does not hand-edit; you do.
-- `ontology/` — canonical vocabularies (`subject-tree.md`, `topics.md`) + generated agent maps.
-- `CONTEXT.md` — context routing and Reader / Writer / Verifier split rules.
-- `CONVENTIONS.md` — operating invariants applied to every tree mutation.
+- `docs/` — technical docs: `CONTEXT.md` (context routing and Reader / Writer / Verifier split rules), `CONVENTIONS.md` (operating invariants applied to every tree mutation), `ARCHITECTURE.md` (schema rationale).
+- `.naite/` — internals, hidden from the user-facing root: `ontology/` (canonical vocabularies `subject-tree.md`, `topics.md` + generated agent maps), `scripts/` (validator, map builders, mirror sync), `reports/` (care / care --check durable reports; create lazily).
 - `.agents/skills/naite/` — workflow procedures (auto-mirrored to `.agents/skills/naite/`).
 
 ---
 
 ## Before any tree mutation
 
-**Read `CONTEXT.md`, `CONVENTIONS.md`, plus the relevant workflow file under `.agents/skills/naite/`.** Do not improvise context loading, schema, naming, rings format, frontmatter facets, or page shape — invariants live in those files. This is non-negotiable: a tree edit without those reads is drift.
+**Read `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, plus the relevant workflow file under `.agents/skills/naite/`.** Do not improvise context loading, schema, naming, rings format, frontmatter facets, or page shape — invariants live in those files. This is non-negotiable: a tree edit without those reads is drift.
 
 ---
 
@@ -61,7 +60,7 @@ This file is the **entrypoint**. It carries routing, triggers, and hard safety r
 - Files: `lowercase-kebab-case.md`. No spaces, no capitals.
 - Wikilinks: `[[page-slug]]` or `[[page-slug|Display Text]]`. Plain `[[...]]` only.
 
-Detail (alias handling, subchapter prefix conventions): `CONVENTIONS.md § Naming`.
+Detail (alias handling, subchapter prefix conventions): `docs/CONVENTIONS.md § Naming`.
 
 ---
 
@@ -99,10 +98,10 @@ The user keeps Obsidian open on the repo root for graph view and reading. Editin
 
 This file is the Codex-facing mirror of the Claude Code surface. Keep `.agents/` + `AGENTS.md` aligned with `.claude/` + `CLAUDE.md`.
 
-- **Canonical edit target**: `.claude/` and `CLAUDE.md`. Regenerate this Codex mirror with `scripts/sync-agents.ps1` when the canonical side changes.
+- **Canonical edit target**: `.claude/` and `CLAUDE.md`. Regenerate this Codex mirror with `.naite/scripts/sync-agents.ps1` when the canonical side changes.
 - **Mirror review**: after sync, review `AGENTS.md` and `.agents/skills/naite/` for tool-specific wording before staging.
 - **Run sync in the same commit** that edits the canonical side. Both surfaces stage together.
-- **Shared (NOT mirrored)**: `CONTEXT.md`, `CONVENTIONS.md`, `ARCHITECTURE.md`, `ontology/`. Both tools read the same files. Tool-specific tokens (`.claude/`, `.agents/`, `CLAUDE.md`, `AGENTS.md`, `Claude Code`, `Codex`, etc.) are allowed where they carry meaning.
+- **Shared (NOT mirrored)**: `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, `docs/ARCHITECTURE.md`, `.naite/`. Both tools read the same files. Tool-specific tokens (`.claude/`, `.agents/`, `CLAUDE.md`, `AGENTS.md`, `Claude Code`, `Codex`, etc.) are allowed where they carry meaning.
 
 ---
 
@@ -112,7 +111,7 @@ The tree is a **neuron network** — `concept` / `entity` / `source-record` page
 
 A standalone decision page has `kind=decision`. Its `subject` is the actual content path; cross-domain decisions get multi-subject. **File naming**: `decision-YYYY-MM-DD-<slug>.md` where the date matches frontmatter `created`. **Do not invent meta subject paths** like `dmu/`, `failure-*/`, `synapse/` — categorizing a synapse defeats its purpose. Date prefix prevents slug collision at scale and groups session clusters in file listings.
 
-**Body shape, when-to-write, prose-idiom vocabulary**: `CONVENTIONS.md § Decision thread shape`, `CONVENTIONS.md § Soft ontology`.
+**Body shape, when-to-write, prose-idiom vocabulary**: `docs/CONVENTIONS.md § Decision thread shape`, `docs/CONVENTIONS.md § Soft ontology`.
 
 If the user produces decision-shape content during a learning session ("선택했다 / 보류했다 / 비교했다 / 실패했다" + reasoning), proactively offer `/naite fruit`.
 
@@ -141,4 +140,4 @@ Tree ontology evolves with content under **cardinality-graded autonomy**:
 - **B — propose (tree structure, future pages 영향)**: subject narrower / rename / move. LLM 이 ontology 파일에 candidate append + grow summary 에 surface, 사용자 confirm/revert.
 - **C — user decision (trunk schema)**: 새 `kind` / `form` / `source-types` enum 값, 새 facet field, 새 top-level domain, subject deprecation. **LLM 절대 추가 금지** — surface 만.
 
-Speculative trunk-schema additions (C-level) corrupt the graph. Autonomy A 는 care-check cadence 가 사후 회수하므로 안전. 자세한 정책 + 입자도 가드: `CONVENTIONS.md § Schema evolution`. 설계 근거: `ARCHITECTURE.md § 4.3`.
+Speculative trunk-schema additions (C-level) corrupt the graph. Autonomy A 는 care-check cadence 가 사후 회수하므로 안전. 자세한 정책 + 입자도 가드: `docs/CONVENTIONS.md § Schema evolution`. 설계 근거: `docs/ARCHITECTURE.md § 4.3`.

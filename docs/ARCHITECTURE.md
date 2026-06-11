@@ -4,7 +4,7 @@
 **Replaces**: 이전 `type` / `role` / `source-type` schema (facet redesign 으로 `kind` / `form` / `source-types` 로 교체); 그 이전엔 hardcoded `domains: [single-enum]`.
 **Origin**: LLM 과의 ontology design 대화 + 사용자 explicit decisions + 후속 care 검토 결과 + zero-base facet redesign 세션.
 
-이 문서는 naite 의 **schema 와 운영 모델의 long-form rationale**. 운영 invariants 는 [`CONVENTIONS.md`](../CONVENTIONS.md), canonical data 는 [`ontology/`](../ontology/), 워크플로 절차는 `.claude/skills/naite/*` 에 분산. 본 문서는 *왜 그렇게 설계했나*, *어떤 대안을 거부했나*, *언제 깨지는가* 를 담는다.
+이 문서는 naite 의 **schema 와 운영 모델의 long-form rationale**. 운영 invariants 는 [`docs/CONVENTIONS.md`](../docs/CONVENTIONS.md), canonical data 는 [`.naite/ontology/`](../.naite/ontology/), 워크플로 절차는 `.claude/skills/naite/*` 에 분산. 본 문서는 *왜 그렇게 설계했나*, *어떤 대안을 거부했나*, *언제 깨지는가* 를 담는다.
 
 ---
 
@@ -46,7 +46,7 @@ W3C 의 Simple Knowledge Organization System 표준의 *부분집합* 채택. `n
 
 ### 2.3 Folksonomy + curated taxonomy
 
-순수 taxonomy (top-down rigid) 는 진화 비용 크고, 순수 folksonomy (bottom-up free) 는 카오스. 두 layer 결합 — `topics` 는 folksonomic emerge, `subject` 는 curated. 미등록 topic 은 입자도 가드 통과 시 LLM 자율 추가 (autonomy A), 가드 실패면 surface 만. 입자도 가드는 `ontology/topics.md § Topic granularity guidance`. 자세히는 tree 의 `folksonomy` 개념 페이지로 정리할 수 있다.
+순수 taxonomy (top-down rigid) 는 진화 비용 크고, 순수 folksonomy (bottom-up free) 는 카오스. 두 layer 결합 — `topics` 는 folksonomic emerge, `subject` 는 curated. 미등록 topic 은 입자도 가드 통과 시 LLM 자율 추가 (autonomy A), 가드 실패면 surface 만. 입자도 가드는 `.naite/ontology/topics.md § Topic granularity guidance`. 자세히는 tree 의 `folksonomy` 개념 페이지로 정리할 수 있다.
 
 ### 2.4 Cached materialized view
 
@@ -82,7 +82,7 @@ updated: YYYY-MM-DD
 ---
 ```
 
-운영 룰 (필드별 enum, granularity gate, alias 처리) 은 [`CONVENTIONS.md § Ontology`](../CONVENTIONS.md) 가 단일 source. 본 섹션은 *왜 이 5 facet 인가* 의 rationale 만.
+운영 룰 (필드별 enum, granularity gate, alias 처리) 은 [`docs/CONVENTIONS.md § Ontology`](../docs/CONVENTIONS.md) 가 단일 source. 본 섹션은 *왜 이 5 facet 인가* 의 rationale 만.
 
 **Facet redesign**: 이전 `type` / `role` / `source-type` schema 가 `kind` / `form` / `source-types` 로 교체됨. 핵심 변화: (1) `kind=source-record` 부활로 literature note (source-bound) 와 permanent note (재사용 개념) 분리, (2) `role` 폐지 + `form` 도입 (page 는 정보 artifact 라 role 개념 부적합), (3) `source-types` plural 화 (multi-provenance).
 
@@ -101,22 +101,22 @@ updated: YYYY-MM-DD
 
 ### 3.3 Spec storage location
 
-- `ARCHITECTURE.md` (본 파일) — **Why** — 철학·이론적 기반·rationale.
-- [`ontology/`](../ontology/) — **What — canonical data** — `subject-tree.md`, `topics.md`. SKOS-lite + folksonomy.
-- [`CONVENTIONS.md`](../CONVENTIONS.md) — **What — operating invariants** — Ontology · Schema evolution · Soft ontology · Decision shape. 양 도구 (Claude Code, Codex CLI) 공유.
+- `docs/ARCHITECTURE.md` (본 파일) — **Why** — 철학·이론적 기반·rationale.
+- [`.naite/ontology/`](../.naite/ontology/) — **What — canonical data** — `subject-tree.md`, `topics.md`. SKOS-lite + folksonomy.
+- [`docs/CONVENTIONS.md`](../docs/CONVENTIONS.md) — **What — operating invariants** — Ontology · Schema evolution · Soft ontology · Decision shape. 양 도구 (Claude Code, Codex CLI) 공유.
 - [`CLAUDE.md`](../CLAUDE.md) (+ auto-mirror `AGENTS.md`) — **Bootloader** — 라우팅·트리거·hard safety.
 - `.claude/skills/naite/*.md` — **How** — workflow 절차.
 
-`ontology/` 디렉토리는 spec data 라 양 surface 가 동일하게 참조. mirror 안 됨 (`scripts/sync-agents.ps1` 갱신 불필요).
+`.naite/ontology/` 디렉토리는 spec data 라 양 surface 가 동일하게 참조. mirror 안 됨 (`.naite/scripts/sync-agents.ps1` 갱신 불필요).
 
 ### 3.4 Topic governance — graded autonomy
 
-- **Canonical list**: `ontology/topics.md` 에 maintained.
+- **Canonical list**: `.naite/ontology/topics.md` 에 maintained.
 - **신규 topic 도입 (autonomy A)**: 입자도 가드 통과 시 LLM 이 `canonical_topics:` 에 직접 append + 페이지 사용. 가드 실패면 surface 만.
 - **Alias 정리**: 명백한 morphology / 약어는 LLM 자율 (autonomy A); 동의어 의심이지만 모호하면 care-check cluster surface (사용자 결정).
 - **Topic 부재 페이지**: 허용 (예: `entity` 타입 페이지). topics 빈 배열 OK.
 
-자세한 정책 + 등급 매핑: [`CONVENTIONS.md § Schema evolution`](../CONVENTIONS.md).
+자세한 정책 + 등급 매핑: [`docs/CONVENTIONS.md § Schema evolution`](../docs/CONVENTIONS.md).
 
 ---
 
@@ -130,7 +130,7 @@ updated: YYYY-MM-DD
 
 ### 4.2 care 의 두 모드 — 분리된 책임
 
-- **`care --check`** (`scripts/lint-ontology.py` deterministic + `.claude/skills/naite/care-check.md` LLM-driven) — schema/정책 compliance. report-only. 3a frontmatter completeness, 3b subject tree, 3c topic canonical, 3d domain cache, 3e role/source-type distribution, 3f BOM, 3g legacy drift, 3h language-shape. § 14 autonomy garbage collector (LLM-driven, 30 일 윈도우).
+- **`care --check`** (`.naite/scripts/lint-ontology.py` deterministic + `.claude/skills/naite/care-check.md` LLM-driven) — schema/정책 compliance. report-only. 3a frontmatter completeness, 3b subject tree, 3c topic canonical, 3d domain cache, 3e role/source-type distribution, 3f BOM, 3g legacy drift, 3h language-shape. § 14 autonomy garbage collector (LLM-driven, 30 일 윈도우).
 - **`care`** (돌봄 모드) — qualitative review/repair. narrative prose verdict 도 이 모드로 흡수: 점수 없음, threshold 없음. page/branch review, 직접 content 수선, 대규모 sweep, recurring-rule 학습. 사용자 수동 호출.
 
 분리 이유: `care --check` 의 mechanical 검사와 `care` 의 *맥락 판단* 이 다른 영역. 자세히: `.claude/skills/naite/{care-check,care}.md`.
@@ -145,13 +145,13 @@ updated: YYYY-MM-DD
 
 이 정책의 *동기* 는 risk inversion 분석이다 — 보수적 정책이 *folksonomy 폭발* 을 가드하는 동안 *thinness* (개념 페이지 미생성, 연결 빈약) 라는 다른 위험을 만들었다는 정량 발견. 정책 완화 후 그래프 활성화 지표 (chapter outbound link 수, zero-link 페이지 수) 로 net positive 를 검증했다.
 
-자세한 등급 매핑 + 입자도 가드: [`CONVENTIONS.md § Schema evolution`](../CONVENTIONS.md).
+자세한 등급 매핑 + 입자도 가드: [`docs/CONVENTIONS.md § Schema evolution`](../docs/CONVENTIONS.md).
 
 ### 4.4 Tree 발전 궤적 — 4 layer 분산 기록
 
 - **Tactical timeline** — `tree/rings.md` (작업 단위 1 줄)
 - **Action delta** — Git commit history (atomic 변경)
-- **Architectural rationale** — `ARCHITECTURE.md` (본 파일)
+- **Architectural rationale** — `docs/ARCHITECTURE.md` (본 파일)
 - **Intellectual reasoning** — `tree/` 의 fruit (decision) 페이지
 
 ### 4.5 Multi-pass orchestration — 대규모 작업의 default
@@ -164,8 +164,8 @@ updated: YYYY-MM-DD
 
 ### 5.1 Active scripts
 
-- `scripts/lint-ontology.py` — § 3 deterministic sub-check (3a-3h) + § 7 non-tree dirt detection. 매 care --check run 호출.
-- `scripts/sync-agents.ps1` — `.claude/skills/naite/*` → `.agents/skills/naite/*` 자동 mirror (`Claude Code` → `Codex` 텍스트 치환). CLAUDE.md → AGENTS.md 동시 처리.
+- `.naite/scripts/lint-ontology.py` — § 3 deterministic sub-check (3a-3h) + § 7 non-tree dirt detection. 매 care --check run 호출.
+- `.naite/scripts/sync-agents.ps1` — `.claude/skills/naite/*` → `.agents/skills/naite/*` 자동 mirror (`Claude Code` → `Codex` 텍스트 치환). CLAUDE.md → AGENTS.md 동시 처리.
 
 ### 5.2 care --check capability
 
@@ -287,13 +287,13 @@ updated: 2026-05-03
 
 미래 care --check 또는 care 가 surface 하면 검토할 항목 (현재 도입 안 함):
 
-- **§ 14 autonomy garbage collector deterministic 구현** — 현재 LLM-driven spec 만. 30 일 윈도우 검증 cadence 가 안정되면 `scripts/autonomy-gc.py` 추가 검토.
+- **§ 14 autonomy garbage collector deterministic 구현** — 현재 LLM-driven spec 만. 30 일 윈도우 검증 cadence 가 안정되면 `.naite/scripts/autonomy-gc.py` 추가 검토.
 - **`as-of: <date>` facet** — `source-types ∋ docs` 페이지의 staleness 추적용. 현재는 본문 provenance 로 충분.
 - **`classifications:` wrapper** — facet 5 개 이상 (예: `audience`, `certainty`, `maturity` 추가) 으로 늘어나면 검토. 현재 5 facet 안정.
 - **새 `kind` value** — 누적 page-shape pain ≥5 페이지 + 사용자 결정 후. 이전 `role=question` (corpus 0) 은 redesign 에서 새 `kind` enum 에 옮기지 않음 — needs surface 시 C-level decision.
 - **새 `form` value** — 현재 `prose` / `index` 만. 미래에 별도 형식 (예: `table`, `gallery`) 등장 시 검토.
 - **새 `source-types` value** (예: `video`, `code-snippet`) — 누적 surface. `book`, `essay` 는 사용자 결정으로 추가된 사례.
-- **`ontology/` split** — 현재 `topics.md`, `subject-tree.md`. 누적 시 `kinds.md`, `source-types.md` 분리 검토.
+- **`.naite/ontology/` split** — 현재 `topics.md`, `subject-tree.md`. 누적 시 `kinds.md`, `source-types.md` 분리 검토.
 - **insight/project file naming date prefix** — decision 에 date prefix 를 도입했지만 insight/project 는 미적용. 누적 시 별도 결정.
 - **Pure computed domain** (frontmatter cache 제거) — Obsidian graph view 의존 없어지거나 별도 cache 메커니즘 도입 시.
 - **forest** — vault 의 집합을 한눈에 보는 상위 기능 (1 vault = 1 tree). 예약어만 확보. 다중 vault 수요가 실재할 때 설계.
@@ -312,4 +312,4 @@ updated: 2026-05-03
 
 ---
 
-본 문서의 *operational rules* 는 [`CONVENTIONS.md`](../CONVENTIONS.md), *canonical data* 는 [`ontology/`](../ontology/), *workflow procedure* 는 `.claude/skills/naite/*` 가 단일 source. 본 파일은 *왜 그렇게 결정했나* 만 long-form 으로 남긴다.
+본 문서의 *operational rules* 는 [`docs/CONVENTIONS.md`](../docs/CONVENTIONS.md), *canonical data* 는 [`.naite/ontology/`](../.naite/ontology/), *workflow procedure* 는 `.claude/skills/naite/*` 가 단일 source. 본 파일은 *왜 그렇게 결정했나* 만 long-form 으로 남긴다.

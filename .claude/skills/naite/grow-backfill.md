@@ -17,7 +17,7 @@ active 학습과 동시에 사용하지 않는다 — 학습 중 콘텐츠에 ba
 
 - **PNG render mandatory (when visual layer present)**: **텍스트 추출 단독 시작 금지.** PDF → PyMuPDF PNG render + image-read 가 *mandatory pre-write step* (`grow-branch.md § D step b`). 강의 본체 + 사용자 손필기 + 도형·도식 모두 PNG 로 image-read 한 뒤에야 본문 작성. 텍스트 추출은 시각 강조·손글씨·다이어그램·수식 일부를 누락. 0-to-1 backfill 든 deepening pass 든 동일 적용 — 깊이 보강도 PNG 재로드부터. **단 source 가 시각 레이어 없는 순수 텍스트 (variant G) 면 적용 대상이 부재하므로 룰이 자동 무력화 — 그 경우 `.txt` 자체가 authoritative source 다.**
 - **Subchapter shape**: `.claude/skills/naite/grow-branch.md § Templates § 서브챕터 노트` 그대로. Lecture-natural H-tag, `## Source` trailing provenance (file path only), 본문에 원본 PDF page anchor·이미지 임베드 안 함.
-- **Output quality contract**: `CONVENTIONS.md § Output quality contract` 준수. 본문은 self-contained Korean prose 로 작성하고, `roots/`, PDF page, staging, render, backfill, "필기에는", "자료에서는" 같은 source/process voice 를 `## Source` 앞에 남기지 않는다. 손필기·시각 강조·보조자료 관점은 개념 설명으로 흡수한다.
+- **Output quality contract**: `docs/CONVENTIONS.md § Output quality contract` 준수. 본문은 self-contained Korean prose 로 작성하고, `roots/`, PDF page, staging, render, backfill, "필기에는", "자료에서는" 같은 source/process voice 를 `## Source` 앞에 남기지 않는다. 손필기·시각 강조·보조자료 관점은 개념 설명으로 흡수한다.
 - **Style reference**: `tmp/style-reference/{course-or-domain}/manifest.md` 가 있으면 manifest 의 `Included files` + `Fallback path` 그대로 사용. 없으면 manifest 의 fallback path 의 노트 1-7장을 read-only 로 직접 참고. 어느 경우에도 tree 에 ingest 안 함.
 - **자동화 권한 분리**: 본 sub-op 는 tree 페이지 작성·검증, raw staging 까지만 자동 수행. **VCS mutation (`git add` / `git commit` / `git push`) 은 사용자 또는 chapter-finish 의 명시 승인 후에만**. Codex 환경에서 `.git/index.lock` 같은 권한 실패 검출 시 즉시 중단하고 보고.
 - **Failure-mode 룰**: 같은 시스템 경계에서 동일 에러가 반복되면 transient 로 보지 말고 architecture 의심으로 전환. 횟수 임계 안 박음 — 사용자·운영자의 판단.
@@ -123,7 +123,7 @@ State entry 포맷:
    - **d. Subchapter 페이지 작성** — `§ Codex prompt template` 의 골격 + `.claude/skills/naite/grow-branch.md § Templates § 서브챕터 노트`. style anchor 참조. 0-to-1 신규 작성 시 frontmatter 5 facet 신규 생성, deepening pass 시 기존 frontmatter 보존 + 본문 *추가* (축소·삭제 금지).
    - **e. Content guard** — 작성/수정한 page 의 `## Source` 앞 body 를 `/naite care § Content Guard` 기준으로 스캔하고 즉시 수정. 특히 raw path, source-process voice, unnecessary English generic heading, mojibake 는 DONE 전에 남기지 않는다.
    - **f. PNG 즉시 삭제** — 해당 subchapter 작성 끝나면 `Remove-Item` 으로 roots/assets/{slug}_ch{NN}_{SS}_p*.png 즉시 삭제. 누적 금지.
-   - **g. lint pass 확인** — `python scripts/lint-ontology.py` 3a-3g 통과. 3h candidates 는 manual review.
+   - **g. lint pass 확인** — `python .naite/scripts/lint-ontology.py` 3a-3g 통과. 3h candidates 는 manual review.
    - **h. Temp log entry append** — `§ Temp run-log schema` 형식 따라 `tmp/{slug}-run-log.md` 에 append.
 5. Chapter 메타 페이지 작성 — `grow-branch.md § E chapter-finish` step 3 그대로. 단 commit 은 안 함.
 6. DONE 마킹.
@@ -173,7 +173,7 @@ backfill 의 각 subchapter 작성 시 Codex 에 전달할 prompt 의 골격:
 
 > **목표**: tree 의 course subchapter page 1개 작성.
 >
-> **Ontology**: `CONVENTIONS.md § Ontology`, `ontology/subject-tree.md`, `ontology/topics.md`.
+> **Ontology**: `docs/CONVENTIONS.md § Ontology`, `.naite/ontology/subject-tree.md`, `.naite/ontology/topics.md`.
 >
 > **Page shape**: `.claude/skills/naite/grow-branch.md § Templates § 서브챕터 노트` 그대로 준수.
 > - Lecture-natural H-tag (H1=subchapter, H2=sub-division, H3=concept group, H4=concept).

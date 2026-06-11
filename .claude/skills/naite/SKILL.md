@@ -12,7 +12,7 @@ You maintain a **naite** vault: one vault = one tree. The user adds sources and 
 - **`NAITE_ROOT`**: the root of the naite vault — the directory containing `CLAUDE.md`, `tree/`, and `roots/`. All data paths resolve against this.
 - **`SKILL_DIR`**: `<NAITE_ROOT>/.claude/skills/naite` — this skill and its sub-files. Optionally junction/symlink this into your user-level skills directory (e.g. `~/.claude/skills/naite`) so `/naite` resolves from any working directory.
 
-**First action on every invocation**: read `<NAITE_ROOT>/CLAUDE.md` in full. For ask, care, grow, fruit, or any tree mutation, also read `<NAITE_ROOT>/CONTEXT.md` before selecting evidence files.
+**First action on every invocation**: read `<NAITE_ROOT>/CLAUDE.md` in full. For ask, care, grow, fruit, or any tree mutation, also read `<NAITE_ROOT>/docs/CONTEXT.md` before selecting evidence files.
 
 If the current CWD is already `NAITE_ROOT` or a subdir of it, operating relative to CWD is fine; otherwise use absolute paths. When in doubt, use absolute.
 
@@ -35,17 +35,17 @@ Internal modules (not user-facing; loaded by grow/care as needed): `capture.md`,
 
 1. Parse the subcommand from `args`. If missing or unrecognized, print the table above and ask the user which subcommand they meant.
 2. Read `<NAITE_ROOT>/CLAUDE.md` if you haven't this session.
-3. Read `<NAITE_ROOT>/CONTEXT.md` when the subcommand needs tree context, generated maps, dependency review, or any mutation.
+3. Read `<NAITE_ROOT>/docs/CONTEXT.md` when the subcommand needs tree context, generated maps, dependency review, or any mutation.
 4. Read the matching sub-skill file with the Read tool (use the absolute path).
 5. Follow its workflow exactly. Do not paraphrase or improvise steps — the sub-files are the contract.
 6. Every successful subcommand (except `ask` without filing) appends a line to `<NAITE_ROOT>/tree/rings.md` with prefix `## [YYYY-MM-DD] <op> | <title>`.
 
 ## Shared rules (do not violate)
 
-- **`roots/` is content-immutable.** Never change the *content* of files under `roots/`. There is **no generic `_archive/` layer** — see `CONVENTIONS.md § Post-grow handling` for the per-subdir rule. Summary: `roots/articles/` files stay in place after grow; `roots/conversations/` claim summaries are deleted post-grow (transcripts in `_transcripts/` are preserved); `roots/courses/{slug}/` is wholesale-moved to `roots/courses/_archive/{slug}/` only at `branch-finish` (the only `_archive/` path in the vault). Content-writing exceptions: legacy import adds a translation comment to the staged copy; grow stages new files under `roots/`.
+- **`roots/` is content-immutable.** Never change the *content* of files under `roots/`. There is **no generic `_archive/` layer** — see `docs/CONVENTIONS.md § Post-grow handling` for the per-subdir rule. Summary: `roots/articles/` files stay in place after grow; `roots/conversations/` claim summaries are deleted post-grow (transcripts in `_transcripts/` are preserved); `roots/courses/{slug}/` is wholesale-moved to `roots/courses/_archive/{slug}/` only at `branch-finish` (the only `_archive/` path in the vault). Content-writing exceptions: legacy import adds a translation comment to the staged copy; grow stages new files under `roots/`.
 - **`tree/` is LLM-owned.** The user does not hand-edit pages; you do. But always surface material changes to the user before committing.
-- **Read `ontology/tree-manifest.json` before searching for candidate pages**, then read `tree/trunk.md` before writing any page so you reuse existing curated domain entry points and page slugs.
-- **Read `ontology/tree-dependencies.json` before changing an existing page** when semantic dependents (vein 으로 이어진 잎들) may need review.
+- **Read `.naite/ontology/tree-manifest.json` before searching for candidate pages**, then read `tree/trunk.md` before writing any page so you reuse existing curated domain entry points and page slugs.
+- **Read `.naite/ontology/tree-dependencies.json` before changing an existing page** when semantic dependents (vein 으로 이어진 잎들) may need review.
 - **Secrets policy from `CLAUDE.md` is absolute.** If care flags a secret, halt before any git operation and report.
-- **Frontmatter contract**: `kind`, `form`, `topics`, `subject`, `source-types`, `domains` (cached), `created`, `updated`. Spec at `CONVENTIONS.md § Ontology` + `ontology/subject-tree.md` + `ontology/topics.md` + `ARCHITECTURE.md § 3`. Legacy `type` / `role` / `source-type` (singular) fields are an error — care 가 surface 하면 새 schema 로 고친다. No speculative fields without care-surfaced pressure + user decision.
+- **Frontmatter contract**: `kind`, `form`, `topics`, `subject`, `source-types`, `domains` (cached), `created`, `updated`. Spec at `docs/CONVENTIONS.md § Ontology` + `.naite/ontology/subject-tree.md` + `.naite/ontology/topics.md` + `docs/ARCHITECTURE.md § 3`. Legacy `type` / `role` / `source-type` (singular) fields are an error — care 가 surface 하면 새 schema 로 고친다. No speculative fields without care-surfaced pressure + user decision.
 - **Filename style**: `lowercase-kebab-case.md`. Wikilinks (vein): `[[page-slug]]` or `[[page-slug|Display]]`.

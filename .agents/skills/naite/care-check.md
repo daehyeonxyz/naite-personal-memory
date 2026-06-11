@@ -4,9 +4,9 @@
 
 Optional flag:
 
-- `/naite care --check --daily` - daily automation profile. Run the same checks, but spend extra reading budget on the findings most likely to change user decisions. Also write a durable report under `exports/daily/YYYY-MM-DD-care-check.md`.
+- `/naite care --check --daily` - daily automation profile. Run the same checks, but spend extra reading budget on the findings most likely to change user decisions. Also write a durable report under `.naite/reports/daily/YYYY-MM-DD-care-check.md`.
 
-Default output is a single markdown report printed to the conversation (not written to a file). In `--daily`, print the report and also write it to `exports/daily/YYYY-MM-DD-care-check.md`. If the user wants to act on findings, they direct the fixes in subsequent commands. Care --check appends one entry to `tree/rings.md`:
+Default output is a single markdown report printed to the conversation (not written to a file). In `--daily`, print the report and also write it to `.naite/reports/daily/YYYY-MM-DD-care-check.md`. If the user wants to act on findings, they direct the fixes in subsequent commands. Care --check appends one entry to `tree/rings.md`:
 
 ```
 ## [YYYY-MM-DD] care-check | <N> findings
@@ -33,7 +33,7 @@ Default output is a single markdown report printed to the conversation (not writ
 - high-degree neurons: top-N listed
 - autonomy garbage: N (low-use canonical: a, trivial narrower: b, orphan spawn: c)
 - context maps: refreshed | stale | missing
-- daily report: exports/daily/YYYY-MM-DD-care-check.md | n/a
+- daily report: .naite/reports/daily/YYYY-MM-DD-care-check.md | n/a
 ```
 
 ## Token budget tiers
@@ -78,14 +78,14 @@ Run all of these in one pass. Don't short-circuit on failures; gather everything
 
 ### 0. Context maps
 
-Read `CONTEXT.md`. Then refresh and read the generated operating maps:
+Read `docs/CONTEXT.md`. Then refresh and read the generated operating maps:
 
 ```powershell
-python scripts/build-tree-manifest.py
-python scripts/build-tree-dependencies.py
+python .naite/scripts/build-tree-manifest.py
+python .naite/scripts/build-tree-dependencies.py
 ```
 
-Use `ontology/tree-manifest.json` for page coordinates and `ontology/tree-dependencies.json` for inbound/outbound link data. The maps are tracked generated files, not hand-edited canonical vocabularies.
+Use `.naite/ontology/tree-manifest.json` for page coordinates and `.naite/ontology/tree-dependencies.json` for inbound/outbound link data. The maps are tracked generated files, not hand-edited canonical vocabularies.
 
 Report the generated map status in the care-check report:
 
@@ -100,13 +100,13 @@ For `--daily`, include a short delta note:
 - whether generated-map diffs are timestamp-only or graph-count changes.
 - whether the hard blocker counts changed since the prior daily memory/report when available.
 
-Also: for `--daily`, the companion `/naite care --daily` triage will read `exports/daily/YYYY-MM-DD-care-check.md` and write its own `exports/daily/YYYY-MM-DD-care.md`.
+Also: for `--daily`, the companion `/naite care --daily` triage will read `.naite/reports/daily/YYYY-MM-DD-care-check.md` and write its own `.naite/reports/daily/YYYY-MM-DD-care.md`.
 
 ### 1. Orphans
 
 Pages in `tree/` (excluding `trunk.md`, `rings.md`, `seeds.md`) with **zero inbound wikilinks** from other pages in `tree/`.
 
-Use `ontology/tree-dependencies.json` as the primary source. If the map is unavailable, fall back to Grep across `tree/*.md` for `\[\[<slug>` and `\[\[<slug>\|`. If no match exists outside the page itself (and outside `trunk.md`/`rings.md`/`seeds.md`), it's an orphan.
+Use `.naite/ontology/tree-dependencies.json` as the primary source. If the map is unavailable, fall back to Grep across `tree/*.md` for `\[\[<slug>` and `\[\[<slug>\|`. If no match exists outside the page itself (and outside `trunk.md`/`rings.md`/`seeds.md`), it's an orphan.
 
 Report: list orphan slugs and their domains. Suggest which might be candidates for linking or deletion. Note: branch meta pages (`course-{slug}-00-index.md`) are typically only linked from `trunk.md § Branches` — these are not orphans even with low inbound from content pages.
 
@@ -115,13 +115,13 @@ Report: list orphan slugs and their domains. Suggest which might be candidates f
 - Read `tree/seeds.md`. List entries still unresolved.
 - Scan all pages for concept mentions. If a noun phrase appears as **bold**, as a wikilink target that doesn't exist, or in plain text **≥3 times across ≥2 pages** without a corresponding `tree/<slug>.md`, propose it as a new stub.
 
-For missing targets from `ontology/tree-dependencies.json`, apply Tier 1 review before proposing stubs. Do not promote `rings.md` historical entries, placeholders, or intentionally uncreated external organization names into stubs without page evidence.
+For missing targets from `.naite/ontology/tree-dependencies.json`, apply Tier 1 review before proposing stubs. Do not promote `rings.md` historical entries, placeholders, or intentionally uncreated external organization names into stubs without page evidence.
 
 Report: unresolved stubs + newly proposed stubs.
 
 ### 3. Ontology validation
 
-매 페이지의 frontmatter 5 facet (`kind`, `form`, `topics`, `subject`, `source-types`) + cached `domains` + dates 를 ontology spec (`CONVENTIONS.md § Ontology`, `ontology/subject-tree.md`, `ontology/topics.md`) 에 비교한다. 자세한 capability spec: `ARCHITECTURE.md § 4.2 / § 6.2`.
+매 페이지의 frontmatter 5 facet (`kind`, `form`, `topics`, `subject`, `source-types`) + cached `domains` + dates 를 ontology spec (`docs/CONVENTIONS.md § Ontology`, `.naite/ontology/subject-tree.md`, `.naite/ontology/topics.md`) 에 비교한다. 자세한 capability spec: `docs/ARCHITECTURE.md § 4.2 / § 6.2`.
 
 **Schema rule**:
 - 유효 schema: `kind` / `form` / `source-types`.
@@ -129,12 +129,12 @@ Report: unresolved stubs + newly proposed stubs.
 - **mixed schema** (한 페이지 안에 kind+role 또는 type+form 혼재) = drift, error. 수동 fix 필요.
 - 새 페이지 작성 시 항상 새 schema 만 사용.
 
-**Helper**: `scripts/lint-ontology.py` 는 deterministic Python validator 로 3a~3j 의 기계 검사와 § 7 non-tree dirt 검사를 수행. Cluster detection (Louvain) 과 topic alias clustering 같은 무거운 작업은 LLM-driven 으로 별도.
+**Helper**: `.naite/scripts/lint-ontology.py` 는 deterministic Python validator 로 3a~3j 의 기계 검사와 § 7 non-tree dirt 검사를 수행. Cluster detection (Louvain) 과 topic alias clustering 같은 무거운 작업은 LLM-driven 으로 별도.
 
 ```
-python scripts/lint-ontology.py                # report only
-python scripts/lint-ontology.py --strip-bom    # also normalize BOM in-place
-python scripts/lint-ontology.py --refresh-domains   # domains cache 갱신 안내
+python .naite/scripts/lint-ontology.py                # report only
+python .naite/scripts/lint-ontology.py --strip-bom    # also normalize BOM in-place
+python .naite/scripts/lint-ontology.py --refresh-domains   # domains cache 갱신 안내
 ```
 
 #### 3a. Frontmatter completeness
@@ -155,22 +155,22 @@ python scripts/lint-ontology.py --refresh-domains   # domains cache 갱신 안�
 - `type` / `role` / `source-type` (singular) 가 있고 `kind` 가 없음 → legacy schema (incomplete)
 - `kind` 와 `role` 또는 `type` 과 `form` 둘 다 있음 → mixed schema (incomplete, drift signal)
 
-`scripts/lint-ontology.py` 가 `detect_schema()` helper 로 자동 감지.
+`.naite/scripts/lint-ontology.py` 가 `detect_schema()` helper 로 자동 감지.
 
 #### 3b. Subject tree validation
 
-각 페이지의 `subject` field 의 모든 path 가 `ontology/subject-tree.md` 의 canonical tree 에 존재해야 함:
+각 페이지의 `subject` field 의 모든 path 가 `.naite/ontology/subject-tree.md` 의 canonical tree 에 존재해야 함:
 - Top-level 이 `subjects:` 의 key 거나 어느 도메인의 `altLabels` 안에 있음.
 - Path 가 narrower (`parent/narrower`) 면 `narrower` 가 그 parent 의 `narrower:` 리스트에 있음.
 
 미등록 path → drift. AltLabel 통해 resolve 가능하면 alias hit 으로 분류 (canonical 로 점진 갱신 권장 — 강제 X).
 
-**Promotion candidate**: 어느 narrower 후보가 ≥ 5 페이지에 등장하는데 canonical 에 없으면 surface (사용자 결정 후 `ontology/subject-tree.md` 에 추가). Cluster detection (Louvain modularity on wikilink graph) 결과와 cross-reference.
+**Promotion candidate**: 어느 narrower 후보가 ≥ 5 페이지에 등장하는데 canonical 에 없으면 surface (사용자 결정 후 `.naite/ontology/subject-tree.md` 에 추가). Cluster detection (Louvain modularity on wikilink graph) 결과와 cross-reference.
 
 #### 3c. Topic canonical validation
 
-각 페이지의 `topics` 의 모든 entry 가 `ontology/topics.md` 의 `canonical_topics` 에 있거나 `aliases` map 의 key 여야 함:
-- 미등록 topic → **warn (block 아님)** — folksonomy 철학 (CONVENTIONS.md § Ontology).
+각 페이지의 `topics` 의 모든 entry 가 `.naite/ontology/topics.md` 의 `canonical_topics` 에 있거나 `aliases` map 의 key 여야 함:
+- 미등록 topic → **warn (block 아님)** — folksonomy 철학 (docs/CONVENTIONS.md § Ontology).
 - ≥ 3 페이지 등장 → promotion candidate (사용자 confirm 후 canonical 추가).
 - Levenshtein ≤ 2 인 페어 (topic 끼리 또는 topic vs canonical) → alias 후보 surface.
 - Topic 이 broad domain 명 (`ml`, `statistics` 등) 이거나 페이지-specific (`course-ma101-ch03-binomial`) 이면 misuse 로 surface — `topics` 는 reusable concept-level.
@@ -179,7 +179,7 @@ python scripts/lint-ontology.py --refresh-domains   # domains cache 갱신 안�
 
 각 페이지의 `domains` cache 가 `subject` 로부터 정확히 derive 됐는지:
 - 기대값: `domains == derive_domains(subject)` — first-occurrence order, dedupe.
-- 불일치 → cache 갱신 필요. `python scripts/lint-ontology.py --refresh-domains` 안내를 따라 갱신.
+- 불일치 → cache 갱신 필요. `python .naite/scripts/lint-ontology.py --refresh-domains` 안내를 따라 갱신.
 
 #### 3e. Kind / form / source-types distribution
 
@@ -189,7 +189,7 @@ python scripts/lint-ontology.py --refresh-domains   # domains cache 갱신 안�
 - `form` distribution: `prose` / `index` 별 count.
 - `source-types` distribution: `course` / `conversation` / `paper` / `article` / `docs` / `book` / `essay` / `external` 별 count (한 페이지가 multi-value 가질 수 있어 합계 ≠ 페이지 수).
 
-**Promotion candidate**: 본문 분석에서 자주 등장하는 page-shape pattern 이 기존 enum 에 안 맞으면 surface (예: tutorial-shape, literature-review-shape, video-source 등). 누적 ≥ 5 페이지면 사용자 결정 후 `CONVENTIONS.md § Ontology` enum 에 추가.
+**Promotion candidate**: 본문 분석에서 자주 등장하는 page-shape pattern 이 기존 enum 에 안 맞으면 surface (예: tutorial-shape, literature-review-shape, video-source 등). 누적 ≥ 5 페이지면 사용자 결정 후 `docs/CONVENTIONS.md § Ontology` enum 에 추가.
 
 #### 3i. Schema integrity (drift detector)
 
@@ -200,7 +200,7 @@ alias phase 가 종료됐고 tree 가 모두 새 schema. 다음 metric 은 0 이
 
 #### 3j. Output quality contract guard
 
-`CONVENTIONS.md § Output quality contract` 의 deterministic subset 을 surface. 품질 평가가 아니라 body hygiene guard 다. False positive 는 가능하지만, 새 producer output 과 touched course pages 에서는 발견 즉시 고친다.
+`docs/CONVENTIONS.md § Output quality contract` 의 deterministic subset 을 surface. 품질 평가가 아니라 body hygiene guard 다. False positive 는 가능하지만, 새 producer output 과 touched course pages 에서는 발견 즉시 고친다.
 
 Scan target:
 
@@ -229,7 +229,7 @@ For `--daily`, include classification for each distinct output-quality cluster: 
 
 UTF-8 BOM (`EF BB BF`) prefix 검출:
 - `tree/*.md` 어떤 페이지든 BOM 가지면 surface.
-- `python scripts/lint-ontology.py --strip-bom` 으로 in-place normalize.
+- `python .naite/scripts/lint-ontology.py --strip-bom` 으로 in-place normalize.
 - 정상 운영 상태에선 0 이어야 함 (migration 시 strip 됨).
 
 #### 3g. Course / collection / source 명을 frontmatter 에 사용 (legacy drift)
@@ -238,7 +238,7 @@ UTF-8 BOM (`EF BB BF`) prefix 검출:
 
 #### 3h. Language-shape review candidates
 
-`CONVENTIONS.md § Naming` 의 *Korean prose + English headings/terms* 정책 drift **후보** 를 surface. 품질 평가 아님 — 정책 compliance 의 후보 검토 단계. 비율·grade·threshold·점수 없음.
+`docs/CONVENTIONS.md § Naming` 의 *Korean prose + English headings/terms* 정책 drift **후보** 를 surface. 품질 평가 아님 — 정책 compliance 의 후보 검토 단계. 비율·grade·threshold·점수 없음.
 
 Surface 룰 (단순 presence, false positive expected):
 
@@ -278,10 +278,10 @@ Report: flagged pairs. Do not auto-merge — ask user which is canonical.
 
 ### 5. Trunk drift
 
-`trunk.md` 는 **curated landing page** 다 — 모든 페이지를 enumerate 하지 않는다 (`CONVENTIONS.md § trunk.md discipline` 참조). 따라서 care --check 의 "missing/ghost" 의미가 바뀌었다.
+`trunk.md` 는 **curated landing page** 다 — 모든 페이지를 enumerate 하지 않는다 (`docs/CONVENTIONS.md § trunk.md discipline` 참조). 따라서 care --check 의 "missing/ghost" 의미가 바뀌었다.
 
 **Curated coverage 검사:**
-- **Domain 노출 임계 (CONVENTIONS.md § trunk.md discipline 의 *Domain inclusion criteria* 와 동기화)**: subject-tree top-level 중 **kind=concept + kind=entity 페이지 합 ≥ 10 AND 그 중 inbound 최고치 ≥ 10** 을 만족하는 도메인은 `## Knowledge domains` 아래 `### <domain>` 섹션을 가져야 한다.
+- **Domain 노출 임계 (docs/CONVENTIONS.md § trunk.md discipline 의 *Domain inclusion criteria* 와 동기화)**: subject-tree top-level 중 **kind=concept + kind=entity 페이지 합 ≥ 10 AND 그 중 inbound 최고치 ≥ 10** 을 만족하는 도메인은 `## Knowledge domains` 아래 `### <domain>` 섹션을 가져야 한다.
   - 임계 통과인데 미노출 = **drift** (도메인 섹션 추가 candidate).
   - 임계 미달인데 노출 = **약화 신호** (페이지 삭제·rename 으로 도메인이 얇아진 경우, 사용자에게 유지/제거 결정 요청).
   - 임계 미달은 branch drill-down 으로만 접근 (예: 단일 branch 하나에만 콘텐츠가 묶인 도메인). 신규 branch 추가로 임계 통과 시 본 surface 가 트리거.
@@ -362,7 +362,7 @@ If the user declines the memory append, still surface the summary in the care --
 
 ### 11. Post-grow residue + stale archive dirs
 
-This tree has **no generic `_archive/` layer** (per `CONVENTIONS.md § Post-grow handling`). The only legitimate archive path is `roots/courses/_archive/{slug}/`, populated by `branch-finish`. Everything else is drift.
+This tree has **no generic `_archive/` layer** (per `docs/CONVENTIONS.md § Post-grow handling`). The only legitimate archive path is `roots/courses/_archive/{slug}/`, populated by `branch-finish`. Everything else is drift.
 
 Check two things:
 
@@ -378,7 +378,7 @@ Report: list flagged paths + reason. Recommend either removing the stale dir / c
 
 ### 12. Fruit coverage
 
-Health-check for **decision-shape pages** (CONVENTIONS.md § Decision thread shape). A page is detected as decision-shape if the body contains ≥ 2 of:
+Health-check for **decision-shape pages** (docs/CONVENTIONS.md § Decision thread shape). A page is detected as decision-shape if the body contains ≥ 2 of:
 
 - Headers `## Decision`, `## Trade-off`, `## Failure mode`, `## Invariant`, `## Rationale`, `## Mechanism`, `## Reusability`
 - Prose idioms: `decided ... over`, `failed when`, `trade-off:`, `validates`, `falsifies`
@@ -398,7 +398,7 @@ For `--daily`, prioritize standalone `kind=decision` pages first. Embedded decis
 
 Compute inbound `[[wikilink]]` counts for every concept page in `tree/`. Surface:
 
-Use `ontology/tree-dependencies.json` as the primary source for inbound counts.
+Use `.naite/ontology/tree-dependencies.json` as the primary source for inbound counts.
 
 - **Top 10 most-referenced** — these are the user's decision-critical neurons, the implicit anchors of their reasoning. No action needed; this is self-knowledge surface. Hub candidates for `trunk.md § Knowledge domains § <domain>` "주요" 리스트.
 - **Bottom distribution** — pages with inbound count 0 (already covered by § 1 Orphans) and 1~2 (weakly connected). Useful for spotting concepts that haven't woven into the synapse layer yet.
@@ -409,18 +409,18 @@ This check has no auto-action; it exists to make the link graph's emergent struc
 
 ### 14. Autonomous addition garbage collector
 
-`CONVENTIONS.md § Schema evolution` 의 autonomy A/B 추가물에 대한 사후 품질 검증. 자율 추가는 일관성 속도를 만드는 대신 *premature 추가* 위험을 안기 — care --check 가 30 일 윈도우로 garbage 후보 surface. 모든 항목 warn (not blocker). `git log --diff-filter=A -- ontology/topics.md ontology/subject-tree.md tree/<slug>.md | head -1` 로 추가 시점 확인.
+`docs/CONVENTIONS.md § Schema evolution` 의 autonomy A/B 추가물에 대한 사후 품질 검증. 자율 추가는 일관성 속도를 만드는 대신 *premature 추가* 위험을 안기 — care --check 가 30 일 윈도우로 garbage 후보 surface. 모든 항목 warn (not blocker). `git log --diff-filter=A -- .naite/ontology/topics.md .naite/ontology/subject-tree.md tree/<slug>.md | head -1` 로 추가 시점 확인.
 
 #### 14a. Canonical topic 저사용 (autonomy A garbage)
 
-`ontology/topics.md § canonical_topics` 의 각 토픽에 대해:
+`.naite/ontology/topics.md § canonical_topics` 의 각 토픽에 대해:
 - `git log` 으로 추가 시점 확인 → ≥30 일 전
 - `tree/*.md` 의 `topics:` field 사용 카운트 < 3
 → surface as **"low-usage canonical"** 후보. 사용자 결정: alias 로 redirect, 다른 canonical 로 통합, 또는 keep (도메인이 작아서 정상). LLM 의 입자도 판단 미스 신호일 수 있음.
 
 #### 14b. Autonomously-added narrower 의 trivial split (autonomy B garbage)
 
-`ontology/subject-tree.md` 의 각 `narrower:` entry 에 대해:
+`.naite/ontology/subject-tree.md` 의 각 `narrower:` entry 에 대해:
 - `git log` 으로 추가 시점 확인 → ≥30 일 전
 - 그 path 를 `subject:` 로 쓰는 페이지 ≤ 1
 → surface as **"trivial narrower"** 후보. 사용자 결정: 트리에서 제거, 또는 부모 narrower 로 흡수, 또는 keep (의도된 좁은 분류).
@@ -432,7 +432,7 @@ This check has no auto-action; it exists to make the link graph's emergent struc
 - inbound `[[wikilink]]` count == 0 (`trunk.md` / `seeds.md` / `rings.md` 외)
 → surface as **"orphan spawn"** 후보. 입자도 미스 또는 너무 좁은 추출 신호. 사용자 결정: 페이지 삭제, 본문 흡수해서 다른 페이지로 merge, 또는 다른 페이지에서 명시적 cross-link 추가.
 
-**철학**: autonomy A/B 의 *option value* (빠른 schema 진화) 를 보존하면서 누적 카오스를 방지. 자율 추가가 잘못되어도 care --check 가 30 일 후 잡고 사용자가 정리. grow 시점에 "확실하지 않으면 추가하지 마" 보다 "추가하고 care --check 가 청소" 가 노드 연결을 치밀하게 유지하는 데 유리하다 — `ARCHITECTURE.md § 2.3` 의 folksonomy 철학과 일치.
+**철학**: autonomy A/B 의 *option value* (빠른 schema 진화) 를 보존하면서 누적 카오스를 방지. 자율 추가가 잘못되어도 care --check 가 30 일 후 잡고 사용자가 정리. grow 시점에 "확실하지 않으면 추가하지 마" 보다 "추가하고 care --check 가 청소" 가 노드 연결을 치밀하게 유지하는 데 유리하다 — `docs/ARCHITECTURE.md § 2.3` 의 folksonomy 철학과 일치.
 
 ## Report format
 
@@ -490,7 +490,7 @@ This check has no auto-action; it exists to make the link graph's emergent struc
 - roots/conversations/2026-04-24-foo.md — rings shows grow 2026-04-24 but file still present. Cleanup (delete claim summary) never ran.
 
 ## Stale archive dirs (N)
-- roots/conversations/_archive/ — not a legitimate archive location per CONVENTIONS.md § Post-grow handling. Recommend removing (files inside may be cleanup residue).
+- roots/conversations/_archive/ — not a legitimate archive location per docs/CONVENTIONS.md § Post-grow handling. Recommend removing (files inside may be cleanup residue).
 
 ## Branch archive coherence (N)
 - roots/courses/_archive/aa101/ exists but no `branch-finish | course-aa101` entry in rings.md. Verify or log retroactively.

@@ -5,8 +5,8 @@ lint-ontology.py — Deterministic ontology validator for naite.
 Implements the deterministic checks of `.claude/skills/naite/care-check.md § 3 Ontology validation`:
 
   3a Frontmatter completeness  — required facets + valid enum values
-  3b Subject tree validation   — subject path against ontology/subject-tree.md
-  3c Topic canonical           — topic against ontology/topics.md (with alias resolution)
+  3b Subject tree validation   — subject path against .naite/ontology/subject-tree.md
+  3c Topic canonical           — topic against .naite/ontology/topics.md (with alias resolution)
   3d Domain cache freshness    — domains == derive_domains(subject)
   3e Kind / form / source-types distribution
   3f BOM detection
@@ -19,9 +19,9 @@ Cluster detection (Louvain) and topic alias clustering are LLM-driven —
 see `.claude/skills/naite/care-check.md` for the full workflow.
 
 Usage:
-    python scripts/lint-ontology.py                    # report only
-    python scripts/lint-ontology.py --strip-bom        # also normalize BOM in-place
-    python scripts/lint-ontology.py --refresh-domains  # list pages whose domains cache is stale
+    python .naite/scripts/lint-ontology.py                    # report only
+    python .naite/scripts/lint-ontology.py --strip-bom        # also normalize BOM in-place
+    python .naite/scripts/lint-ontology.py --refresh-domains  # list pages whose domains cache is stale
 
 Exit codes:
     0 — clean
@@ -38,9 +38,9 @@ from pathlib import Path
 # Paths + canonical sources
 # ---------------------------------------------------------------------------
 
-NAITE_ROOT = Path(__file__).resolve().parent.parent
+NAITE_ROOT = Path(__file__).resolve().parent.parent.parent
 TREE_DIR = NAITE_ROOT / 'tree'
-ONTOLOGY_DIR = NAITE_ROOT / 'ontology'
+ONTOLOGY_DIR = NAITE_ROOT / '.naite' / 'ontology'
 SPECIALS = {'trunk.md', 'rings.md', 'seeds.md'}
 BOM = b'\xef\xbb\xbf'
 
@@ -122,7 +122,7 @@ def detect_schema(fm):
 # ---------------------------------------------------------------------------
 
 def parse_yaml_list(value):
-    """Parse the small flow/block-list subset used by ontology/*.md."""
+    """Parse the small flow/block-list subset used by .naite/ontology/*.md."""
     value = value.strip()
     if not value:
         return None
@@ -137,11 +137,11 @@ def parse_yaml_list(value):
 
 
 def load_subject_tree():
-    """Parse subjects + top-level altLabels from ontology/subject-tree.md."""
+    """Parse subjects + top-level altLabels from .naite/ontology/subject-tree.md."""
     text = (ONTOLOGY_DIR / 'subject-tree.md').read_text(encoding='utf-8')
     match = re.search(r'```yaml\s*\n\s*subjects:\s*\n(.*?)\n```', text, re.DOTALL)
     if not match:
-        raise RuntimeError('Could not find subjects YAML block in ontology/subject-tree.md')
+        raise RuntimeError('Could not find subjects YAML block in .naite/ontology/subject-tree.md')
 
     tree, aliases = {}, {}
     current, field = None, None
@@ -187,7 +187,7 @@ CANONICAL_TREE, SUBJECT_ALIASES = load_subject_tree()
 # ---------------------------------------------------------------------------
 
 def load_topic_governance():
-    """Parse canonical_topics + aliases from ontology/topics.md YAML blocks."""
+    """Parse canonical_topics + aliases from .naite/ontology/topics.md YAML blocks."""
     text = (ONTOLOGY_DIR / 'topics.md').read_text(encoding='utf-8')
     canonical, aliases = [], {}
 
