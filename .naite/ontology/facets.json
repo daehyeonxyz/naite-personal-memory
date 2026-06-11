@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "description": "Machine-readable facet definitions. Single source for the lint validator and naite-app filter UI. Enum changes remain C-level (user decision) per CLAUDE.md Schema discipline.",
+  "facets": {
+    "kind": {
+      "multiple": false,
+      "required": true,
+      "search": "exact",
+      "values": [
+        "concept",
+        "entity",
+        "source-record",
+        "project",
+        "decision",
+        "insight",
+        "comparison",
+        "essay",
+        "personal"
+      ]
+    },
+    "form": {
+      "multiple": false,
+      "required": true,
+      "search": "exact",
+      "values": ["prose", "index"]
+    },
+    "source-types": {
+      "multiple": true,
+      "required": true,
+      "search": "exact",
+      "values": [
+        "course",
+        "conversation",
+        "paper",
+        "article",
+        "docs",
+        "book",
+        "essay",
+        "external"
+      ]
+    },
+    "subject": {
+      "multiple": true,
+      "required": true,
+      "search": "path",
+      "canonical": "subject-tree.md"
+    },
+    "topics": {
+      "multiple": true,
+      "required": false,
+      "search": "token",
+      "canonical": "topics.md"
+    },
+    "created": {
+      "multiple": false,
+      "required": true,
+      "search": "date"
+    },
+    "updated": {
+      "multiple": false,
+      "required": true,
+      "search": "date"
+    },
+    "domains": {
+      "multiple": true,
+      "required": false,
+      "cached": true,
+      "search": "token"
+    }
+  }
+}
