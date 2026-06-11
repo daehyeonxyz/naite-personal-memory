@@ -13,13 +13,13 @@ If `<path>` is a directory, process each file inside **one at a time** with the 
 
 ## Context routing and role split
 
-Before reading a source, load `CONTEXT.md` and follow its context admission order. Use `ontology/tree-manifest.json` as the agent fast path for page lookup, while still reading `tree/trunk.md` for curated human entry points.
+Before reading a source, load `docs/CONTEXT.md` and follow its context admission order. Use `.naite/ontology/tree-manifest.json` as the agent fast path for page lookup, while still reading `tree/trunk.md` for curated human entry points.
 
 For long sources, multi-file sources, directories, or any source likely to push the workflow contract out of attention, split the work into three roles:
 
-1. **Reader**: reads the raw source and produces a compact extraction chunk. The Reader does not edit `tree/`, `ontology/`, or `roots/`.
-2. **Writer**: reads `CONVENTIONS.md`, this workflow, generated maps, ontology files, and the Reader chunk. The Writer creates or updates tree pages.
-3. **Verifier**: checks touched pages, rebuilds generated maps, and surfaces inbound semantic dependents from `ontology/tree-dependencies.json`.
+1. **Reader**: reads the raw source and produces a compact extraction chunk. The Reader does not edit `tree/`, `.naite/ontology/`, or `roots/`.
+2. **Writer**: reads `docs/CONVENTIONS.md`, this workflow, generated maps, ontology files, and the Reader chunk. The Writer creates or updates tree pages.
+3. **Verifier**: checks touched pages, rebuilds generated maps, and surfaces inbound semantic dependents from `.naite/ontology/tree-dependencies.json`.
 
 Use physical subagents when the active tool surface supports them and the user has authorized delegation. Otherwise keep the same roles as explicit sequential phases in one session.
 
@@ -27,10 +27,10 @@ Use physical subagents when the active tool surface supports them and the user h
 
 ### 1. Pre-flight
 
-- Read `CONTEXT.md`.
-- If `ontology/tree-manifest.json` is missing or stale for the current task, run `python scripts/build-tree-manifest.py`.
-- Read `ontology/tree-manifest.json` and use it to narrow candidate existing pages before loading full page bodies.
-- Read `ontology/tree-dependencies.json` before editing an existing page when the change could affect pages that depend on it. If the file is missing, run `python scripts/build-tree-dependencies.py`.
+- Read `docs/CONTEXT.md`.
+- If `.naite/ontology/tree-manifest.json` is missing or stale for the current task, run `python .naite/scripts/build-tree-manifest.py`.
+- Read `.naite/ontology/tree-manifest.json` and use it to narrow candidate existing pages before loading full page bodies.
+- Read `.naite/ontology/tree-dependencies.json` before editing an existing page when the change could affect pages that depend on it. If the file is missing, run `python .naite/scripts/build-tree-dependencies.py`.
 - Read `tree/trunk.md` in full so you know which **knowledge domains** exist (`## Knowledge domains` section) and which **branch meta pages** exist (`## Branches`). Note: trunk is curated, not exhaustive — `tree/*.md` glob is the truth for slugs.
 - Read `tree/seeds.md` — a matching stub means a page is expected and this source may fulfill it.
 - Read the last ~20 lines of `tree/rings.md` for recent context (what was grown, any pending threads).
@@ -73,15 +73,15 @@ Before writing any page, tell the user in 3–8 bullets what you extracted. Ask 
 
 For each affected page:
 
-Follow `CONVENTIONS.md § Output quality contract`. The body is a self-contained tree page, not a processing note. Absorb source substance into prose; keep raw paths and source provenance in `## Source` or source-record links only. Do not leave raw/source-processing voice (`raw`, staging, extraction, PDF page, "원문에서는", "자료에서는", "이 페이지에서는") in the body before `## Source`.
+Follow `docs/CONVENTIONS.md § Output quality contract`. The body is a self-contained tree page, not a processing note. Absorb source substance into prose; keep raw paths and source provenance in `## Source` or source-record links only. Do not leave raw/source-processing voice (`raw`, staging, extraction, PDF page, "원문에서는", "자료에서는", "이 페이지에서는") in the body before `## Source`.
 
 - If the page does **not** exist: create `tree/<slug>.md` with full ontology frontmatter:
   ```yaml
   ---
   kind: concept | entity | source-record | project | decision | insight | comparison
   form: prose | index              # grow 산물은 보통 prose
-  topics: []                       # canonical from `ontology/topics.md`. 0-5개. 빈 배열 OK.
-  subject: [<path>]                # SKOS-lite path from `ontology/subject-tree.md`
+  topics: []                       # canonical from `.naite/ontology/topics.md`. 0-5개. 빈 배열 OK.
+  subject: [<path>]                # SKOS-lite path from `.naite/ontology/subject-tree.md`
   source-types: [course | conversation | paper | article | docs | book | essay | external]   # 8-enum list (single-item OK)
   domains: []                      # CACHED — care --check 가 채움 (subject 의 top-level)
   created: YYYY-MM-DD
@@ -97,10 +97,10 @@ Follow `CONVENTIONS.md § Output quality contract`. The body is a self-contained
     - `insight` — 작업·학습에서 압축된 통찰
     - `comparison` — A vs B 비교가 페이지 본질
   - **`form` 선택 기준**: 본문이 산문 흐름이면 `prose`, 다른 페이지 link list/navigation 허브면 `index`.
-  - `subject` 는 `ontology/subject-tree.md` 의 path 1개. Cross-domain 진짜일 때만 multi (`[a/x, b/y]`).
-  - `topics` 는 `ontology/topics.md` 의 canonical 우선. **미등록 topic 후보가 입자도 가드 (`ontology/topics.md § Topic granularity guidance` — 재사용 가능한 concept-level, broad domain 도 page-specific 도 아닐 것) 통과하면 LLM 이 직접 `ontology/topics.md § canonical_topics` 에 append 하고 페이지에 사용** (`CONVENTIONS.md § Schema evolution` autonomy A). 가드 실패면 페이지에서 빼고 grow summary 에 "topic skipped (granularity): X" 로 surface 만. 명백한 alias (`cot ↔ chain-of-thought` 처럼 morphology 또는 well-known abbrev) 도 LLM 이 `ontology/topics.md § aliases` 에 직접 append (autonomy A); 동의어 의심이지만 모호하면 care --check cluster surface 로 미룸.
-  - `source-types` 는 8-enum list (`CONVENTIONS.md § Ontology` 참조). 한 페이지가 여러 source 에서 강화될 수 있으니 list — `source-types: [course, paper]` 같이 multi 가능. `legacy` 는 source-types 값 아님 — `--legacy` mode 의 import provenance 는 본문 또는 log entry 로 남김, source-types 은 콘텐츠 본질 (보통 `[article]` 또는 `[conversation]`).
-  - **새 subject narrower** 가 자연스러우면 LLM 이 `ontology/subject-tree.md § narrower:` 에 candidate append + grow summary 에 "narrower proposed: X" 로 surface (autonomy B). 사용자가 다음 검토 사이클에 confirm 또는 revert. **새 top-level domain / 새 enum 값 (`kind` / `form` / `source-types`) / 새 facet field / subject deprecation** 은 autonomy C — LLM 절대 추가 금지, grow summary 에 pressure 로 surface 만.
+  - `subject` 는 `.naite/ontology/subject-tree.md` 의 path 1개. Cross-domain 진짜일 때만 multi (`[a/x, b/y]`).
+  - `topics` 는 `.naite/ontology/topics.md` 의 canonical 우선. **미등록 topic 후보가 입자도 가드 (`.naite/ontology/topics.md § Topic granularity guidance` — 재사용 가능한 concept-level, broad domain 도 page-specific 도 아닐 것) 통과하면 LLM 이 직접 `.naite/ontology/topics.md § canonical_topics` 에 append 하고 페이지에 사용** (`docs/CONVENTIONS.md § Schema evolution` autonomy A). 가드 실패면 페이지에서 빼고 grow summary 에 "topic skipped (granularity): X" 로 surface 만. 명백한 alias (`cot ↔ chain-of-thought` 처럼 morphology 또는 well-known abbrev) 도 LLM 이 `.naite/ontology/topics.md § aliases` 에 직접 append (autonomy A); 동의어 의심이지만 모호하면 care --check cluster surface 로 미룸.
+  - `source-types` 는 8-enum list (`docs/CONVENTIONS.md § Ontology` 참조). 한 페이지가 여러 source 에서 강화될 수 있으니 list — `source-types: [course, paper]` 같이 multi 가능. `legacy` 는 source-types 값 아님 — `--legacy` mode 의 import provenance 는 본문 또는 log entry 로 남김, source-types 은 콘텐츠 본질 (보통 `[article]` 또는 `[conversation]`).
+  - **새 subject narrower** 가 자연스러우면 LLM 이 `.naite/ontology/subject-tree.md § narrower:` 에 candidate append + grow summary 에 "narrower proposed: X" 로 surface (autonomy B). 사용자가 다음 검토 사이클에 confirm 또는 revert. **새 top-level domain / 새 enum 값 (`kind` / `form` / `source-types`) / 새 facet field / subject deprecation** 은 autonomy C — LLM 절대 추가 금지, grow summary 에 pressure 로 surface 만.
   - Body: summary first, then detail. Cite the source with `[[source-page-slug]]` (creating a `kind=source-record` page if the source merits one, e.g. a specific paper/article).
 - If the page **exists**: Edit it. Update `updated:` in frontmatter. Preserve existing structure; add or revise prose surgically. Flag contradictions explicitly in the text (e.g. "_2026-04-15 source [[foo]] disagrees: ..._").
 
@@ -109,11 +109,11 @@ After writing or editing affected pages, run the `/naite care § Content Guard` 
 After content guard, run:
 
 ```powershell
-python scripts/build-tree-manifest.py
-python scripts/build-tree-dependencies.py
+python .naite/scripts/build-tree-manifest.py
+python .naite/scripts/build-tree-dependencies.py
 ```
 
-Then inspect `ontology/tree-dependencies.json` for inbound references to every touched slug. Surface semantic dependent candidates in the grow summary. Do not rewrite dependent pages automatically unless the user explicitly asked for repair.
+Then inspect `.naite/ontology/tree-dependencies.json` for inbound references to every touched slug. Surface semantic dependent candidates in the grow summary. Do not rewrite dependent pages automatically unless the user explicitly asked for repair.
 
 **Subject path drift 와 가드-실패 topic 누적은 care --check 의 주 surface 대상.** Autonomy A 추가물 (canonical topic, alias, 일반 개념 페이지) 의 사후 품질은 care --check 의 garbage collector (`.claude/skills/naite/care-check.md § 14`) 가 검증.
 
@@ -139,13 +139,13 @@ Add one entry:
 ## [YYYY-MM-DD] grow | <source title or slug>
 - pages created: [[...]]
 - pages updated: [[...]]
-- subject: <path>  (cross-domain 일 때만 복수, ontology/subject-tree.md 참조)
+- subject: <path>  (cross-domain 일 때만 복수, .naite/ontology/subject-tree.md 참조)
 - stubs added: N
 ```
 
 ### 8. Post-grow handling (type-specific)
 
-This tree has no generic `_archive/` layer — raw files are the source of truth, tree pages are the distillation, duplicating raw into an archive was redundant and removed (see `CONVENTIONS.md § Post-grow handling`).
+This tree has no generic `_archive/` layer — raw files are the source of truth, tree pages are the distillation, duplicating raw into an archive was redundant and removed (see `docs/CONVENTIONS.md § Post-grow handling`).
 
 Do exactly one of these based on the source location:
 

@@ -84,7 +84,7 @@ Determine source type from the extension and location, then run a pre-step befor
    ```
    > Source PDF: `roots/articles/_source/<name>.pdf`
    ```
-4. Delegate to `ingest roots/articles/<slug>.md`. Per current rule (`CONVENTIONS.md § Post-grow handling`), the extracted md stays in `roots/articles/` after grow — articles are not archived. The original PDF lives at `roots/articles/_source/<name>.pdf`.
+4. Delegate to `ingest roots/articles/<slug>.md`. Per current rule (`docs/CONVENTIONS.md § Post-grow handling`), the extracted md stays in `roots/articles/` after grow — articles are not archived. The original PDF lives at `roots/articles/_source/<name>.pdf`.
 
 #### 3c. YouTube / video
 URL-only inputs are not sources. Require a transcript md file first:
@@ -118,7 +118,7 @@ After the underlying `ingest` run completes (or conversation mode ends without i
 - pages created / updated (from the ingest run)
 - next steps (e.g. "run `/naite care --check` after a few more grows").
 
-If the ingested material includes a clear decision / trade-off / failure analysis (signals: "선택했다 / 보류했다 / 비교했다 / 실패했다" + reasoning), also offer: "이거 `/naite fruit` 로 의사결정 thread 까지 박아둘까요?" — see CONVENTIONS.md § Decision thread shape.
+If the ingested material includes a clear decision / trade-off / failure analysis (signals: "선택했다 / 보류했다 / 비교했다 / 실패했다" + reasoning), also offer: "이거 `/naite fruit` 로 의사결정 thread 까지 박아둘까요?" — see docs/CONVENTIONS.md § Decision thread shape.
 
 ## What this command never does
 

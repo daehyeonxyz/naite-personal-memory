@@ -6,9 +6,9 @@ Canonical SKOS-lite hierarchical subject taxonomy for naite.
 - Cross-domain pages declare multi-value subject: `subject: [a/x, b/y]`.
 - Renaming uses `altLabels` — old name continues to resolve via care-check.
 - Adding `narrower` doesn't affect existing pages (prefix match: `subject ⊑ ml` catches `ml`, `ml/agents`, `ml/agents/multi-agent`).
-- See `ARCHITECTURE.md § 2.2` for theoretical basis (W3C SKOS) and `§ 4.3` for the full evolution table.
+- See `docs/ARCHITECTURE.md § 2.2` for theoretical basis (W3C SKOS) and `§ 4.3` for the full evolution table.
 
-아래 트리는 **중립 시작 예시**다. 본인의 학습·작업 도메인에 맞게 교체하거나 확장한다. 새 top-level domain 추가는 사용자 결정 (autonomy C), narrower 추가는 LLM candidate 제안 (autonomy B) 을 따른다 (`CONVENTIONS.md § Schema evolution`).
+아래 트리는 **중립 시작 예시**다. 본인의 학습·작업 도메인에 맞게 교체하거나 확장한다. 새 top-level domain 추가는 사용자 결정 (autonomy C), narrower 추가는 LLM candidate 제안 (autonomy B) 을 따른다 (`docs/CONVENTIONS.md § Schema evolution`).
 
 ## Tree
 
@@ -55,11 +55,11 @@ Frontmatter 의 `domains:` field 는 **care-check 가 자동 갱신** — `subje
 - `subject: [statistics/probability, ml/reasoning]` → `domains: [statistics, ml]`
 - `subject: [ml]` → `domains: [ml]` (broad-only also valid)
 
-`scripts/lint-ontology.py --refresh-domains` 가 idempotent 하게 cache 갱신. 사용자가 직접 `domains:` 작성 금지.
+`.naite/scripts/lint-ontology.py --refresh-domains` 가 idempotent 하게 cache 갱신. 사용자가 직접 `domains:` 작성 금지.
 
 ## Evolution rules
 
-`CONVENTIONS.md § Schema evolution` 의 cardinality-graded autonomy A/B/C 가 본 트리 변경의 권한 base. 요약:
+`docs/CONVENTIONS.md § Schema evolution` 의 cardinality-graded autonomy A/B/C 가 본 트리 변경의 권한 base. 요약:
 
 | 시나리오 | 등급 | 액션 | 페이지 변경 |
 |---|---|---|---|
@@ -71,4 +71,4 @@ Frontmatter 의 `domains:` field 는 **care-check 가 자동 갱신** — `subje
 
 **Autonomy B 후보는 LLM 이 직접 트리에 append + surface; autonomy C 는 LLM 절대 추가 안 함.** care-check 가 cluster detection (Louvain modularity) 으로 narrower 후보 surface, 사용자 결정 후 confirm.
 
-자세한 정책: `CONVENTIONS.md § Schema evolution`.
+자세한 정책: `docs/CONVENTIONS.md § Schema evolution`.

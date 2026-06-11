@@ -5,7 +5,7 @@ Canonical topic list (folksonomy layer) for naite.
 - Page frontmatter `topics` field is **0-5 entries**. 빈 배열 허용 (예: `kind=entity` 페이지). 억지 topic 부여 금지.
 - Topics 는 **재사용 가능한 개념·기법·패턴 수준** — broad domain 명 아님. 예: `llm-api`, `normal-distribution`, `chain-of-thought`, `sampling-distribution`.
 - Canonical preferred. 미등록 topic 은 **warn (block 아님)** — folksonomy 가 emerge 하도록. care-check 가 누적 후보 surface, 사용자 confirm 후 canonical 추가.
-- See `ARCHITECTURE.md § 2.3` (folksonomy + curated taxonomy) and `§ 3.4` (governance workflow).
+- See `docs/ARCHITECTURE.md § 2.3` (folksonomy + curated taxonomy) and `§ 3.4` (governance workflow).
 
 ## Canonical topics
 
@@ -45,7 +45,7 @@ aliases:
 - **Rename canonical**: 새 canonical 선택, 기존 이름은 alias 로 redirect. 페이지 frontmatter 변경 불필요 (care-check 가 alias 해석).
 - **Remove canonical**: deprecation. 모든 인용 페이지 page rewrite 필요 — 마지막 수단.
 
-자세한 governance workflow: `ARCHITECTURE.md § 3.4`.
+자세한 governance workflow: `docs/ARCHITECTURE.md § 3.4`.
 
 ## Topic granularity guidance
 

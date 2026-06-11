@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build ontology/tree-manifest.json for fast agent routing."""
+"""Build .naite/ontology/tree-manifest.json for fast agent routing."""
 
 from __future__ import annotations
 
@@ -9,9 +9,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-NAITE_ROOT = Path(__file__).resolve().parent.parent
+NAITE_ROOT = Path(__file__).resolve().parent.parent.parent
 TREE_DIR = NAITE_ROOT / "tree"
-OUT_PATH = NAITE_ROOT / "ontology" / "tree-manifest.json"
+OUT_PATH = NAITE_ROOT / ".naite" / "ontology" / "tree-manifest.json"
 SPECIALS = {"trunk.md", "rings.md", "seeds.md"}
 
 
@@ -127,7 +127,7 @@ def main() -> int:
     data = {
         "schema_version": 1,
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "generator": "scripts/build-tree-manifest.py",
+        "generator": ".naite/scripts/build-tree-manifest.py",
         "page_count": len(pages),
         "content_page_count": sum(1 for page in pages if not page["special"]),
         "summary": {

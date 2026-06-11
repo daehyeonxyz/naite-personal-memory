@@ -1,11 +1,11 @@
-# CONVENTIONS.md — naite operating invariants
+# docs/CONVENTIONS.md — naite operating invariants
 
 These rules apply to **every tree mutation** regardless of which workflow (`/naite grow`, `/naite ask`, `/naite fruit`, `/naite care`) is running. Workflow-specific procedures live in the naite workflow skill directory.
 
 This file is shared by both tool surfaces. Keep it tool-neutral: workflow rules live here, while tool-specific paths and entrypoint wording live in `CLAUDE.md`, `AGENTS.md`, and the mirrored workflow skill directories.
 
-For the *why* (rationale, theoretical basis, schema evolution playbook), see `ARCHITECTURE.md`.
-For the *data* (canonical vocabularies), see `ontology/subject-tree.md` and `ontology/topics.md`.
+For the *why* (rationale, theoretical basis, schema evolution playbook), see `docs/ARCHITECTURE.md`.
+For the *data* (canonical vocabularies), see `.naite/ontology/subject-tree.md` and `.naite/ontology/topics.md`.
 
 ---
 
@@ -23,7 +23,7 @@ naite vault 하나 = 나무 한 그루. 부위 이름의 단일 기준은 이 �
 | leaf 잎 | kind | `kind=concept / entity / source-record / insight / comparison / project / essay / personal` 페이지 (전체 enum: § Ontology) |
 | fruit 열매 | kind | `kind=decision` 페이지 — `/naite fruit` 가 맺는다 |
 | branch 가지 | 군집 | `course-{slug}-*` 파일명 prefix 하나 = 가지 하나. grow 의 장기 모드 |
-| vein 맥 | 링크 | 페이지 간 `[[wikilink]]`. 저장은 wikilink + `ontology/tree-dependencies.json` |
+| vein 맥 | 링크 | 페이지 간 `[[wikilink]]`. 저장은 wikilink + `.naite/ontology/tree-dependencies.json` |
 | forest 숲 | 예약어 | vault 의 집합 (연결 의미 없음). 미래 기능 |
 
 ---
@@ -87,14 +87,14 @@ updated: YYYY-MM-DD
 
 - `kind` enum (9 values): `concept` (reusable concept/method/technique/pattern), `entity` (person/org/tool/platform/model/product), `source-record` (single source unit recorded in the tree — course top/chapter/subchapter, paper note, book note, article note), `project` (user's project tracker), `decision` (synapse / decision record), `insight` (extracted/synthesized observation), `comparison` (A-vs-B page where the comparison itself is the subject), `essay` (사용자가 직접 작성한 에세이 또는 학문 도메인 밖 개인 글쓰기. `source-types: [essay]` 와 짝을 이루며 `subject: [personal]` 을 사용한다. `source-record` 는 외부 source 의 study note 이고, `essay` 는 사용자 본인이 직접 쓴 글이다), `personal` (사용자 본인의 신원, 학력, 산출물 목차, 진로 hub 등 self-reference 메타 페이지. `subject: [personal]` 과 짝을 이루며 source-types 는 보통 [conversation, external]. essay 가 본인이 쓴 학문 외 글이라면 personal 은 본인에 대한 메타-기록 페이지다. C-level 신설로 사용자 승인 후 추가된 enum 사례). `question` is **not** a kind — earlier `role=question` deprecated in 2026-05-18 (no corpus use case; future C-level decision if needed).
 - `form` enum (2 values): `prose` (body is flowing text — explanation, decision record, insight, etc.), `index` (body is a list/navigation hub of wikilinks).
-- `topics`: 0-5 per page. Canonical list (`ontology/topics.md`) preferred. Uncanonicalized topic → care-check warns (does not block — folksonomy philosophy). Empty array OK (e.g. `kind=entity`). Do not force topics. Topics are **re-usable concept/technique level** — not broad domain names.
-- `subject`: SKOS-lite path notation (`parent/child[/grandchild]`, slash-separated). Single path is default; multi only for genuine cross-domain (`[a/x, b/y]`). Canonical tree: `ontology/subject-tree.md`. **Course / collection / institution / source names are NOT subjects** — `course`, `course-{slug}`, `anthropic-academy`, `ode`, `laplace-transform` are page slugs/entities, not subject paths. Course membership is carried by the `course-{slug}-*` filename prefix.
-- `source-types` (always list, 8 values): `course` (academic/online courses), `paper` (peer-reviewed academic), `article` (informal: blog / news / X thread / Substack), `docs` (official docs: Anthropic / OpenAI / library docs), `book` (book), `conversation` (user dialogue capture), `essay` (self-authored essay/long-form), `external` (fallback). A page can be informed by multiple sources — `source-types: [course, paper]` is valid. `legacy` is **not** a value — it's an import channel; staged legacy notes ingest with the source-types matching their content nature. Detail: `ARCHITECTURE.md § 7`.
-- `domains` (CACHED, NOT a facet): top-level path component of `subject`. **care-check auto-derives** (`scripts/lint-ontology.py --refresh-domains`); never hand-write. Idempotent on schema change.
+- `topics`: 0-5 per page. Canonical list (`.naite/ontology/topics.md`) preferred. Uncanonicalized topic → care-check warns (does not block — folksonomy philosophy). Empty array OK (e.g. `kind=entity`). Do not force topics. Topics are **re-usable concept/technique level** — not broad domain names.
+- `subject`: SKOS-lite path notation (`parent/child[/grandchild]`, slash-separated). Single path is default; multi only for genuine cross-domain (`[a/x, b/y]`). Canonical tree: `.naite/ontology/subject-tree.md`. **Course / collection / institution / source names are NOT subjects** — `course`, `course-{slug}`, `anthropic-academy`, `ode`, `laplace-transform` are page slugs/entities, not subject paths. Course membership is carried by the `course-{slug}-*` filename prefix.
+- `source-types` (always list, 8 values): `course` (academic/online courses), `paper` (peer-reviewed academic), `article` (informal: blog / news / X thread / Substack), `docs` (official docs: Anthropic / OpenAI / library docs), `book` (book), `conversation` (user dialogue capture), `essay` (self-authored essay/long-form), `external` (fallback). A page can be informed by multiple sources — `source-types: [course, paper]` is valid. `legacy` is **not** a value — it's an import channel; staged legacy notes ingest with the source-types matching their content nature. Detail: `docs/ARCHITECTURE.md § 7`.
+- `domains` (CACHED, NOT a facet): top-level path component of `subject`. **care-check auto-derives** (`.naite/scripts/lint-ontology.py --refresh-domains`); never hand-write. Idempotent on schema change.
 
 `trunk.md` and `rings.md` have no frontmatter (special files). Additional facet fields (`confidence`, `status`, `depends-on`, `contradicts`, `source-count`, `as-of`, etc.) are added only after care-check surfaces accumulated pressure → user decision. No arbitrary additions.
 
-For the why behind each facet: `ARCHITECTURE.md § 3`. Schema evolution: § Schema evolution below.
+For the why behind each facet: `docs/ARCHITECTURE.md § 3`. Schema evolution: § Schema evolution below.
 
 ---
 
@@ -123,7 +123,7 @@ When reading these idioms during `/naite ask`, synthesize as if they were typed 
 
 ## Decision thread shape
 
-A decision page has **`kind=decision`** (occasionally embedded as decision-shape content within `kind=concept`/`entity`/`source-record` pages — both are valid synapse forms). Its `subject` is the actual content path (canonical tree: `ontology/subject-tree.md`). Cross-domain decisions get multi-subject. **Do not invent meta subject paths** like `dmu/`, `failure-*/`, `synapse/` — categorizing a synapse defeats its purpose.
+A decision page has **`kind=decision`** (occasionally embedded as decision-shape content within `kind=concept`/`entity`/`source-record` pages — both are valid synapse forms). Its `subject` is the actual content path (canonical tree: `.naite/ontology/subject-tree.md`). Cross-domain decisions get multi-subject. **Do not invent meta subject paths** like `dmu/`, `failure-*/`, `synapse/` — categorizing a synapse defeats its purpose.
 
 **File naming**: standalone decision pages use `decision-YYYY-MM-DD-<slug>.md` format, where `YYYY-MM-DD` matches frontmatter `created`. This prevents slug collision as decisions accumulate and provides session-cluster grouping in file listings.
 
@@ -200,7 +200,7 @@ When to write a rings entry:
 | `ask-filed` | only when answer was filed as page | rumination-only ask: skip |
 | `fruit` | 1 page written/updated | decision-shape page |
 | `care-check` | 1 care-check run | findings summary |
-| `care` | 1 qualitative maintenance run | review, repair, sweep, or system-learning summary (details go to `tmp/care-*` or `exports/*-care/`) |
+| `care` | 1 qualitative maintenance run | review, repair, sweep, or system-learning summary (details go to `tmp/care-*` or `.naite/reports/*-care/`) |
 | `branch-start` | new branch setup | branch meta created |
 | `branch-chapter` | chapter completion | **N subchapters bundled into 1 entry** |
 | `branch-finish` | branch end | includes archive move |
@@ -320,9 +320,9 @@ Evolution channels:
 | Scenario | Level | Action | Page change |
 |---|---|---|---|
 | New general concept page (e.g. `[[bayes-theorem]]` extracted from a course chapter) | **A** | LLM creates page during grow with proper frontmatter + wikilink from caller | None to existing |
-| New canonical topic (e.g. `posterior-probability`) | **A** | LLM appends to `ontology/topics.md § canonical_topics` + uses on page | None |
-| Topic alias addition | **A** | LLM appends to `ontology/topics.md § aliases` when synonymy is obvious (morphology / well-known abbreviation) | None — care-check resolves |
-| Subject narrower added (e.g. `ml/inference-optimization`) | **B** | LLM appends to `ontology/subject-tree.md § narrower:` + flags in grow summary | None |
+| New canonical topic (e.g. `posterior-probability`) | **A** | LLM appends to `.naite/ontology/topics.md § canonical_topics` + uses on page | None |
+| Topic alias addition | **A** | LLM appends to `.naite/ontology/topics.md § aliases` when synonymy is obvious (morphology / well-known abbreviation) | None — care-check resolves |
+| Subject narrower added (e.g. `ml/inference-optimization`) | **B** | LLM appends to `.naite/ontology/subject-tree.md § narrower:` + flags in grow summary | None |
 | Subject rename | **B** | LLM proposes canonical change + altLabel; user confirms in next sweep | None — care-check resolves alias |
 | Subject move (reparent) | **B** | LLM proposes relocate + bidirectional altLabels | None — care-check resolves alias |
 | New top-level domain | **C** | care-check surfaces pressure; user adds to tree | None |
@@ -330,12 +330,12 @@ Evolution channels:
 | New `kind` value | **C** | enum extension after care-check surfaces page-shape pain ≥5 pages | None for existing |
 | New `form` value | **C** | enum extension after care-check surfaces presentation-shape pressure | None for existing |
 | New `source-types` value | **C** | enum extension after surface pressure | None |
-| New facet field | **C** | discussed in `ARCHITECTURE.md § 7 future considerations` | None |
+| New facet field | **C** | discussed in `docs/ARCHITECTURE.md § 7 future considerations` | None |
 
 **Granularity guards on autonomy A** (gate before any autonomous addition):
 
-- **General concept page**: must be reusable concept-level. NOT page-specific (`course-ma101-ch03-binomial`), NOT broad domain (`ml`, `statistics`). Same granularity rule as topics — see `ontology/topics.md § Topic granularity guidance`.
-- **Canonical topic**: same granularity gate. LLM must check `ontology/topics.md § Topic granularity guidance` before appending. Reusable concept/technique/pattern level only.
+- **General concept page**: must be reusable concept-level. NOT page-specific (`course-ma101-ch03-binomial`), NOT broad domain (`ml`, `statistics`). Same granularity rule as topics — see `.naite/ontology/topics.md § Topic granularity guidance`.
+- **Canonical topic**: same granularity gate. LLM must check `.naite/ontology/topics.md § Topic granularity guidance` before appending. Reusable concept/technique/pattern level only.
 - **Topic alias**: only when synonymy is obvious (`cot ↔ chain-of-thought`, `hitl ↔ human-in-the-loop`). Ambiguous synonyms surface to care-check cluster detection (Levenshtein + co-occurrence) for user confirmation, NOT autonomous addition.
 
 **care-check as garbage collector** (post-hoc protection — `/naite care --check` § 3b / § 3c / § 14):
@@ -346,7 +346,7 @@ Evolution channels:
 
 care-check runs idempotent; it surfaces, the user decides.
 
-Schema evolution history is distributed across 4 layers: git commit history + `tree/rings.md migration` entries + `ARCHITECTURE.md` long-form rationale + `tree/decision-*` synapse pages. See `ARCHITECTURE.md § 4.5`.
+Schema evolution history is distributed across 4 layers: git commit history + `tree/rings.md migration` entries + `docs/ARCHITECTURE.md` long-form rationale + `tree/decision-*` synapse pages. See `docs/ARCHITECTURE.md § 4.5`.
 
 **Skill promotion.** When the same multi-step manual procedure executes ≥3 times across sessions (visible in `rings.md` or reported as recurring), propose formalizing it as a new naite workflow skill. `/naite care --check` flags candidates. Successful procedures deserve to be codified; one-offs stay one-offs.
 

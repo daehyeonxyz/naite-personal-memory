@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build ontology/tree-dependencies.json from wikilinks and soft relation idioms."""
+"""Build .naite/ontology/tree-dependencies.json from wikilinks and soft relation idioms."""
 
 from __future__ import annotations
 
@@ -9,9 +9,9 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
-NAITE_ROOT = Path(__file__).resolve().parent.parent
+NAITE_ROOT = Path(__file__).resolve().parent.parent.parent
 TREE_DIR = NAITE_ROOT / "tree"
-OUT_PATH = NAITE_ROOT / "ontology" / "tree-dependencies.json"
+OUT_PATH = NAITE_ROOT / ".naite" / "ontology" / "tree-dependencies.json"
 WIKILINK_RE = re.compile(r"\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]")
 
 RELATION_PATTERNS = [
@@ -126,7 +126,7 @@ def main() -> int:
     data = {
         "schema_version": 1,
         "generated_at": datetime.now(timezone.utc).isoformat(),
-        "generator": "scripts/build-tree-dependencies.py",
+        "generator": ".naite/scripts/build-tree-dependencies.py",
         "page_count": len(paths),
         "summary": {
             "edge_count": sum(len(page["outbound"]) for page in pages.values()),
