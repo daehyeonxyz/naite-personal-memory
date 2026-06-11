@@ -73,6 +73,7 @@ https://github.com/daehyeonxyz/naite-personal-memory 를 이 폴더에 설치해
 | `/naite ask <질문>` | 쌓인 기록을 바탕으로 질문할 때 |
 | `/naite fruit [topic?]` | 결정, trade-off, 실패 분석을 열매로 남길 때 |
 | `/naite care [scope?]` | 나무를 다듬을 때. `--check` 를 붙이면 고치지 않고 점검만 합니다 |
+| `/naite upgrade` | naite 새 버전이 나왔을 때. 내 자료와 내가 고친 규칙은 건드리지 않고 작업 틀만 갱신합니다 |
 
 명령을 외울 필요는 없습니다. 그냥 자료를 붙여넣고 "반영해줘" 라고 말해도 에이전트가 알아서 맞는 흐름을 탑니다.
 

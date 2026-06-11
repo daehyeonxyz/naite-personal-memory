@@ -10,8 +10,8 @@
     {
       "name": "naite",
       "source": "./",
-      "description": "naite maintenance toolkit. /naite dispatches to grow, ask, fruit, and care. See the repo's CLAUDE.md for conventions.",
-      "version": "0.0.0",
+      "description": "naite maintenance toolkit. /naite dispatches to grow, ask, fruit, care, and upgrade. See the repo's CLAUDE.md for conventions.",
+      "version": "0.1.0",
       "repository": "https://github.com/daehyeonxyz/naite-personal-memory",
       "license": "MIT",
       "category": "workflow",

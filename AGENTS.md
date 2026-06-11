@@ -50,6 +50,7 @@ This file is the **entrypoint**. It carries routing, triggers, and hard safety r
 | 결정/trade-off thread 를 열매로 | `/naite fruit` | `.agents/skills/naite/fruit.md` |
 | 건강 점검 (report-only) | `/naite care --check` | `.agents/skills/naite/care-check.md` |
 | 정성 검토·수선·대규모 정리 | `/naite care` | `.agents/skills/naite/care.md` |
+| naite 새 버전으로 하네스 갱신 (사용자 자료 불변) | `/naite upgrade` | `.agents/skills/naite/upgrade.md` |
 
 단발-vs-branch 구분은 grow.md § Branch pre-check 가 담당한다. 불확실하면 사용자에게 묻는다.
 
