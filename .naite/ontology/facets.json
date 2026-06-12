@@ -1,21 +1,21 @@
 {
-  "schema_version": 1,
-  "description": "Machine-readable facet definitions. Single source for the lint validator and naite-app filter UI. Enum changes remain C-level (user decision) per CLAUDE.md Schema discipline.",
+  "schema_version": 2,
+  "description": "Machine-readable facet definitions. Single source for the lint validator and naite-app filter UI. v2: kind values carry a core flag — core kinds are harness-known (workflows depend on their semantics) and fixed; user kinds are vault-declared and get default page behavior. Enum changes to core kinds remain C-level (user decision) per CLAUDE.md Schema discipline; user kinds are added by declaring them here.",
   "facets": {
     "kind": {
       "multiple": false,
       "required": true,
       "search": "exact",
       "values": [
-        "concept",
-        "entity",
-        "source-record",
-        "project",
-        "decision",
-        "insight",
-        "comparison",
-        "essay",
-        "personal"
+        { "value": "concept", "core": true },
+        { "value": "entity", "core": true },
+        { "value": "source-record", "core": true },
+        { "value": "decision", "core": true },
+        { "value": "project", "core": false },
+        { "value": "insight", "core": false },
+        { "value": "comparison", "core": false },
+        { "value": "essay", "core": false },
+        { "value": "personal", "core": false }
       ]
     },
     "form": {

@@ -54,11 +54,20 @@ FACETS_PATH = ONTOLOGY_DIR / 'facets.json'
 
 
 def _facet_values(name, fallback):
+    # schema_version 1: values is a list of strings.
+    # schema_version 2: kind values are {value, core} objects (core kinds are
+    # harness-known and fixed; user kinds are vault-declared). Normalize both.
     try:
         data = json.loads(FACETS_PATH.read_text(encoding='utf-8'))
         values = data['facets'][name]['values']
-        if isinstance(values, list) and values:
-            return tuple(values)
+        out = []
+        for v in values:
+            if isinstance(v, str):
+                out.append(v)
+            elif isinstance(v, dict) and isinstance(v.get('value'), str):
+                out.append(v['value'])
+        if out:
+            return tuple(out)
     except (OSError, ValueError, KeyError, TypeError):
         pass
     return fallback

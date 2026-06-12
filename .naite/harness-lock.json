@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "version": "0.1.0",
-  "generated_at": "2026-06-11T08:50:06.425479+00:00",
+  "generated_at": "2026-06-12T01:54:04.038518+00:00",
   "files": {
     ".agents/skills/naite/SKILL.md": "sha256:edacee71eff67f73fd11157c8cf821f9ddbc67ad43389b1432f7d094884f1447",
     ".agents/skills/naite/ask.md": "sha256:23bc362076cdced8ee517f837b6f8b0e8c17138dee8fdd3ded4b7ff01f891855",
@@ -31,7 +31,7 @@
     ".naite/scripts/build-harness-lock.py": "sha256:3ec211473c63249211181117fbd859b8ff58570a0e944d7b6e9d97cfe8bb578d",
     ".naite/scripts/build-tree-dependencies.py": "sha256:df9ac7e44cc8f3e453d8164c6ce5688ae679d1df780758cd6af6fe43c20b605a",
     ".naite/scripts/build-tree-manifest.py": "sha256:fe17b987f403df4e2f174fc88ba5376c38fe91e4efacf5b2c1fff471eddc0ac4",
-    ".naite/scripts/lint-ontology.py": "sha256:6d6f61f137448896cc32061d9bf7ed36d8549b642e0138380d269afb1a4e8384",
+    ".naite/scripts/lint-ontology.py": "sha256:6396c3f3181953c2c4a017164f721305438383e70924eb3e542e419df856cea6",
     ".naite/scripts/sync-agents.ps1": "sha256:adaed10e45379f492e65a0e2862875f901f0f719a4cf00420d2ca3d30e61e949",
     "AGENTS.md": "sha256:a8ce037c0759490e8d19fcd57113ad97cc23003bd8dec894fefc11313ab6a9e2",
     "CLAUDE.md": "sha256:bd150b4c2f1d2e3ae153952eed36de977af2dae77e5cef81029ed8431e313d21",
