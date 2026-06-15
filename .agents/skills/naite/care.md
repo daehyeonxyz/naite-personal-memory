@@ -57,6 +57,8 @@ For one-page repair, inspect inbound entries for the touched slug before editing
 
 Read the requested pages, their frontmatter, and the directly relevant links. Produce a prose verdict with concrete page examples. Avoid scores, grades, thresholds, and rubric language.
 
+Verdicts use plain labels, not scores: `healthy` / `thin-but-acceptable` / `repair-candidate` / `source-risk` / `system-rule-candidate`. `source-risk` means the page reads well but its formulas, definitions, theorems, conditions, or numbers must not be rewritten without source review (`docs/CONVENTIONS.md § Output quality contract`, source-fidelity ceiling); defer the repair rather than risk distorting the source.
+
 Review answers should say:
 
 - what is already usable,

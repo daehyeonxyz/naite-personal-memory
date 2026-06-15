@@ -68,6 +68,7 @@ Each non-zero finding should carry one of these labels when the distinction affe
 - `false-positive`: matched mechanically but is not a tree defect after context review.
 - `intentional-debt`: known or deliberate residue, such as historical `rings.md` links preserved for audit value.
 - `repair-candidate`: a concrete page, link, source-voice, or workflow issue that can be fixed in a later user-directed pass.
+- `source-risk`: a fidelity-sensitive page (formulas, definitions, theorems, conditions, numbers) that reads well but must not be rewritten without source review; defer repair (`docs/CONVENTIONS.md § Output quality contract`, source-fidelity ceiling).
 - `schema-pressure`: repeated evidence that may justify ontology, workflow, or check-rule evolution, subject to the schema evolution rules.
 
 For `--daily`, the report should end with **우선 검토 후보 3개**. These are not automatic fixes. They are the three most useful items for a human or later `/naite care --daily` review.
@@ -433,6 +434,27 @@ This check has no auto-action; it exists to make the link graph's emergent struc
 → surface as **"orphan spawn"** 후보. 입자도 미스 또는 너무 좁은 추출 신호. 사용자 결정: 페이지 삭제, 본문 흡수해서 다른 페이지로 merge, 또는 다른 페이지에서 명시적 cross-link 추가.
 
 **철학**: autonomy A/B 의 *option value* (빠른 schema 진화) 를 보존하면서 누적 카오스를 방지. 자율 추가가 잘못되어도 care --check 가 30 일 후 잡고 사용자가 정리. grow 시점에 "확실하지 않으면 추가하지 마" 보다 "추가하고 care --check 가 청소" 가 노드 연결을 치밀하게 유지하는 데 유리하다 — `docs/ARCHITECTURE.md § 2.3` 의 folksonomy 철학과 일치.
+
+### 15. Forest health (optional, report-only)
+
+vault 가 숲으로 분화 중이거나 분화 압력을 점검할 때 실행한다. **report-only** — 자동 분할·병합·재배정은 없다 (C급, 사용자 결정). 근거: `docs/CONVENTIONS.md § Forest layer`, `docs/ARCHITECTURE.md § 9`.
+
+실행 도구 (모두 `tree/` 에 read-only):
+
+- `python .naite/scripts/forest-communities.py` — S1 구조 신호. 군집별 conductance·지배 도메인·hub. 새 저-conductance 군집은 분화 후보, 높은 conductance 줄기는 아직 미성숙.
+- `python .naite/scripts/forest-assign.py --write` — 개념 계보 배정 (`forest-config.json` seed + label propagation). `forest-manifest.json` 갱신.
+- `python .naite/scripts/forest-dashboard.py` — 나이테 대시보드 (`.naite/forest/dashboard.md`) 갱신.
+
+의존성: `.naite/scripts/requirements.txt` (`networkx>=3.0`, `numpy`, `scikit-learn`).
+
+surface 할 압력:
+
+- **분화 압력**: 한 나무 안에 size ≥ floor 이면서 conductance ≤ 임계인 군집이 새로 자랐는가.
+- **병합 압력**: 두 나무가 두꺼운 `inter_tree_edges` 로 붙었는가.
+- **재배정 압력**: flip 페이지 — 과목 라벨과 링크 계보가 어긋난 페이지 (걸침 개념 메커니즘의 flip 부류).
+- `forest-config.json` 이 없으면 도메인=나무 identity 로 동작하며 첫 grouping 후보만 제안한다.
+
+판단 기준은 수치가 아니라 작업 맥락 효용이다. modularity·conductance 는 증거이고, 분화·병합·재배정 cut 은 사용자가 정한다. 빈/작은 vault (Phase 1) 에서는 도구가 분화 후보를 거의/전혀 잡지 않는 것이 정상이다.
 
 ## Report format
 

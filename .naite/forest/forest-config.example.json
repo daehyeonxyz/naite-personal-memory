@@ -1,0 +1,18 @@
+{
+  "_README": "Optional, vault-specific. Copy this file to forest-config.json (same directory) and edit. Without a forest-config.json, the forest tools fall back to domain=tree identity: each top-level subject domain becomes its own tree. See docs/CONVENTIONS.md § Forest layer.",
+  "_schema": {
+    "domain_to_tree": "map of subject top-level domain -> tree name. Domains not listed fall back to identity (the domain becomes its own tree).",
+    "tree_descriptions": "map of tree name -> one-line description, shown in the forest dashboard.",
+    "neutral_domains": "list of domains seeded with NO tree, so link-neighbor label propagation decides their tree. Use for source labels that span lineages."
+  },
+  "domain_to_tree": {
+    "ml": "ai",
+    "neural-network": "ai",
+    "statistics": "statistics"
+  },
+  "tree_descriptions": {
+    "ai": "LLMs, agents, neural networks.",
+    "statistics": "Probability and statistics."
+  },
+  "neutral_domains": []
+}
