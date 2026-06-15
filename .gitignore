@@ -86,4 +86,7 @@ tmp/
 .naite/forest/dashboard.md
 .naite/ontology/forest-manifest.json
 
+# Pre-commit guard's local-only personal denylist (never committed).
+.naite/hooks/denylist.local
+
 .gstack/

@@ -1,0 +1,83 @@
+#!/bin/sh
+# naite-personal-memory — pre-commit guard.
+#
+# Purpose: keep this PUBLIC starter free of personal information and of personal
+# vault content. It blocks a commit when the staged change looks like:
+#   1. personal vault content (a tree/ page or roots/ source file — the starter
+#      ships only the empty placeholders),
+#   2. a secret (API key / token / private key),
+#   3. a generated/per-vault file that should stay gitignored,
+#   4. any string listed in the local-only denylist (.naite/hooks/denylist.local).
+#
+# Activate (per clone, one time):   git config core.hooksPath .naite/hooks
+# Intentional override (rare):       git commit --no-verify
+#
+# This script is generic and tracked. Your personal strings (email, name, etc.)
+# live only in .naite/hooks/denylist.local, which is gitignored and never committed.
+
+ROOT=$(git rev-parse --show-toplevel)
+fail=0
+err() { printf '  - %s\n' "$1" >&2; fail=1; }
+
+OLDIFS=$IFS
+IFS='
+'
+
+# 1) Personal vault content must not enter the public starter.
+#    Allowed baseline: tree/{trunk,rings,seeds}.md and roots/**/.gitkeep placeholders.
+for f in $(git diff --cached --name-only --diff-filter=AM); do
+  case "$f" in
+    tree/trunk.md|tree/seeds.md|tree/rings.md) ;;
+    tree/*.md)
+      err "tree page '$f' looks like personal vault content (this starter ships an empty tree)" ;;
+    roots/.gitkeep|roots/*/.gitkeep|roots/*/*/.gitkeep|roots/*/*/*/.gitkeep) ;;
+    roots/*)
+      err "roots file '$f' looks like personal source material (this starter ships no roots content)" ;;
+    .naite/forest/forest-config.json|.naite/ontology/forest-manifest.json|.naite/forest/dashboard.md)
+      err "'$f' is a per-vault or generated file and should stay gitignored" ;;
+  esac
+done
+IFS=$OLDIFS
+
+diff=$(git diff --cached -U0)
+
+# 2) Secret-like patterns in the staged content.
+if printf '%s' "$diff" | grep -Eq 'sk-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{36,}|xox[baprs]-[A-Za-z0-9-]{10,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----'; then
+  err "staged content contains a secret-like pattern (API key / token / private key)"
+fi
+
+# 3) Local-only personal denylist (gitignored; one string per line, '#' comments allowed).
+DENY="$ROOT/.naite/hooks/denylist.local"
+if [ -f "$DENY" ]; then
+  IFS='
+'
+  for pat in $(grep -v '^[[:space:]]*#' "$DENY" 2>/dev/null | grep -v '^[[:space:]]*$'); do
+    if printf '%s' "$diff" | grep -qiF -- "$pat"; then
+      err "staged content contains a denylisted personal string: '$pat'"
+    fi
+  done
+  IFS=$OLDIFS
+fi
+
+# 4) The commit identity must not use a denylisted personal email (e.g. a real
+#    address instead of a GitHub noreply). Author email is metadata, not content,
+#    so the content scans above cannot catch it.
+email=$(git config user.email 2>/dev/null || true)
+if [ -f "$DENY" ] && [ -n "$email" ]; then
+  IFS='
+'
+  for pat in $(grep -v '^[[:space:]]*#' "$DENY" 2>/dev/null | grep -v '^[[:space:]]*$'); do
+    case "$email" in
+      *"$pat"*) err "commit email '$email' matches denylisted '$pat' — set a noreply email: git config user.email <id>+<user>@users.noreply.github.com" ;;
+    esac
+  done
+  IFS=$OLDIFS
+fi
+
+if [ "$fail" -eq 0 ]; then
+  exit 0
+fi
+
+printf '\nnaite guard: commit blocked. This public starter must stay free of personal info and personal vault content.\n' >&2
+printf 'If this is genuinely generic starter content, re-run with:  git commit --no-verify\n' >&2
+exit 1
