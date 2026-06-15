@@ -79,4 +79,11 @@ tmp/
 
 # Generated manifests are large daily files (~1MB+) — avoid commit churn
 .naite/reports/*-care/manifest.jsonl
+
+# Forest layer — generated/personal products (regenerated per vault; not committed).
+# forest-config.example.json IS tracked; the real config and generated outputs are not.
+.naite/forest/forest-config.json
+.naite/forest/dashboard.md
+.naite/ontology/forest-manifest.json
+
 .gstack/

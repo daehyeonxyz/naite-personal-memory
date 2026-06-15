@@ -166,6 +166,8 @@ updated: YYYY-MM-DD
 
 - `.naite/scripts/lint-ontology.py` — § 3 deterministic sub-check (3a-3h) + § 7 non-tree dirt detection. 매 care --check run 호출.
 - `.naite/scripts/sync-agents.ps1` — `.claude/skills/naite/*` → `.agents/skills/naite/*` 자동 mirror (`Claude Code` → `Codex` 텍스트 치환). CLAUDE.md → AGENTS.md 동시 처리.
+- `.naite/scripts/sync-agents.py` — sync-agents.ps1 의 cross-platform 포팅 (PowerShell 없는 환경용). 동일 치환 규칙·CRLF 출력.
+- `.naite/scripts/forest-*.py` — forest layer 진단 도구 (§ 9, report/manifest 생성만, tree content 미수정): `forest-communities.py` (분화 신호), `forest-assign.py` (개념 계보 배정), `forest-dashboard.py` (나이테 대시보드), `forest-retrieval-experiment.py` (숲 vs vault 효용 측정). 의존성: `.naite/scripts/requirements.txt` (`networkx>=3.0`, `numpy`, `scikit-learn`).
 
 ### 5.2 care --check capability
 
@@ -296,7 +298,7 @@ updated: 2026-05-03
 - **`.naite/ontology/` split** — 현재 `topics.md`, `subject-tree.md`. 누적 시 `kinds.md`, `source-types.md` 분리 검토.
 - **insight/project file naming date prefix** — decision 에 date prefix 를 도입했지만 insight/project 는 미적용. 누적 시 별도 결정.
 - **Pure computed domain** (frontmatter cache 제거) — Obsidian graph view 의존 없어지거나 별도 cache 메커니즘 도입 시.
-- **forest** — vault 의 집합을 한눈에 보는 상위 기능 (1 vault = 1 tree). 예약어만 확보. 다중 vault 수요가 실재할 때 설계.
+- **forest 물리 마이그레이션** — forest 는 평평한 `tree/` 위 manifest 투영으로 운영하는 그림자 단계다 (§ 9). 파일을 실제 나무 디렉터리로 가르는 물리 분할은 다중 나무 수요가 실재할 때.
 
 각 항목은 care --check 또는 care 가 *surface* 한 후 사용자 결정. 지금 도입은 premature.
 
@@ -309,6 +311,21 @@ updated: 2026-05-03
 - **Blondel, V.D., et al.** (2008). *Fast unfolding of communities in large networks.* J. Stat. Mech. — Louvain modularity. → `louvain-modularity`.
 - **Andy Matuschak.** *Evergreen notes.* https://notes.andymatuschak.org/ — Atomic, concept-oriented, densely-linked notes 의 modern PKM 정의.
 - **Maggie Appleton.** *A Brief History & Ethos of the Digital Garden.* https://maggieappleton.com/garden-history — Folksonomy + emergent structure.
+
+---
+
+## 9. Forest layer — 왜 vault 에서 숲으로
+
+단일 vault 는 규모가 커지면 서로 무관한 사상 공간을 한 그래프에 묶어 강제 링크를 누적한다. 이를 스키마 범주 하나로 푸는 대신, 독립된 나무들의 숲으로 분화하고 나무 사이를 느슨하게 결합하는 것이 본 layer 의 방향이다. operational rules 는 `docs/CONVENTIONS.md § Forest layer`.
+
+이 방향은 직관에서 출발했지만, naite 를 개발하며 운영한 dogfood vault 의 관찰로 다듬어졌다. 네 가지 관찰이 근거다 (모두 그 dogfood vault 의 경향이며, 새 vault 가 그대로 재현할 값은 아니다).
+
+1. **잠재 구조는 이미 강하다.** 충분히 자란 vault 의 링크 그래프에 Louvain 을 돌리면 modularity 가 높게 나오고, 상향식 군집이 손으로 만든 `subject` 도메인을 거의 복원한다. 분화는 직관이 아니라 측정으로 뒷받침되며, 본질이 데이터에서 떠오른다는 상향식 온톨로지 주장을 지지한다.
+2. **숲의 효용은 retrieval 정밀도가 아니다.** 콘텐츠 유사도 retrieval 은 이미 도메인 내부로 self-filter 되어, 단일 vault 도 거짓 연관을 많이 만들지 않는다. 따라서 숲의 가치는 검색 정밀도가 아니라 **에이전트 맥락 범위 한정**과 나무별 독립 거버넌스다. 이 교정 때문에 cut 기준을 수치가 아니라 작업 맥락 효용으로 둔다.
+3. **소속은 과목이 아니라 개념 계보다.** 과목 라벨로 묶으면, 한 과목 안에 통계 계보와 ML 계보가 섞여 있을 때 잘못 묶는다. 링크 이웃 기반 label propagation 이 페이지를 실제 계보 나무로 보낸다.
+4. **시냅스는 inter-tree 접착제가 아니다.** decided-over/trade-off 같은 시냅스 idiom 은 대부분 나무 내부에 머문다 (가설 반증). 그래서 inter-tree 연결은 명시적 routing 표면으로 관리하고, 무거운 그래프 스키마를 숲 층위에 다시 올리지 않는다.
+
+분화·병합·재배정은 C급 (vault 구조) 이라 `/naite care --check § Forest health` 가 압력만 surface 하고 사용자가 결정한다. 빈/작은 vault (Phase 1) 에서는 이 layer 가 잠들어 있다.
 
 ---
 
