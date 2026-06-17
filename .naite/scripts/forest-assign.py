@@ -65,6 +65,7 @@ def main() -> None:
     config = load_config()
     config_domain_to_tree = config.get("domain_to_tree", {})
     tree_desc = config.get("tree_descriptions", {})
+    tree_labels = config.get("tree_labels", {})  # tree -> 사람용 표시 이름 (naite-app 이 manifest.label 로 읽는다)
     # --neutral 가 주어지면 그것을 쓰고, 아니면 config 의 neutral_domains.
     if args.neutral:
         neutral_domains = {d.strip() for d in args.neutral.split(",") if d.strip()}
@@ -224,7 +225,7 @@ def main() -> None:
             internal = intra.get(t, 0)
             external = sum(c for pair, c in inter.items() if t in pair)
             total = internal + external
-            forest_trees.append({
+            entry = {
                 "tree": t,
                 "description": tree_desc.get(t, ""),
                 "page_count": len(members),
@@ -232,7 +233,11 @@ def main() -> None:
                 "internal_edges": internal,
                 "external_edges": external,
                 "by_kind": dict(Counter(kind_of[s] for s in members)),
-            })
+            }
+            # 사람용 표시 이름(약어 확장 등)은 vault 가 정한다 — 앱은 하드코딩하지 않는다.
+            if tree_labels.get(t):
+                entry["label"] = tree_labels[t]
+            forest_trees.append(entry)
         out = {
             "schema_version": 2,
             "generated_at": datetime.now(timezone.utc).isoformat(),

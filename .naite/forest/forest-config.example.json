@@ -3,6 +3,7 @@
   "_schema": {
     "domain_to_tree": "map of subject top-level domain -> tree name. Domains not listed fall back to identity (the domain becomes its own tree).",
     "tree_descriptions": "map of tree name -> one-line description, shown in the forest dashboard.",
+    "tree_labels": "map of tree name -> human display name (e.g. 'ai' -> 'Artificial Intelligence'). naite-app shows this instead of the prettified id; omit a tree to fall back to its prettified id. Abbreviation expansion lives here, never hardcoded in the app.",
     "neutral_domains": "list of domains seeded with NO tree, so link-neighbor label propagation decides their tree. Use for source labels that span lineages."
   },
   "domain_to_tree": {
@@ -13,6 +14,10 @@
   "tree_descriptions": {
     "ai": "LLMs, agents, neural networks.",
     "statistics": "Probability and statistics."
+  },
+  "tree_labels": {
+    "ai": "Artificial Intelligence",
+    "statistics": "Statistics"
   },
   "neutral_domains": []
 }
