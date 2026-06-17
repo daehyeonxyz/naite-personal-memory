@@ -11,5 +11,12 @@
     "llm-wiki",
     "personal-memory"
   ],
-  "skills": ["./.claude/skills/"]
+  "skills": ["./.claude/skills/"],
+  "mcpServers": {
+    "naite": {
+      "command": "npx",
+      "args": ["-y", "naite-mcp"],
+      "env": { "NAITE_ROOT": "${CLAUDE_PROJECT_DIR}" }
+    }
+  }
 }
