@@ -1,7 +1,11 @@
 # 내 에이전트에 나무 붙이기 (MCP)
 
-naite 나무는 [`naite-mcp`](https://www.npmjs.com/package/naite-mcp) 커넥터를 통해 **각자 자신의
-Claude Code / Claude Desktop / Codex** 에서 읽고 이어붙일 수 있다. 도구는 둘이다.
+naite 나무는 `naite-mcp`([소스](https://github.com/daehyeonxyz/naite-app/tree/main/mcp)) 커넥터를
+통해 **각자 자신의 Claude Code / Claude Desktop / Codex** 에서 읽고 이어붙일 수 있다. 도구는 둘이다.
+
+> **상태:** `naite-mcp` 는 아직 npm 에 발행 전이다. 따라서 아래 `npx -y naite-mcp` 경로는 발행 후에
+> 동작한다. 발행 전에는 로컬 빌드 경로(`node /절대/경로/naite-app/mcp/dist/index.js`, `npm run build` 선행)로
+> `command`/`args` 를 대신 가리키면 된다.
 
 - **`naite_ask`** (읽기): 나무가 아는 것에서 검색·페이지·이웃을 가져온다.
 - **`naite_capture`** (쓰기): 대화에서 건진 주장을 `roots/conversations/` 에 스테이징한다. 잎으로의
