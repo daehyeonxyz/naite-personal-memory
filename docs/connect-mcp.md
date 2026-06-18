@@ -1,11 +1,7 @@
 # 내 에이전트에 나무 붙이기 (MCP)
 
-naite 나무는 `naite-mcp`([소스](https://github.com/daehyeonxyz/naite-app/tree/main/mcp)) 커넥터를
-통해 **각자 자신의 Claude Code / Claude Desktop / Codex** 에서 읽고 이어붙일 수 있다. 도구는 둘이다.
-
-> **상태:** `naite-mcp` 는 아직 npm 에 발행 전이다. 따라서 아래 `npx -y naite-mcp` 경로는 발행 후에
-> 동작한다. 발행 전에는 로컬 빌드 경로(`node /절대/경로/naite-app/mcp/dist/index.js`, `npm run build` 선행)로
-> `command`/`args` 를 대신 가리키면 된다.
+naite 나무는 [`naite-mcp`](https://www.npmjs.com/package/naite-mcp) 커넥터를 통해 **각자 자신의
+Claude Code / Claude Desktop / Codex** 에서 읽고 이어붙일 수 있다. 도구는 둘이다.
 
 - **`naite_ask`** (읽기): 나무가 아는 것에서 검색·페이지·이웃을 가져온다.
 - **`naite_capture`** (쓰기): 대화에서 건진 주장을 `roots/conversations/` 에 스테이징한다. 잎으로의
@@ -64,6 +60,5 @@ env = { NAITE_ROOT = "C:/Users/<you>/projects/your-vault" }
 
 ---
 
-`naite-mcp` 는 npm 공개 패키지다(`npx -y naite-mcp`). 아직 발행 전이라면 메인테이너가 발행한 뒤
-위 명령이 동작한다. 발행 전에는 로컬 빌드 경로(`node /path/to/naite-app/mcp/dist/index.js`)로 대신
-가리킬 수 있다.
+`naite-mcp` 는 npm 공개 패키지다 (`npx -y naite-mcp`). vault 가 비어 있으면 읽을 게 없으니, `/naite`
+스킬로 먼저 키운 다음 붙인다.
