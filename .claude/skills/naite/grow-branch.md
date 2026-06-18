@@ -64,7 +64,7 @@ If separate agents are not available, run the same three phases sequentially in 
   - 새 subject narrower — `.naite/ontology/subject-tree.md § narrower:` 에 candidate append.
   - Subject rename / move (reparent) — altLabel 함께 제안.
 - **Autonomy C (사용자 결정)** — LLM 절대 추가 금지:
-  - 새 top-level domain, 새 enum 값 (`type` / `role` / `source-type`), 새 facet field, subject deprecation.
+  - 새 top-level domain, 새 enum 값 (`kind` / `form` / `source-types`), 새 facet field, subject deprecation.
 
 `subchapter-note` 와 `backfill` 양 모드 동일 적용. 차이는 표면화 방식 — active 는 takeaways 단계에서 surface, backfill 은 chapter-finish log 에서 surface. 입자도 검사 실패한 후보는 어떤 모드에서도 자율 추가 금지 — log 의 surface 항목으로만 남긴다.
 

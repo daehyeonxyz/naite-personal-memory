@@ -130,7 +130,7 @@ updated: YYYY-MM-DD
 
 ### 4.2 care 의 두 모드 — 분리된 책임
 
-- **`care --check`** (`.naite/scripts/lint-ontology.py` deterministic + `.claude/skills/naite/care-check.md` LLM-driven) — schema/정책 compliance. report-only. 3a frontmatter completeness, 3b subject tree, 3c topic canonical, 3d domain cache, 3e role/source-type distribution, 3f BOM, 3g legacy drift, 3h language-shape. § 14 autonomy garbage collector (LLM-driven, 30 일 윈도우).
+- **`care --check`** (`.naite/scripts/lint-ontology.py` deterministic + `.claude/skills/naite/care-check.md` LLM-driven) — schema/정책 compliance. report-only. 3a frontmatter completeness, 3b subject tree, 3c topic canonical, 3d domain cache, 3e kind/form/source-types distribution, 3f BOM, 3g legacy drift, 3h language-shape. § 14 autonomy garbage collector (LLM-driven, 30 일 윈도우).
 - **`care`** (돌봄 모드) — qualitative review/repair. narrative prose verdict 도 이 모드로 흡수: 점수 없음, threshold 없음. page/branch review, 직접 content 수선, 대규모 sweep, recurring-rule 학습. 사용자 수동 호출.
 
 분리 이유: `care --check` 의 mechanical 검사와 `care` 의 *맥락 판단* 이 다른 영역. 자세히: `.claude/skills/naite/{care-check,care}.md`.

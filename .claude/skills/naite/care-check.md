@@ -186,7 +186,7 @@ python .naite/scripts/lint-ontology.py --refresh-domains   # domains cache 갱�
 
 매 care-check 가 enum 별 count 표 surface — 새 enum 도입 압력 감지:
 
-- `kind` distribution: `concept` / `entity` / `source-record` / `project` / `decision` / `insight` / `comparison` 별 count.
+- `kind` distribution: `concept` / `entity` / `source-record` / `project` / `decision` / `insight` / `comparison` / `essay` / `personal` 별 count.
 - `form` distribution: `prose` / `index` 별 count.
 - `source-types` distribution: `course` / `conversation` / `paper` / `article` / `docs` / `book` / `essay` / `external` 별 count (한 페이지가 multi-value 가질 수 있어 합계 ≠ 페이지 수).
 

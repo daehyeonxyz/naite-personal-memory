@@ -12,7 +12,9 @@ Implements the deterministic checks of `.claude/skills/naite/care-check.md § 3 
   3f BOM detection
   3g Legacy collection drift   — pre-migration tags surfaced
   3h Language-shape review candidates
+  3i Schema integrity (drift detector)
   3j Output quality contract guard
+  3k Leaf-depth guard
   7  Non-tree scratch dirt
 
 Cluster detection (Louvain) and topic alias clustering are LLM-driven —

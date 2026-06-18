@@ -51,7 +51,7 @@ For one-page repair, inspect inbound entries for the touched slug before editing
 
 ## Modes
 
-`care` is one skill with four internal modes. Pick the mode from user intent; do not ask unless intent is genuinely ambiguous.
+`care` is one skill with five internal modes. Pick the mode from user intent; do not ask unless intent is genuinely ambiguous.
 
 ### Review
 
