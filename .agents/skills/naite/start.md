@@ -1,8 +1,8 @@
 # /naite start
 
-naite 를 처음 켠 사용자의 **첫 세션을 안내한다**. 빈 나무에는 보여줄 게 없으므로, 사용자가 이미 다른 AI(ChatGPT, Gemini, claude.ai) 에 쌓아둔 기록을 가져와(import) 첫 나무를 짓고, 그 나무를 그래프로 보며 모델을 납득하게 한다.
+naite 를 처음 켠 사용자의 **첫 세션을 안내한다**. 빈 나무에는 보여줄 게 없으므로, 사용자가 이미 다른 AI(ChatGPT, Gemini, claude.ai) 에 쌓아둔 기록과(또는) 가지고 있는 원본 자료로 첫 나무를 짓고, 그 나무를 그래프로 보며 모델을 납득하게 한다.
 
-모든 데이터 경로는 NAITE_ROOT 기준으로, 하위 스킬 참조는 SKILL_DIR (`<NAITE_ROOT>/.agents/skills/naite`) 기준으로 푼다. 맥락은 SKILL.md 를 본다.
+모든 데이터 경로는 NAITE_ROOT 기준으로, 하위 스킬 참조는 SKILL_DIR (`<NAITE_ROOT>/.agents/skills/naite`) 기준으로 푼다. 맥락은 SKILL.md 를 본다. 사용자 대면 카피와 export 품질 기준은 `docs/QUALITY.md` 가 단일 진실원이다.
 
 ## When to use
 
@@ -14,46 +14,97 @@ naite 를 처음 켠 사용자의 **첫 세션을 안내한다**. 빈 나무에�
 
 - `roots/` 는 source of truth. import 한 export 는 `roots/conversations/` 에만 쓴다. `tree/` 를 직접 편집하지 않는다.
 - `roots/conversations/` 에 쓰기 전 `capture.md § 4` secrets pre-check 를 돌린다. 적중 시 쓰지 않고 사용자에게 알리고 redact 를 제안한다. 우회하지 않는다.
-- 새 rings op 를 만들지 않는다. rings 기록은 위임된 `ingest` 가 한다.
+- **export 가 `docs/QUALITY.md § Import 검수 게이트` 를 통과하지 못하면 ingest 로 넘기지 않는다.** 얕은 입력을 그대로 빈약한 나무로 만들지 않는다.
+- 새 rings op 를 만들지 않는다. rings 기록은 위임된 `ingest`/`grow` 가 한다.
 - git commit 하지 않는다.
 
 ## Workflow
 
 ### 1. 모델 설명
 
-나무 모델을 30초로 설명한다: `roots`(자료가 들어옴) → 잎·맥(이해가 링크됨) → 열매(결정) → 나이테(성장 기록). "저장 ≠ 축적" 을 한 줄로 짚는다.
+아래 고정 문구를 **그대로** 보여준다. 매번 새로 쓰지 않는다. 기준은 `docs/QUALITY.md § Onboarding copy rubric` 이다.
 
-### 2. 이전 프롬프트 전달
+````text
+naite 는 한 사람의 모든 지식과 경험을 모아두는 저장소이자, 그 사람의 에이전트들이 함께 읽는 공통 맥락입니다.
 
-사용자가 ChatGPT / Gemini / claude.ai 중 어디서 기록을 가져올지 묻는다. `docs/migrate-prompt.md` 의 프롬프트를 해당 서비스 팁과 함께 제시한다.
+데이터는 두 층입니다.
+- roots: 원본 자료가 그대로 들어가는 곳입니다 (대화 export, 강의 노트, 논문, 아티클). 손대지 않은 출처입니다.
+- tree: roots 를 소화해 만든 위키 형식의 페이지 공간입니다. 페이지끼리 wikilink 로 연결됩니다. 기록하는 내용의 종류에 따라 나무를 여러 개 만들 수 있습니다 (예: ai 나무, 통계 나무).
+
+한 나무의 페이지 종류입니다.
+- 줄기(trunk): 그 나무의 목차이자 뼈대가 되는 페이지입니다. 여기서 가지가 뻗어 나갑니다.
+- 잎(leaf): 사용자 본인의 지식과 경험을 적은 페이지입니다. 위키백과처럼 잎끼리 서로 link 로 이어집니다.
+- 열매(fruit): 사용자가 내린 결정과 그때 얻은 통찰을 적은 페이지입니다.
+- 나이테(rings): 이 저장소가 시간에 따라 쌓이고 자라온 기록입니다.
+
+파일을 모아두는 것과, 서로 링크되어 다시 꺼내 쓸 수 있게 되는 것은 다릅니다. naite 는 자료를 쌓아두는 폴더가 아니라, 나중에 사용자와 에이전트가 함께 읽고 연결을 따라갈 수 있는 살아 있는 위키입니다.
+````
+
+### 2. 깊이 경로 선택 + 이전 프롬프트 전달
+
+먼저 한 줄로 묻는다: "원본 자료(강의 노트, 논문, 문서, 전체 대화 export)를 가지고 계신가요?"
+
+- **A. 메모리로 골격 먼저:** 원본이 마땅치 않으면, 다른 AI 의 기억에서 골격을 먼저 깐다. 사용자가 ChatGPT / Gemini / claude.ai 중 어디서 가져올지 묻고, `docs/migrate-prompt.md` 의 프롬프트를 해당 서비스 팁과 함께 제시한다.
+- **B. 원본 자료로 깊이 (권장):** 원본이 있으면, 메모리 골격과 함께 그 자료로 깊이를 채운다. 메모리 프롬프트로 골격을 깔되, 깊은 주제는 6~7단계에서 원본 파일을 직접 ingest 한다.
+
+회상은 골격과 색인에 좋고, 위키 깊이는 원본 자료에서 나온다. 두 경로는 배타적이지 않다.
 
 ### 3. import 받기
 
 사용자가 자기 AI 에 붙여넣고 받은 export(Markdown 한 덩어리) 를 가져온다.
 
-### 4. roots 에 안전하게 기록
+### 4. import 검수 게이트
 
-1. export 내용에 `capture.md § 4` secrets pre-check 를 먼저 돌린다. 적중하면 멈추고 사용자에게 알린 뒤 redact 를 제안한다.
-2. 통과하면 두 곳에 쓴다 (서비스 식별자 `<service>` 는 `chatgpt` / `gemini` / `claude` 중 하나):
-   - 임시 claim summary: `roots/conversations/YYYY-MM-DD-memory-migration-<service>.md` — grow 후 `ingest` 가 삭제하는 ephemeral 스테이징.
-   - 영구 보존본: `roots/conversations/_transcripts/migration-<service>.md` — **서비스별 stable 이름** (날짜 prefix 없음). import 를 다시 하면 이 파일을 갱신(덮어쓰기)하고, 새 날짜의 claim summary 를 만든다. 이 stable 이름은 "재import 시 갱신" 을 위한 의도된 컨벤션 (CONVENTIONS.md § Naming 참조).
+`docs/QUALITY.md § Import 검수 게이트` 의 기준으로 export 를 pass/fail 판정한다. 다음 중 하나라도 해당하면 **ingest 로 넘기지 않고** 사용자에게 보완을 요청한다.
+
+- (a) 자기소개(섹션 0) 가 비어 있다.
+- (b) "배운 것" 이 전체의 절반 미만이거나, 항목당 한 문장뿐이다.
+- (c) 주제에 하위 개념·관계가 없어 위키 페이지로 펼칠 깊이가 안 된다.
+- (d) secrets/PII 가 섞여 있다 (`capture.md § 4` 검사와 별개로 게이트에서도 본다).
+- (e) "trade-off" / "미해결 질문" 같은 옛 프롬프트 잔재가 섞여 있다.
+
+되돌릴 때의 한 줄 예: "섹션 0 을 채우고, 배운 것의 항목 몇 개를 문단으로 전개해 다시 생성하거나, 원본 자료를 첨부해 주세요." 통과할 때까지 다음 단계로 가지 않는다.
+
+### 5. roots 에 안전하게 기록
+
+1. export 내용에 `capture.md § 4` secrets pre-check 를 돌린다. 적중하면 멈추고 사용자에게 알린 뒤 redact 를 제안한다.
+2. 통과하면 두 곳에 쓴다 (서비스 식별자 `<service>` 는 `chatgpt` / `gemini` / `claude` 중 하나).
+   - 임시 claim summary: `roots/conversations/YYYY-MM-DD-memory-migration-<service>.md` (grow 후 `ingest` 가 삭제하는 ephemeral 스테이징).
+   - 영구 보존본: `roots/conversations/_transcripts/migration-<service>.md` (**서비스별 stable 이름**, 날짜 prefix 없음). import 를 다시 하면 이 파일을 갱신하고 새 날짜의 claim summary 를 만든다. 이 stable 이름은 "재import 시 갱신" 을 위한 의도된 컨벤션이다 (`CONVENTIONS.md § Naming` 참조).
 3. `_transcripts/` 보존본은 사용자의 distilled 메모리 원본이자 재-grow 보험이다. 절대 삭제하지 않는다.
 
-### 5. ingest 로 위임 (스키마는 여기서 적용)
+### 6. 골격 세우기 (skeleton pass)
 
 `SKILL_DIR/ingest.md` 를 읽고 그 전체 워크플로를 `<path> = <NAITE_ROOT>/roots/conversations/YYYY-MM-DD-memory-migration-<service>.md` 로 실행한다. 이것은 grow 의 conversation 모드가 capture 직후 쓰는 것과 **같은 ingest 프리미티브**다. file 모드(article 이동 로직) 와 Branch pre-check 를 거치지 않으므로, 여러 주제가 섞인 export 가 branch 모드로 오탐될 일이 없다.
 
+이 패스의 결과물은 **골격**이다. 자기소개 페이지, subject 경로, 그리고 각 주제의 잎이다. 원본 자료가 없어 `[없음]` 이거나 "(원본 자료 필요)" 로 표시된 주제는 얕은 stub 으로 정직하게 남기고, `seeds.md` 에 깊이 보강 후보로 적는다.
+
 잎·맥(wikilink)·열매(`kind=decision`)·`subject`/facet 변환과 rings 기록은 전부 `ingest` 가 한다. start 는 스키마를 직접 손대지 않는다.
 
-`ingest` 의 사후 삭제(§ 8)는 넘긴 경로, 즉 날짜가 붙은 claim summary(`YYYY-MM-DD-memory-migration-<service>.md`)만 지웁니다. 영구 보존본은 이름이 다른 stable 파일(`roots/conversations/_transcripts/migration-<service>.md`)이라 삭제 대상에 해당하지 않습니다.
+`ingest` 의 사후 삭제(§ 8)는 넘긴 경로, 즉 날짜가 붙은 claim summary(`YYYY-MM-DD-memory-migration-<service>.md`)만 지운다. 영구 보존본은 이름이 다른 stable 파일(`roots/conversations/_transcripts/migration-<service>.md`)이라 삭제 대상에 해당하지 않는다.
 
-### 6. reflect / 그래프 보기
+### 7. 깊이 채우기 (depth pass)
 
-`ingest` 가 만든 페이지 요약(생성·갱신된 페이지, 다음 단계) 을 받은 뒤, 사용자에게 그래프 뷰를 열어보라고 안내한다: Obsidian 으로 vault 를 열거나 naite-app 의 Forest 뷰를 연다. 막 생긴 자기 나무가 링크된 네트워크로 보이는 것이 납득의 순간이다. 다음 한두 수를 제안한다 (관심 주제로 `/naite ask`, 새 자료로 `/naite grow`).
+export 에서 `[있음]` 으로 표시된 주제는, 그 원본 자료로 골격 잎을 진짜 위키 페이지로 채운다. 사용자에게 해당 파일(강의 노트, 논문 PDF, 전체 대화 export 등)을 받아, `SKILL_DIR/grow.md` 의 **file 모드**로 ingest 한다. 한 과목·책·시리즈처럼 긴 호흡이면 grow 의 **branch 모드**가 적절하다 (이 경우 Branch pre-check 가 제대로 작동해야 하므로, 골격 패스와 달리 grow 를 정상 경로로 탄다).
+
+원본 자료가 없는 주제는 stub 으로 둔다. 나중에 자료가 생기면 `/naite grow` 로 보강한다. 깊이는 원본에서 나온다는 점을 사용자에게 한 줄로 알린다. depth pass 로 넣는 원본 자료는 §4 게이트가 아니라 grow 자신의 `capture.md § 4` secrets pre-check 를 거친다. grow 가 그 검사를 전담한다.
+
+### 8. reflect / 그래프 보기
+
+`ingest`/`grow` 가 만든 페이지 요약(생성·갱신된 페이지, 다음 단계) 을 받은 뒤, 사용자에게 그래프 뷰를 열어보라고 안내한다: Obsidian 으로 vault 를 열거나 naite-app 의 Forest 뷰를 연다. 막 생긴 자기 나무가 링크된 네트워크로 보이는 것이 납득의 순간이다.
+
+마지막으로 고정 문구로 닫는다 (그대로 보여준다).
+
+````text
+방금 본 이 그래프는 전부 당신이 직접 쌓은 것입니다. 이제 이 나무는 당신의 다른 AI 에이전트가 당신을 이해하는 공유 맥락이 됩니다. 새 작업을 시작할 때 /naite ask 로 "내가 X 에 대해 이미 아는 것" 을 먼저 꺼내 쓰세요.
+````
+
+이어서 다음 한두 수를 제안한다 (관심 주제로 `/naite ask`, 새 자료로 `/naite grow`).
 
 ## What this command never does
 
-- `roots/` 의 import 기록 외에는 직접 쓰지 않는다 (`tree/` 변환은 `ingest` 위임).
+- `roots/` 의 import 기록 외에는 직접 쓰지 않는다 (`tree/` 변환은 `ingest`/`grow` 위임).
 - secrets pre-check 를 건너뛰지 않는다.
+- 게이트를 통과하지 못한 얕은 export 를 ingest 하지 않는다.
 - 새 rings op 를 만들지 않는다.
 - Never commits to git.

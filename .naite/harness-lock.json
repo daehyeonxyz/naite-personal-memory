@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "version": "0.2.0",
-  "generated_at": "2026-06-18T05:58:34.995769+00:00",
+  "generated_at": "2026-06-18T12:45:20.207710+00:00",
   "files": {
     ".agents/skills/naite/SKILL.md": "sha256:90d86b306ac038cdff0d8212477f2e4a628456856f73be8028f0275f0c619f45",
     ".agents/skills/naite/ask.md": "sha256:23bc362076cdced8ee517f837b6f8b0e8c17138dee8fdd3ded4b7ff01f891855",
@@ -13,7 +13,7 @@
     ".agents/skills/naite/grow-branch.md": "sha256:e87fb4503f7e850a821d099b75cf3f790aa29e93bced52ff1b808ef80d9f61d5",
     ".agents/skills/naite/grow.md": "sha256:10b5548cdc5dced1c017541735f7e552a5be3ce4f300f51c916ccdb0d67986e6",
     ".agents/skills/naite/ingest.md": "sha256:73b890c7aa39b633aedfd6f0755218459bcb75d70aa5702beb5a32e56c3bbdcb",
-    ".agents/skills/naite/start.md": "sha256:e1b776de1a6b89a9cc777e6bc8afe288b31c6f2856b6bdf370c44e70f86004f5",
+    ".agents/skills/naite/start.md": "sha256:eb1787941ee98c6f19fc4122709cbaed2ee0e3f5f925eeb32364e605327f1928",
     ".agents/skills/naite/upgrade.md": "sha256:3189f352addd6939e839e83899c33c7b351df6fcaf3ed4171a84735848644608",
     ".claude-plugin/marketplace.json": "sha256:ed03ef62d26c84c01df68c9abad8f2d5793170d2d8ac2f4e866b60e868ad9a9c",
     ".claude-plugin/plugin.json": "sha256:ef9c2e706ad962d9a58baaa1ef4972a1f8253ab7be2732dcb8f72d39c98d567a",
@@ -27,7 +27,7 @@
     ".claude/skills/naite/grow-branch.md": "sha256:2ab96ee1b2e74c65f0d22302b8d791d7f23063e64ebe0abcfe1573ceb626a0ec",
     ".claude/skills/naite/grow.md": "sha256:0b93dbda229b76685351b94da814912cb50fd2caa00e84f1435843ccbc5881a9",
     ".claude/skills/naite/ingest.md": "sha256:b28b287c31255197cc87163d45ad4f132789d65d98b8ced237dd1dce0cfd106b",
-    ".claude/skills/naite/start.md": "sha256:d9cafb32a04b28cdb9b7e7b36fbe15ff20618cfa4dcefeaeb2d574acceeeb42d",
+    ".claude/skills/naite/start.md": "sha256:dde55b7cd08e7642dd21e0323883723568a26b77c4ca547933c69a6e12b6aa10",
     ".claude/skills/naite/upgrade.md": "sha256:90b76731ad69caf0cd17d05db0d3c43e90ca3a8619552de3ac351cd5298ac420",
     ".gitignore": "sha256:7d78ea76c7b3ab612f73629854c5fe82ddb2291a6a3d198c0ee61d3560cdec81",
     ".naite/scripts/build-harness-lock.py": "sha256:3ec211473c63249211181117fbd859b8ff58570a0e944d7b6e9d97cfe8bb578d",
@@ -49,7 +49,8 @@
     "docs/ARCHITECTURE.md": "sha256:8b75083280c0befada0d59a507c819bdf5f0e4b89ff071539f7a19a3bd37c3b8",
     "docs/CONTEXT.md": "sha256:763cc7aa9fccb89421131527dae3b32c26b1f4b12fd1d187f1fa018a24b4516d",
     "docs/CONVENTIONS.md": "sha256:dcebd6ac98bb998318c0ce721d791bbd265a6f009e9682dc8fe34dac20dc1c0f",
+    "docs/QUALITY.md": "sha256:35e025e6566696a74778a6ef6d6c2b3e01bf4e253658bb40df90f8c10e6ccd8b",
     "docs/connect-mcp.md": "sha256:9aa93d2459e8e7ae563b2946b888f1db38d00b301a4da0f54e74a7484ee19b1d",
-    "docs/migrate-prompt.md": "sha256:eea91d4f4d3073e720f8d389074f9ccb1a24bd73b0622016fc4e789ac4898e60"
+    "docs/migrate-prompt.md": "sha256:70ad308c072e2c5777f6051f75ceaf1b97612c8cbcf985a95fecf3b5a0a0de2c"
   }
 }
