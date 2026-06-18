@@ -771,18 +771,30 @@ def lint(args):
 
     if args.refresh_domains and cache_stale:
         print(f'### Refreshing domain cache for {len(cache_stale)} pages')
-        print('  Update each page''s domains: to the top-level of its subject paths.')
+        for name, _stored, _derived in cache_stale:
+            p = TREE_DIR / name
+            fm, _ = parse_frontmatter(p)
+            new_domains = '[' + ', '.join(derive_domains(parse_list_value(fm['subject']))) + ']'
+            text = p.read_text(encoding='utf-8-sig')
+            new_text = re.sub(r'(?m)^domains:.*$', f'domains: {new_domains}', text, count=1)
+            p.write_text(new_text, encoding='utf-8')
+            print(f'  {name}: domains -> {new_domains}')
+        cache_stale.clear()
 
     blocking = bool(incomplete or invalid_subject or cache_stale or legacy_drift)
     return 1 if blocking else 0
 
 
 def main():
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except (AttributeError, ValueError):
+        pass
     parser = argparse.ArgumentParser()
     parser.add_argument('--strip-bom', action='store_true',
                         help='Normalize BOM-prefixed files to UTF-8 no-BOM in-place')
     parser.add_argument('--refresh-domains', action='store_true',
-                        help='List pages whose cached domains field is stale')
+                        help='Rewrite stale domains: cache in place from each page subject paths')
     args = parser.parse_args()
     sys.exit(lint(args))
 

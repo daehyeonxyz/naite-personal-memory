@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "version": "0.2.0",
-  "generated_at": "2026-06-18T12:45:20.207710+00:00",
+  "generated_at": "2026-06-18T13:59:59.725544+00:00",
   "files": {
     ".agents/skills/naite/SKILL.md": "sha256:90d86b306ac038cdff0d8212477f2e4a628456856f73be8028f0275f0c619f45",
     ".agents/skills/naite/ask.md": "sha256:23bc362076cdced8ee517f837b6f8b0e8c17138dee8fdd3ded4b7ff01f891855",
@@ -38,7 +38,7 @@
     ".naite/scripts/forest-dashboard.py": "sha256:2a0fb6fb287332d4783bcde95e4e571e7ba549a3eb465c2510566ceaaced7095",
     ".naite/scripts/forest-retrieval-experiment.py": "sha256:2500e90bd49249a2d491fc8cc942d290b5ee97ca324a4680e8ad0662933fee13",
     ".naite/scripts/gen-subagents.py": "sha256:95f11ea4406bb9910c96154d64df40aeb562eba96a269259056d6a1a25e05106",
-    ".naite/scripts/lint-ontology.py": "sha256:6396c3f3181953c2c4a017164f721305438383e70924eb3e542e419df856cea6",
+    ".naite/scripts/lint-ontology.py": "sha256:24c989ce2dff7c7546047e09fd5bd14a271b5462b5230f7035794bb52ef02ca5",
     ".naite/scripts/requirements.txt": "sha256:756d8f72148c2505b726fbef429a4fe77e5d28b3f7be65dad10ad51b27610180",
     ".naite/scripts/sync-agents.ps1": "sha256:adaed10e45379f492e65a0e2862875f901f0f719a4cf00420d2ca3d30e61e949",
     ".naite/scripts/sync-agents.py": "sha256:42aa669b4da4c0a9184c3fa58025fe03363c06db124c7b73208c3f87ea9807b7",
@@ -49,7 +49,7 @@
     "docs/ARCHITECTURE.md": "sha256:8b75083280c0befada0d59a507c819bdf5f0e4b89ff071539f7a19a3bd37c3b8",
     "docs/CONTEXT.md": "sha256:763cc7aa9fccb89421131527dae3b32c26b1f4b12fd1d187f1fa018a24b4516d",
     "docs/CONVENTIONS.md": "sha256:dcebd6ac98bb998318c0ce721d791bbd265a6f009e9682dc8fe34dac20dc1c0f",
-    "docs/QUALITY.md": "sha256:35e025e6566696a74778a6ef6d6c2b3e01bf4e253658bb40df90f8c10e6ccd8b",
+    "docs/QUALITY.md": "sha256:bedcd4b76b989c346553c8cb161747b848ed0a4b6c540f7b3335fcdf91c1c618",
     "docs/connect-mcp.md": "sha256:9aa93d2459e8e7ae563b2946b888f1db38d00b301a4da0f54e74a7484ee19b1d",
     "docs/migrate-prompt.md": "sha256:70ad308c072e2c5777f6051f75ceaf1b97612c8cbcf985a95fecf3b5a0a0de2c"
   }
