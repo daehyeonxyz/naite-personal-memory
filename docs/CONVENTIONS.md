@@ -42,6 +42,7 @@ Tree maintenance has two user-facing modes, both under `/naite care`:
 - Files: `lowercase-kebab-case.md`. No spaces, no capitals. One concept per file.
 - Wikilinks: `[[page-slug]]` or `[[page-slug|Display Text]]`. Plain `[[...]]` only — no typed relations (relations live in prose; see § Soft ontology).
 - Aliases: list at top of page under `## Also known as` heading. `trunk.md` lists only the canonical slug.
+- **Migration 보존본 예외:** `/naite start` 가 가져온 메모리 export 의 영구 보존본은 `roots/conversations/_transcripts/migration-<service>.md` 로 **날짜 prefix 없이 서비스별 stable 이름**을 쓴다. 재import 시 같은 파일을 갱신하기 위한 의도된 예외다 (`<service>` = `chatgpt`/`gemini`/`claude`). 일반 transcript 의 `YYYY-MM-DD-<slug>.md` 규칙과 다르다.
 
 ---
 

@@ -45,6 +45,7 @@ This file is the **entrypoint**. It carries routing, triggers, and hard safety r
 
 | Trigger signal from user | Workflow | Body |
 |---|---|---|
+| 신규 사용자 첫 세션 (설치 직후, 빈 vault, "어떻게 시작") | `/naite start` | `.agents/skills/naite/start.md` |
 | 학습·자료 반영 전반 (대화 마무리 "반영해줘", 파일 첨부, syllabus·"Ch1 끝" 같은 장기 신호, 소스만 던져짐) | `/naite grow` | `.agents/skills/naite/grow.md` |
 | 쌓인 tree 에 대한 질문 | `/naite ask` | `.agents/skills/naite/ask.md` |
 | 결정/trade-off thread 를 열매로 | `/naite fruit` | `.agents/skills/naite/fruit.md` |

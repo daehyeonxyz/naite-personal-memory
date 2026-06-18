@@ -10,7 +10,7 @@ Claude Code / Claude Desktop / Codex** 에서 읽고 이어붙일 수 있다. �
 ## 전제
 
 이 커넥터는 *이미 자란 나무*를 가리킬 때만 쓸모가 있다. 빈 폴더는 읽을 게 없다. 아직 시작 전이라면
-이 저장소를 스타터로 복제하고 `/naite` 스킬로 먼저 키운다 (`/naite grow`, `/naite care`).
+이 저장소를 스타터로 복제하고 `/naite start` 로 첫 나무를 짓는다 (이후 `/naite grow`, `/naite care`).
 
 vault 경로는 `NAITE_ROOT` 환경변수 → `--root <경로>` 인자 → 현재 디렉토리 순으로 찾는다.
 

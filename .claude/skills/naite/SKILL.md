@@ -1,6 +1,6 @@
 ---
 name: naite
-description: Maintain a naite vault — a personal knowledge tree maintained by an LLM. Dispatcher for grow, ask, fruit, care, and upgrade. Invoke by typing /naite followed by one of the subcommand names.
+description: Maintain a naite vault — a personal knowledge tree maintained by an LLM. Dispatcher for start, grow, ask, fruit, care, and upgrade. Invoke by typing /naite followed by one of the subcommand names.
 ---
 
 # /naite — dispatcher
@@ -22,6 +22,7 @@ The user invokes `/naite <subcommand> [args]`. Parse the first token of `args` a
 
 | Subcommand | When to use | Load |
 |------------|-------------|------|
+| `start` | 첫 세션 안내: 신규 사용자가 자기 메모리를 import 해 `/naite grow` 흐름으로 첫 나무를 짓고 그래프로 본다. 1회성 온보딩 진입점, 이후는 grow 로. | `<SKILL_DIR>/start.md` |
 | `grow [args?]` | 나무를 키운다 — 학습·자료 반영의 단일 진입점. 대화 마무리, 파일/디렉터리 첨부, 장기 과정 (과목·책·시리즈 = branch), 소스만 던져진 경우 (받아두기) 를 자동 감지해 분기한다. | `<SKILL_DIR>/grow.md` |
 | `ask <question>` | 나무에게 묻는다 — 쌓인 tree 에서 답을 합성하고, 가치 있으면 페이지로 남길지 제안한다. | `<SKILL_DIR>/ask.md` |
 | `fruit [topic?]` | 열매를 맺는다 — 결정·trade-off·실패 분석을 `kind=decision` 페이지로 박는 dialogue scaffold. 대화 중 결정 패턴 감지 시 에이전트가 자동 제안. | `<SKILL_DIR>/fruit.md` |

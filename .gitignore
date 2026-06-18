@@ -89,4 +89,10 @@ tmp/
 # Pre-commit guard's local-only personal denylist (never committed).
 .naite/hooks/denylist.local
 
+# Internal dev/planning artifacts — local-only. Specs and implementation plans
+# (superpowers brainstorming/writing-plans output) are dev process docs, not
+# product content. Keeping them untracked stops them shipping into user vaults
+# on install (the install copies all non-.git files) and out of harness-lock.
+docs/superpowers/
+
 .gstack/

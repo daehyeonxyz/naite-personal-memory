@@ -44,11 +44,33 @@ naite 는 저장소 하나를 살아서 자라는 나무 한 그루로 다룹니
 
 ## 시작하기
 
-필요한 것은 GitHub 계정과 Claude Code 또는 Codex 하나뿐입니다.
+필요한 것은 GitHub 계정과 Claude Code 하나입니다. Codex 를 쓰거나 직접 설치하려면 아래 폴백 경로를 따릅니다.
 
-1. GitHub 에서 새 저장소를 만듭니다. 개인 기록이므로 **Private** 을 권장합니다.
-2. 그 저장소를 클론한 폴더에서 Claude Code 또는 Codex 를 실행합니다.
-3. 아래 프롬프트를 그대로 붙여넣습니다.
+### plugin 마켓플레이스로 설치 (Claude Code 정식 경로)
+
+Claude Code 에서 아래 두 명령을 순서대로 실행합니다.
+
+```text
+/plugin marketplace add daehyeonxyz/naite-personal-memory
+/plugin install naite
+```
+
+이 명령은 naite 하네스와 함께 `naite-mcp` 서버도 자동으로 등록합니다. vault 는 에이전트가 연 프로젝트 디렉토리가 됩니다.
+
+설치가 끝나면 `/naite start` 로 첫 세션을 시작하세요. 이미 다른 AI 에 쌓아둔 기록을 가져와 첫 나무를 짓는 안내 세션입니다.
+
+```text
+/naite start
+```
+
+평소 쓰던 AI (ChatGPT, Gemini 등) 에서 대화 기록을 내보내 프롬프트에 붙여넣으면, naite 가 그 기록을 import 합니다. 그러면 naite 가 그 기록을 잎과 맥과 열매로 짜서 첫 나무를 만들고, Obsidian 의 그래프 뷰나 앱 Forest 화면에서 내 나무를 직접 확인할 수 있습니다. 데모용 예시 데이터가 아니라 내 기록이기 때문에, 첫 세션부터 바로 쓸모 있는 결과물이 됩니다.
+
+### plugin 미지원 폴백 (Codex / 직접 설치)
+
+Claude Code 플러그인 마켓플레이스를 쓸 수 없는 경우(Codex 사용자, 직접 클론을 선호하는 경우)에는 아래 방법을 사용합니다. 개인 기록이 담기므로 **Private** 저장소를 권장합니다.
+
+1. GitHub 에서 새 저장소를 만들고 클론한 폴더에서 에이전트를 실행합니다.
+2. 아래 프롬프트를 그대로 붙여넣습니다.
 
 ```text
 https://github.com/daehyeonxyz/naite-personal-memory 를 이 폴더에 설치해줘.
@@ -59,11 +81,7 @@ https://github.com/daehyeonxyz/naite-personal-memory 를 이 폴더에 설치해
 4. 끝나면 내가 지금 바로 해볼 수 있는 것을 한두 가지 알려줘.
 ```
 
-설치가 끝나면 첫 자료를 하나 던져 보세요. 강의 PDF 하나, 인상 깊었던 대화 하나면 충분합니다.
-
-```text
-/naite grow
-```
+설치가 끝나면 `/naite start` 로 첫 세션을 시작하세요.
 
 처음부터 모든 경험을 정리할 필요는 없습니다. 나무는 자랄수록 더 쓸모 있어집니다.
 
@@ -71,6 +89,7 @@ https://github.com/daehyeonxyz/naite-personal-memory 를 이 폴더에 설치해
 
 | 명령 | 언제 쓰나 |
 |---|---|
+| `/naite start` | 처음 시작할 때. 다른 AI 의 기록을 가져와 첫 나무를 짓는 1회성 안내 세션 |
 | `/naite grow [path?]` | 공부한 것, 던져둔 자료를 나무에 반영할 때. 대화 마무리, 파일 하나, 과목·책·시리즈 단위 전부 여기로 |
 | `/naite ask <질문>` | 쌓인 기록을 바탕으로 질문할 때 |
 | `/naite fruit [topic?]` | 결정, trade-off, 실패 분석을 열매로 남길 때 |
