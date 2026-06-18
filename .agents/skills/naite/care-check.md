@@ -130,7 +130,7 @@ Report: unresolved stubs + newly proposed stubs.
 - **mixed schema** (한 페이지 안에 kind+role 또는 type+form 혼재) = drift, error. 수동 fix 필요.
 - 새 페이지 작성 시 항상 새 schema 만 사용.
 
-**Helper**: `.naite/scripts/lint-ontology.py` 는 deterministic Python validator 로 3a~3j 의 기계 검사와 § 7 non-tree dirt 검사를 수행. Cluster detection (Louvain) 과 topic alias clustering 같은 무거운 작업은 LLM-driven 으로 별도.
+**Helper**: `.naite/scripts/lint-ontology.py` 는 deterministic Python validator 로 3a~3k 의 기계 검사 (3k = form=prose leaf-depth warn) 와 § 7 non-tree dirt 검사를 수행. Cluster detection (Louvain) 과 topic alias clustering 같은 무거운 작업은 LLM-driven 으로 별도.
 
 ```
 python .naite/scripts/lint-ontology.py                # report only

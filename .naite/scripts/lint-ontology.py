@@ -440,6 +440,48 @@ def find_output_quality_findings(path):
     return findings
 
 
+LEAF_DEPTH_MIN_BODY_CHARS = 400  # tunable floor: prose chars (heading/code/math 제외) before ## Source
+
+
+def find_leaf_depth_findings(path, form):
+    """Warn-only leaf-depth proxy for form=prose leaves.
+
+    Flags (a) no in-body wikilink, (b) prose body below the char floor.
+    Deterministic proxy only. The real depth bar is the write-time self-check
+    against docs/QUALITY.md § 4 (LEAF-1..4). Never blocking.
+    """
+    if form != 'prose':
+        return []
+    text = path.read_text(encoding='utf-8-sig', errors='replace')
+    lines, start, end = body_line_bounds_before_source(text)
+    in_code_block = False
+    in_math_block = False
+    prose_chars = 0
+    wikilinks = 0
+    for idx in range(start, end):
+        stripped = lines[idx].strip()
+        if stripped.startswith('```'):
+            in_code_block = not in_code_block
+            continue
+        if in_code_block:
+            continue
+        if stripped == '$$':
+            in_math_block = not in_math_block
+            continue
+        if in_math_block or not stripped:
+            continue
+        if stripped.startswith('#'):
+            continue
+        wikilinks += len(re.findall(r'\[\[[^\]]+\]\]', stripped))
+        prose_chars += len(stripped)
+    findings = []
+    if wikilinks == 0:
+        findings.append((0, 'no-inbody-link', 'body has no [[wikilink]]'))
+    if prose_chars < LEAF_DEPTH_MIN_BODY_CHARS:
+        findings.append((0, 'thin-body', f'{prose_chars} prose chars (< {LEAF_DEPTH_MIN_BODY_CHARS})'))
+    return findings
+
+
 def find_non_tree_dirt(repo_root):
     """Return list of (tracked_path, reason) for files matching agent/IDE scratch patterns.
 
@@ -507,6 +549,7 @@ def lint(args):
     legacy_drift = []
     language_candidates = []  # list of (page_name, line_no, kind)
     output_quality_findings = []  # list of (page_name, line_no, kind, match)
+    leaf_depth_findings = []  # list of (page_name, line_no, kind, match)
 
     for p in pages:
         fm, has_bom = parse_frontmatter(p)
@@ -598,6 +641,10 @@ def lint(args):
         # 3j output quality contract guard (warn-only deterministic subset)
         for line_no, kind, match in find_output_quality_findings(p):
             output_quality_findings.append((p.name, line_no, kind, match))
+
+        # 3k leaf-depth guard (warn-only)
+        for line_no, kind, match in find_leaf_depth_findings(p, fm['form']):
+            leaf_depth_findings.append((p.name, line_no, kind, match))
 
     # ---------------------------------------------------------------------
     # Report
@@ -733,6 +780,20 @@ def lint(args):
         print(f'  ... +{len(pages_with_quality) - 20} more pages')
     if not output_quality_findings:
         print('  OK — no deterministic output-quality findings')
+    print()
+
+    print(f'### 3k Leaf-depth guard: {len(leaf_depth_findings)} findings')
+    print('  (warn — form=prose leaf 깊이 proxy: 본문 wikilink 0 또는 thin body. 진짜 판정은 작성 시점 self-check)')
+    by_page_depth = {}
+    for name, line_no, kind, match in leaf_depth_findings:
+        by_page_depth.setdefault(name, []).append((line_no, kind, match))
+    for name, items in sorted(by_page_depth.items(), key=lambda x: -len(x[1]))[:20]:
+        summary = ', '.join(kind for _, kind, _ in items)
+        print(f'  {name}: {summary}')
+    if len(by_page_depth) > 20:
+        print(f'  ... +{len(by_page_depth) - 20} more pages')
+    if not leaf_depth_findings:
+        print('  OK — no leaf-depth warnings')
     print()
 
     # ---------------------------------------------------------------------
