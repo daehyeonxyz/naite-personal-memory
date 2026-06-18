@@ -35,6 +35,8 @@ Internal modules (not user-facing; loaded by grow/care as needed): `capture.md`,
 
 ## How to run
 
+> **빈 vault 노트:** `grow` 는 진입 시 `tree/` 에 일반 페이지가 없으면 `/naite start` 를 먼저 제안한다. 사용자가 거절하면 grow 를 정상 진행한다.
+
 1. Parse the subcommand from `args`. If missing or unrecognized, print the table above and ask the user which subcommand they meant.
 2. Read `<NAITE_ROOT>/AGENTS.md` if you haven't this session.
 3. Read `<NAITE_ROOT>/docs/CONTEXT.md` when the subcommand needs tree context, generated maps, dependency review, or any mutation.

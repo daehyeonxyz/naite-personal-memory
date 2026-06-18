@@ -52,6 +52,7 @@ conversation / file 모드로 가기 전에, 이 학습이 **하나의 큰 줄�
 
 ### 1. Resolve mode
 
+- **빈 vault 선검사:** `tree/` 에 `trunk.md`/`rings.md`/`seeds.md` 외 페이지가 없으면(빈 vault), 한 줄로 제안한다: "vault 가 비어 있습니다. 처음이시면 `/naite start` 로 안내형 첫 세션을 권합니다 (y → `/naite start` 로 전환, n → grow 계속)." n 또는 거절이면 grow 를 정상 진행한다. 이미 자란 vault 면 이 선검사는 조용히 통과한다.
 - If `args` is empty → conversation mode (단, § Branch pre-check 신호가 잡히면 branch 모드).
 - 첫 토큰이 `backfill {slug}` → backfill 모드, `grow-backfill.md § Workflow` 로 위임.
 - 장기 과정 신호가 잡히면 → branch 모드, `grow-branch.md` 로 위임.
