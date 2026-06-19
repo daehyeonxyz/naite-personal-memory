@@ -27,7 +27,7 @@ The user invokes `/naite <subcommand> [args]`. Parse the first token of `args` a
 | `ask <question>` | 나무에게 묻는다 — 쌓인 tree 에서 답을 합성하고, 가치 있으면 페이지로 남길지 제안한다. | `<SKILL_DIR>/ask.md` |
 | `fruit [topic?]` | 열매를 맺는다 — 결정·trade-off·실패 분석을 `kind=decision` 페이지로 박는 dialogue scaffold. 대화 중 결정 패턴 감지 시 에이전트가 자동 제안. | `<SKILL_DIR>/fruit.md` |
 | `care [scope?]` | 나무를 돌본다 — `--check` (점검: report-only, secrets 차단 게이트) 와 돌봄 (검토·수선·대규모 정리) 두 모드. | `<SKILL_DIR>/care.md` |
-| `upgrade` | 하네스를 올린다 — 업스트림 최신 릴리스로 작업 틀만 갱신. 사용자 자료 (`roots/`, `tree/`, `.naite/ontology/`) 는 절대 건드리지 않고, 사용자 커스텀 파일은 3-way 제안으로 보존. | `<SKILL_DIR>/upgrade.md` |
+| `upgrade` | 하네스를 올린다. 업스트림 최신 릴리스로 작업 틀을 갱신하고, 필요한 vault schema migration 은 preview와 승인 뒤 적용한다. 사용자 커스텀 파일은 3-way 제안으로 보존. | `<SKILL_DIR>/upgrade.md` |
 
 `<SKILL_DIR>` = `<NAITE_ROOT>/.claude/skills/naite`. Substitute when reading.
 

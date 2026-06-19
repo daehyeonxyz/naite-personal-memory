@@ -91,7 +91,7 @@ https://github.com/daehyeonxyz/naite-personal-memory 를 이 폴더에 설치해
 | `/naite fruit [topic?]` | 결정·trade-off·실패 분석을 열매로 남길 때 |
 | `/naite care --check [scope?]` | 고치지 않고 건강 점검만 할 때. secrets scan 과 schema/lint 보고서를 만든다 |
 | `/naite care [scope?]` | 점검 결과나 사용자의 요청을 바탕으로 나무를 실제로 다듬을 때 |
-| `/naite upgrade` | naite 새 버전이 나왔을 때. 내 자료와 내가 고친 규칙은 두고 틀만 갱신 |
+| `/naite upgrade` | naite 새 버전이 나왔을 때. 내 자료와 내가 고친 규칙은 보존하고, 필요한 schema migration은 preview와 승인 뒤 적용 |
 
 명령을 외울 필요는 없습니다. 자료를 붙여넣고 "반영해줘" 라고만 해도 에이전트가 알맞은 흐름을 찾아갑니다.
 

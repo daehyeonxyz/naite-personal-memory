@@ -149,7 +149,7 @@ updated: YYYY-MM-DD
 | `/naite fruit` | `fruit.md` | 결정·trade-off thread 를 `kind=decision` 으로 남긴다. |
 | `/naite care --check` | `care.md` + `care-check.md` | report-only 점검. |
 | `/naite care` | `care.md` | 실제 수선·정성 검토. |
-| `/naite upgrade` | `upgrade.md` | 사용자 자료는 보존하고 하네스만 갱신한다. |
+| `/naite upgrade` | `upgrade.md` | 사용자 자료를 보존하며 하네스를 갱신하고, 필요한 vault schema migration은 preview와 승인 뒤 적용한다. |
 
 `capture.md` 는 대화 내용을 `roots/conversations/` 에 스테이징하는 단계이고, `ingest.md` 는 승인된 원천을 `tree/` 로 접는 단계다. 둘 다 `/naite capture` 또는 `/naite ingest` 로 직접 노출하지 않는다. 명령 수를 줄이고, 원천 보존과 사용자 승인 순서를 `grow` 안에서 강제하기 위해서다.
 
