@@ -52,7 +52,7 @@ Execute collected `## Migration` steps in version order. Steps touching protecte
 
 ### 6. Finalize
 
-1. Run `.naite/scripts/sync-agents.ps1` so `.agents/` + `AGENTS.md` match the upgraded canonical side.
+1. Run `.naite/scripts/sync-agents.ps1` on Windows or `python .naite/scripts/sync-agents.py` on macOS/Linux so `.agents/` + `AGENTS.md` match the upgraded canonical side.
 2. Update `.claude-plugin/plugin.json` version to `V_new` if not already replaced in step 4.
 3. Rebuild the lock: `python .naite/scripts/build-harness-lock.py`.
 4. Sanity check: `python .naite/scripts/lint-ontology.py` must still exit 0 (upgrade must not break the vault).

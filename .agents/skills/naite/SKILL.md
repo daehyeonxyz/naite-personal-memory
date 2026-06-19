@@ -23,7 +23,7 @@ The user invokes `/naite <subcommand> [args]`. Parse the first token of `args` a
 | Subcommand | When to use | Load |
 |------------|-------------|------|
 | `start` | 첫 세션 안내: 신규 사용자가 자기 메모리를 import 해 `/naite grow` 흐름으로 첫 나무를 짓고 그래프로 본다. 1회성 온보딩 진입점, 이후는 grow 로. | `<SKILL_DIR>/start.md` |
-| `grow [args?]` | 나무를 키운다 — 학습·자료 반영의 단일 진입점. 대화 마무리, 파일/디렉터리 첨부, 장기 과정 (과목·책·시리즈 = branch), 소스만 던져진 경우 (받아두기) 를 자동 감지해 분기한다. | `<SKILL_DIR>/grow.md` |
+| `grow [args?]` | 나무를 키운다 — 학습·자료 반영의 단일 진입점. 대화 마무리, 파일/디렉터리 첨부, 장기 과정 (과목·책·시리즈 = branch), backfill, 소스만 던져진 경우 (받아두기) 를 자동 감지해 분기한다. | `<SKILL_DIR>/grow.md` |
 | `ask <question>` | 나무에게 묻는다 — 쌓인 tree 에서 답을 합성하고, 가치 있으면 페이지로 남길지 제안한다. | `<SKILL_DIR>/ask.md` |
 | `fruit [topic?]` | 열매를 맺는다 — 결정·trade-off·실패 분석을 `kind=decision` 페이지로 박는 dialogue scaffold. 대화 중 결정 패턴 감지 시 에이전트가 자동 제안. | `<SKILL_DIR>/fruit.md` |
 | `care [scope?]` | 나무를 돌본다 — `--check` (점검: report-only, secrets 차단 게이트) 와 돌봄 (검토·수선·대규모 정리) 두 모드. | `<SKILL_DIR>/care.md` |
@@ -31,7 +31,17 @@ The user invokes `/naite <subcommand> [args]`. Parse the first token of `args` a
 
 `<SKILL_DIR>` = `<NAITE_ROOT>/.agents/skills/naite`. Substitute when reading.
 
-Internal modules (not user-facing; loaded by grow/care as needed): `capture.md`, `ingest.md`, `grow-branch.md`, `grow-backfill.md`, `care-check.md`.
+Implementation modules are loaded by the dispatcher, not invoked as top-level `/naite` commands:
+
+| User-visible entry | Internal module | Role |
+|---|---|---|
+| `/naite grow` with fresh conversation | `capture.md` then `ingest.md` | capture stages a claim summary and transcript under `roots/conversations/`; ingest folds the approved source into `tree/` |
+| `/naite grow <path>` | `ingest.md` | pulls one raw source under `roots/` into connected tree pages |
+| `/naite grow` with branch signal | `grow-branch.md` | handles active long-running course/book/series work |
+| `/naite grow backfill <slug>` | `grow-backfill.md` | handles already-finished course/archive backfill without dialogue |
+| `/naite care --check` | `care-check.md` | report-only health check loaded through care |
+
+Do not advertise `/naite capture` or `/naite ingest`; those are implementation names only.
 
 ## How to run
 

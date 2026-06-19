@@ -41,6 +41,7 @@ This file is the **entrypoint**. It carries routing, triggers, hard safety rules
 |---|---|---|
 | 신규 사용자 첫 세션 (설치 직후, 빈 vault, "어떻게 시작") | `/naite start` | `.agents/skills/naite/start.md` |
 | 학습·자료 반영 전반 (대화 마무리 "반영해줘", 파일 첨부, syllabus·"Ch1 끝" 같은 장기 신호, 소스만 던져짐) | `/naite grow` | `.agents/skills/naite/grow.md` |
+| 이미 학습 완료한 과목·아카이브를 dialogue 없이 일괄 보강 | `/naite grow backfill <slug>` | `.agents/skills/naite/grow-backfill.md` |
 | 쌓인 tree 에 대한 질문 | `/naite ask` | `.agents/skills/naite/ask.md` |
 | 결정/trade-off thread 를 열매로 | `/naite fruit` | `.agents/skills/naite/fruit.md` |
 | 건강 점검 (report-only) | `/naite care --check` | `.agents/skills/naite/care-check.md` |
@@ -48,6 +49,8 @@ This file is the **entrypoint**. It carries routing, triggers, hard safety rules
 | naite 새 버전으로 하네스 갱신 (사용자 자료 불변) | `/naite upgrade` | `.agents/skills/naite/upgrade.md` |
 
 단발-vs-branch 구분은 grow.md § Branch pre-check 가 담당한다. 불확실하면 사용자에게 묻는다.
+
+`capture.md`, `ingest.md`, `grow-branch.md`, `care-check.md` 는 직접 호출하는 `/naite` 명령이 아니라 위 라우터가 내부에서 읽는 절차 파일이다. `capture.md` 와 `ingest.md` 는 `/naite grow` 또는 `/naite start` 가 위임할 때만 사용한다. `grow-backfill.md` 는 독립 top-level subcommand 가 아니라 `/naite grow backfill <slug>` 로 진입한다.
 
 ---
 
@@ -88,7 +91,7 @@ The user keeps Obsidian open on the repo. Before staging an edit, run `git diff 
 
 This file is the Codex-facing mirror of the Claude Code surface. Keep `.agents/` + `AGENTS.md` aligned with `.claude/` + `CLAUDE.md`.
 
-- **Canonical edit target**: `.claude/` and `CLAUDE.md`. Regenerate this Codex mirror with `.naite/scripts/sync-agents.ps1` when the canonical side changes.
+- **Canonical edit target**: `.claude/` and `CLAUDE.md`. Regenerate this Codex mirror with `.naite/scripts/sync-agents.ps1` on Windows or `python .naite/scripts/sync-agents.py` on macOS/Linux when the canonical side changes.
 - **Mirror review**: after sync, review `AGENTS.md` and `.agents/skills/naite/` for tool-specific wording before staging.
 - **Run sync in the same commit** that edits the canonical side. Both surfaces stage together.
 - **Shared (NOT mirrored)**: `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, `docs/ARCHITECTURE.md`, `SOUL.md`, `USER.md`, `MEMORY.md`, `.naite/`. Both tools read the same files. Tool-specific tokens (`.claude/`, `.agents/`, `CLAUDE.md`, `AGENTS.md`, `Claude Code`, `Codex`, etc.) are allowed where they carry meaning.

@@ -108,7 +108,7 @@ updated: YYYY-MM-DD
 - [`CLAUDE.md`](../CLAUDE.md) (+ auto-mirror `AGENTS.md`) — **Bootloader** — 라우팅·트리거·hard safety.
 - `.claude/skills/naite/*.md` — **How** — workflow 절차.
 
-`.naite/ontology/` 디렉토리는 spec data 라 양 surface 가 동일하게 참조한다. mirror 하지 않는다 (`.naite/scripts/sync-agents.ps1` 갱신 불필요).
+`.naite/ontology/` 디렉토리는 spec data 라 양 surface 가 동일하게 참조한다. mirror 하지 않는다 (`sync-agents` 갱신 불필요).
 
 ### 3.4 Topic governance — graded autonomy
 
@@ -135,6 +135,23 @@ updated: YYYY-MM-DD
 - **`care`** (돌봄 모드) — qualitative review/repair. narrative prose verdict 도 이 모드로 흡수: 점수 없음, threshold 없음. page/branch review, 직접 content 수선, 대규모 sweep, recurring-rule 학습. 사용자 수동 호출.
 
 분리 이유: `care --check` 의 mechanical 검사와 `care` 의 *맥락 판단* 은 서로 다른 영역에 있다. 자세히: `.claude/skills/naite/{care-check,care}.md`.
+
+### 4.2.1 Workflow command topology
+
+사용자에게 보이는 `/naite` 명령과 내부 workflow 파일은 일부러 분리한다.
+
+| User entry | Loads | 비고 |
+|---|---|---|
+| `/naite start` | `start.md` + `ingest.md` | 신규 사용자 첫 세션. migration export 를 통과시키면 ingest primitive 로 첫 tree 를 만든다. |
+| `/naite grow` | `grow.md` + 필요 시 `capture.md`, `ingest.md`, `grow-branch.md` | 학습·자료 반영의 단일 진입점. capture 와 ingest 는 직접 명령이 아니다. |
+| `/naite grow backfill <slug>` | `grow.md` + `grow-backfill.md` | 이미 학습 완료한 course/archive 를 dialogue 없이 보강하는 grow 하위 모드. |
+| `/naite ask` | `ask.md` | tree 기반 질의응답. |
+| `/naite fruit` | `fruit.md` | 결정·trade-off thread 를 `kind=decision` 으로 남긴다. |
+| `/naite care --check` | `care.md` + `care-check.md` | report-only 점검. |
+| `/naite care` | `care.md` | 실제 수선·정성 검토. |
+| `/naite upgrade` | `upgrade.md` | 사용자 자료는 보존하고 하네스만 갱신한다. |
+
+`capture.md` 는 대화 내용을 `roots/conversations/` 에 스테이징하는 단계이고, `ingest.md` 는 승인된 원천을 `tree/` 로 접는 단계다. 둘 다 `/naite capture` 또는 `/naite ingest` 로 직접 노출하지 않는다. 명령 수를 줄이고, 원천 보존과 사용자 승인 순서를 `grow` 안에서 강제하기 위해서다.
 
 ### 4.3 Schema evolution — graded autonomy
 
@@ -168,6 +185,10 @@ updated: YYYY-MM-DD
 - `.naite/scripts/lint-ontology.py` — § 3 deterministic sub-check (3a-3h) + § 7 non-tree dirt detection. 매 care --check run 호출.
 - `.naite/scripts/sync-agents.ps1` — `.claude/skills/naite/*` → `.agents/skills/naite/*` 자동 mirror (`Claude Code` → `Codex` 텍스트 치환). CLAUDE.md → AGENTS.md 동시 처리.
 - `.naite/scripts/sync-agents.py` — sync-agents.ps1 의 cross-platform 포팅 (PowerShell 없는 환경용). 동일 치환 규칙·CRLF 출력.
+- `.naite/scripts/build-harness-lock.py` — release/upgrade 가 의존하는 하네스 파일 hash lock 생성. 하네스 파일을 고친 뒤 재생성하고 `--check` 로 drift 를 검증한다.
+- `.naite/scripts/build-tree-manifest.py` — `tree/*.md` frontmatter, heading, alias 를 모아 agent fast-path map 을 만든다. ingest/care 가 page 후보를 찾기 전에 stale 하면 실행한다.
+- `.naite/scripts/build-tree-dependencies.py` — wikilink 와 soft relation idiom 을 스캔해 inbound/outbound dependency map 을 만든다. 기존 page 의미가 바뀌거나 link 구조가 바뀐 뒤 실행한다.
+- `.naite/scripts/gen-subagents.py` — `.naite/ontology/forest-manifest.json` 이 있을 때 나무별 subagent 정의를 `.naite/agents/` 아래 생성한다. 보통 `forest-assign.py --write` 이후 선택적으로 실행한다.
 - `.naite/scripts/forest-*.py` — forest layer 진단 도구 (§ 9, report/manifest 생성만, tree content 미수정): `forest-communities.py` (분화 신호), `forest-assign.py` (개념 계보 배정), `forest-dashboard.py` (나이테 대시보드), `forest-retrieval-experiment.py` (숲 vs vault 효용 측정). 의존성: `.naite/scripts/requirements.txt` (`networkx>=3.0`, `numpy`, `scikit-learn`).
 
 ### 5.2 care --check capability

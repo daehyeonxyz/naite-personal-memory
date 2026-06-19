@@ -12,8 +12,8 @@ Check all items before opening this PR.
 
 - [ ] `.claude/` + `CLAUDE.md`만 편집했습니다. `.agents/` + `AGENTS.md`는 직접 수정하지 않았습니다.
   (Edited `.claude/` + `CLAUDE.md` only. Did not directly edit `.agents/` or `AGENTS.md`.)
-- [ ] `sync-agents.ps1`을 실행하여 `.agents/` 미러를 재생성했습니다.
-  (Ran `sync-agents.ps1` to regenerate the `.agents/` mirror.)
+- [ ] `sync-agents.ps1` 또는 `sync-agents.py`를 실행하여 `.agents/` 미러를 재생성했습니다.
+  (Ran `sync-agents.ps1` or `sync-agents.py` to regenerate the `.agents/` mirror.)
 
 ### 로컬 검사 통과 (Local checks pass)
 

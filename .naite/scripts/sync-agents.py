@@ -30,7 +30,7 @@ SURFACE_SECTION = """## Surface mirror discipline
 
 This file is the Codex-facing mirror of the Claude Code surface. Keep `.agents/` + `AGENTS.md` aligned with `.claude/` + `CLAUDE.md`.
 
-- **Canonical edit target**: `.claude/` and `CLAUDE.md`. Regenerate this Codex mirror with `.naite/scripts/sync-agents.ps1` when the canonical side changes.
+- **Canonical edit target**: `.claude/` and `CLAUDE.md`. Regenerate this Codex mirror with `.naite/scripts/sync-agents.ps1` on Windows or `python .naite/scripts/sync-agents.py` on macOS/Linux when the canonical side changes.
 - **Mirror review**: after sync, review `AGENTS.md` and `.agents/skills/naite/` for tool-specific wording before staging.
 - **Run sync in the same commit** that edits the canonical side. Both surfaces stage together.
 - **Shared (NOT mirrored)**: `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, `docs/ARCHITECTURE.md`, `SOUL.md`, `USER.md`, `MEMORY.md`, `.naite/`. Both tools read the same files. Tool-specific tokens (`.claude/`, `.agents/`, `CLAUDE.md`, `AGENTS.md`, `Claude Code`, `Codex`, etc.) are allowed where they carry meaning.

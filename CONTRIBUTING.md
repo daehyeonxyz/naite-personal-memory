@@ -37,11 +37,18 @@ No CI automation runs on PRs at this time (D1 decision: manual maintainer review
 
 ## Pre-PR local checks
 
-Before opening a PR, run these three commands and confirm each exits clean:
+Before opening a PR, install the script dependencies once, then run the local checks and confirm each exits clean:
 
 ```bash
+# 0. Install Python dependencies used by optional analysis scripts
+python -m pip install -r .naite/scripts/requirements.txt
+
 # 1. Regenerate the .agents/ mirror from the canonical .claude/ side
+# Windows PowerShell
 powershell -File .naite/scripts/sync-agents.ps1
+
+# macOS / Linux / CI without PowerShell
+python .naite/scripts/sync-agents.py
 
 # 2. Rebuild harness-lock (embed version + dependency snapshot)
 python .naite/scripts/build-harness-lock.py
@@ -50,8 +57,28 @@ python .naite/scripts/build-harness-lock.py
 python .naite/scripts/lint-ontology.py
 ```
 
-- `.agents/` + `AGENTS.md`는 `sync-agents.ps1`의 생성물입니다. 직접 수정하지 마세요.
+- `.agents/` + `AGENTS.md`는 `sync-agents.ps1` 또는 `sync-agents.py`의 생성물입니다. 직접 수정하지 마세요.
+- `requirements.txt` 는 주로 `forest-*` 진단 스크립트용입니다. `build-*`, `lint-*`, `sync-agents.py` 는 표준 라이브러리만으로 동작하지만, 첫 기여자는 위 설치를 먼저 해 두면 script 실행 중 `ImportError` 로 막히지 않습니다.
 - 외부 기여자는 PR로 `.naite/ontology/facets.json` 을 직접 편집하지 않습니다. core enum 변경은 C-level 메인테이너 결정 사항입니다. user kind 선언은 vault 소유자의 행위이므로, 공유 하네스 repo의 PR 범위에 들어가지 않습니다. 아래 Schema governance 섹션을 참고하세요.
+
+---
+
+## Script map
+
+`.naite/scripts/` 의 주요 스크립트는 아래 상황에서 실행합니다.
+
+| Script | 언제 실행하나 | 비고 |
+|---|---|---|
+| `sync-agents.ps1` | Windows에서 `.claude/` 또는 `CLAUDE.md` 정본을 고친 뒤 | `.agents/` + `AGENTS.md` mirror 재생성 |
+| `sync-agents.py` | macOS, Linux, CI, PowerShell 없는 환경에서 mirror를 재생성할 때 | `sync-agents.ps1`의 cross-platform 대체재 |
+| `build-harness-lock.py` | 하네스 파일을 고친 뒤 release 또는 PR 전 | `--check` 로 lock drift 검증 가능 |
+| `lint-ontology.py` | PR 전, 또는 `/naite care --check` 검증 중 | tree/schema report-only 검사 |
+| `build-tree-manifest.py` | `tree/` 페이지를 만들거나 삭제한 뒤, 또는 manifest가 없거나 stale 할 때 | agent가 page 후보를 빠르게 찾기 위한 generated map |
+| `build-tree-dependencies.py` | `tree/` 페이지의 wikilink나 의미 의존성을 바꾼 뒤 | inbound/outbound dependency map 생성 |
+| `forest-*.py` | `/naite care --check` 또는 maintainer가 forest layer를 진단할 때 | `requirements.txt` 의 `networkx`, `numpy`, `scikit-learn` 이 필요할 수 있음 |
+| `gen-subagents.py` | `.naite/ontology/forest-manifest.json` 이 있고 나무별 subagent 정의를 만들 때 | 보통 `forest-assign.py --write` 이후 선택적으로 실행 |
+
+외부 기여자는 보통 `tree/` 와 `roots/` 를 건드리지 않으므로 `build-tree-*`, `forest-*`, `gen-subagents.py` 를 직접 실행할 일이 거의 없습니다. 문서나 skill, plugin metadata 를 고쳤다면 `sync-agents`, `build-harness-lock.py`, `lint-ontology.py` 가 기본 검사입니다.
 
 ---
 
@@ -85,7 +112,7 @@ Detail: `docs/CONVENTIONS.md § Naming`, `CLAUDE.md § 응답 스타일`.
 |---|---|
 | `.claude/` + `CLAUDE.md` | `.agents/` + `AGENTS.md` |
 
-`sync-agents.ps1`을 실행하면 미러가 자동 재생성됩니다. 두 표면이 같은 커밋에 스테이징되어야 합니다.
+Windows 에서는 `sync-agents.ps1`, macOS/Linux 에서는 `sync-agents.py` 를 실행하면 미러가 자동 재생성됩니다. 두 표면이 같은 커밋에 스테이징되어야 합니다.
 
 ---
 

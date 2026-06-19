@@ -187,7 +187,7 @@ Not every dependency should trigger automatic edits. Use three levels:
 
 | Level | Examples | Action |
 |---|---|---|
-| Hard dependency | `CLAUDE.md` to `AGENTS.md`, `.claude/skills/naite/*` to `.agents/skills/naite/*` | sync with `.naite/scripts/sync-agents.ps1` |
+| Hard dependency | `CLAUDE.md` to `AGENTS.md`, `.claude/skills/naite/*` to `.agents/skills/naite/*` | sync with `.naite/scripts/sync-agents.ps1` on Windows or `python .naite/scripts/sync-agents.py` on macOS/Linux |
 | Contract dependency | `docs/CONVENTIONS.md` change affecting workflow files or validator scripts | update the affected contracts and validators in the same change |
 | Semantic dependency | concept, decision, or source-record content change affecting linked pages | surface candidates from `.naite/ontology/tree-dependencies.json`, then repair through `/naite care` only when requested |
 
@@ -200,7 +200,7 @@ Python finds candidates. The LLM judges meaning. Do not auto-propagate semantic 
 For changes to operating docs or workflow files:
 
 1. Update canonical `.claude/` and root shared files first.
-2. Run `.naite/scripts/sync-agents.ps1` after `.claude/` or `CLAUDE.md` changes.
+2. Run `.naite/scripts/sync-agents.ps1` on Windows or `python .naite/scripts/sync-agents.py` on macOS/Linux after `.claude/` or `CLAUDE.md` changes.
 3. Rebuild generated maps if tree page coordinates or links changed.
 4. Run the relevant deterministic scripts.
 5. Review `git diff` before staging.

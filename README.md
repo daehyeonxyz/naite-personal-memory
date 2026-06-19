@@ -86,12 +86,16 @@ https://github.com/daehyeonxyz/naite-personal-memory 를 이 폴더에 설치해
 |---|---|
 | `/naite start` | 처음 시작할 때. 다른 AI 의 기록을 가져와 첫 나무를 짓는 1회성 안내 |
 | `/naite grow [path?]` | 공부한 것, 던져 둔 자료를 나무에 반영할 때. 대화 마무리·파일 하나·과목 단위까지 전부 |
+| `/naite grow backfill <slug>` | 이미 학습이 끝난 과목·아카이브를 대화 없이 chapter 단위로 일괄 보강할 때 |
 | `/naite ask <질문>` | 쌓인 기록을 바탕으로 물을 때 |
 | `/naite fruit [topic?]` | 결정·trade-off·실패 분석을 열매로 남길 때 |
-| `/naite care [scope?]` | 나무를 다듬을 때. `--check` 면 고치지 않고 점검만 |
+| `/naite care --check [scope?]` | 고치지 않고 건강 점검만 할 때. secrets scan 과 schema/lint 보고서를 만든다 |
+| `/naite care [scope?]` | 점검 결과나 사용자의 요청을 바탕으로 나무를 실제로 다듬을 때 |
 | `/naite upgrade` | naite 새 버전이 나왔을 때. 내 자료와 내가 고친 규칙은 두고 틀만 갱신 |
 
 명령을 외울 필요는 없습니다. 자료를 붙여넣고 "반영해줘" 라고만 해도 에이전트가 알맞은 흐름을 찾아갑니다.
+
+`capture.md`, `ingest.md`, `grow-branch.md`, `care-check.md` 는 사용자가 직접 부르는 명령이 아니라 위 명령들이 내부에서 읽는 절차 파일입니다. 예를 들어 대화 내용을 남기면 `/naite grow` 가 먼저 `capture.md` 로 `roots/conversations/` 에 임시 기록을 만들고, 사용자가 승인하면 `ingest.md` 로 `tree/` 에 반영합니다. `grow-backfill.md` 도 파일 이름은 별도지만 진입점은 `/naite grow backfill <slug>` 입니다.
 
 ## 폴더 구조
 
@@ -121,6 +125,7 @@ naite 는 셋으로 나를 압니다. 모두 평범한 Markdown 이라 직접 �
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — 왜 이런 구조인지, 스키마 설계 근거
 - [docs/CONVENTIONS.md](docs/CONVENTIONS.md) — 페이지가 지키는 규칙
 - [docs/CONTEXT.md](docs/CONTEXT.md) — 에이전트가 무엇을 어떤 순서로 읽는지
+- [docs/agent-runtimes.md](docs/agent-runtimes.md) — Claude Code, Codex, plugin, prompt caching 차이
 
 ## 기여
 
