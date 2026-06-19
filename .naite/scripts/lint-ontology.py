@@ -51,7 +51,7 @@ BOM = b'\xef\xbb\xbf'
 # Single source: .naite/ontology/facets.json (shared with naite-app filter UI).
 # Hardcoded tuples below are the fallback when facets.json is missing/corrupt.
 # Rationale: docs/ARCHITECTURE.md § 3 (facet redesign).
-# personal (C-level addition): user self-reference meta hub (personal-profile, career).
+# personal: user-declared kind, core:false (schema_version 2 facets.json).
 FACETS_PATH = ONTOLOGY_DIR / 'facets.json'
 
 
@@ -86,14 +86,16 @@ LEGACY_SOURCE_TYPES = ('course', 'paper', 'article', 'docs', 'conversation', 'ex
 LEGACY_TYPES = ('concept', 'entity', 'source')
 
 # Pre-migration legacy tags that should never appear in `subject` (3g).
+# Keep only genuinely generic tokens here. Vault-specific tags (e.g. ode,
+# laplace-transform, anthropic-academy, engineering-mathematics) belong in a
+# per-clone local denylist, not in this neutral starter.
 LEGACY_TAGS = {
-    'course', 'anthropic-academy', 'ode', 'laplace-transform',
-    'engineering-mathematics',  # wrong spelling
+    'course',
     'education',
 }
 
 OUTPUT_QUALITY_PATTERNS = [
-    ('raw-path', re.compile(r'`?raw[\\/][^`\s)]*', re.IGNORECASE)),
+    ('roots-path', re.compile(r'`?roots[\\/][^`\s)]*', re.IGNORECASE)),
     ('source-process', re.compile(
         r'\b(?:Staging|Source Staging|Archived source bundle|PDF page|raw PDF|source PDF|source page|lecture notes|page range|render|image-read|backfill|run-log|extraction)\b',
         re.IGNORECASE,

@@ -69,7 +69,8 @@ DB 의 materialized view 패턴. 매 query 재계산 (computed) 도, 박제 (cac
 ```yaml
 ---
 kind: concept | entity | source-record |          # 페이지 본질 (불변)
-      project | decision | insight | comparison
+      project | decision | insight | comparison |
+      essay | personal
 form: prose | index                               # 본문 제시 방식
 topics: [<canonical-topic>, ...]                  # folksonomy. 0-5. 빈 배열 OK.
 subject: [<skos-path>]                            # SKOS-lite path. 다축 가능 (cross-domain).

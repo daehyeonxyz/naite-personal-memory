@@ -226,6 +226,15 @@ Report file, line, matched phrase, and whether it is before `## Source`. For tou
 
 For `--daily`, include classification for each distinct output-quality cluster: `false-positive`, `intentional-debt`, or `repair-candidate`.
 
+#### 3k. Leaf-depth guard
+
+warn-only proxy check. `form=prose` 잎 페이지에 대해 두 가지를 감지한다.
+
+- 본문 (frontmatter 제외, `## Source` 이전) 에 `[[wikilink]]` 가 0 개인 경우
+- 본문 산문 글자 수가 대략 400 자 미만인 경우 (thin body)
+
+두 항목 모두 정밀 판정이 아니라 coarse proxy 다. 실제 깊이 판정 기준은 작성 시점 self-check (`docs/QUALITY.md § 4` LEAF-1~4) 이며 care-check 는 report-only 로만 surface 한다. blocker 가 아니고 자동 수정도 없다.
+
 #### 3f. BOM detection
 
 UTF-8 BOM (`EF BB BF`) prefix 검출:
@@ -266,6 +275,7 @@ blocker 아님 (secrets 만 blocker). report 는 candidate line 의 위치만 �
 | 3h language-shape review candidates | N lines | manual review (false positive expected) |
 | 3i schema integrity (drift detector) | legacy N / mixed M | both must be 0; if > 0 fix pages to the new schema |
 | 3j output quality contract guard | N lines | fix source/process voice and raw leakage |
+| 3k leaf-depth guard | N findings | warn-only; thin/unlinked prose leaves (real bar: write-time self-check) |
 ```
 
 3i 의 legacy/mixed count = 0 이 정상 상태. > 0 이면 새 페이지가 옛 schema 로 작성됐다는 drift signal.
@@ -428,7 +438,7 @@ This check has no auto-action; it exists to make the link graph's emergent struc
 
 #### 14c. Autonomous 일반 개념 페이지의 orphan (autonomy A garbage)
 
-§ 1 Orphans 와 cross-reference. autonomy A 로 spawn 된 일반 개념 페이지 (branch skill `subchapter-note § step 5`, grow skill `§ 5`) 가:
+§ 1 Orphans 와 cross-reference. autonomy A 로 spawn 된 일반 개념 페이지 (branch skill `subchapter-note § step 5`, `ingest.md § 5`) 가:
 - `git log` 으로 생성 시점 확인 → ≥30 일 전
 - inbound `[[wikilink]]` count == 0 (`trunk.md` / `seeds.md` / `rings.md` 외)
 → surface as **"orphan spawn"** 후보. 입자도 미스 또는 너무 좁은 추출 신호. 사용자 결정: 페이지 삭제, 본문 흡수해서 다른 페이지로 merge, 또는 다른 페이지에서 명시적 cross-link 추가.

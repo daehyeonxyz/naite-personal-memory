@@ -127,4 +127,4 @@ If the ingested material includes a clear decision / trade-off / failure analysi
 - Never bypasses per-step user confirmation from `capture`/`ingest`.
 - Never logs on its own (`rings.md` entries come from the sub-skills).
 - Never writes PDF/office binaries into `tree/`.
-- Never commits to git.
+- grow 단발 경로(conversation/file/stage-only)는 git commit 하지 않는다. branch 모드의 커밋·push 는 `grow-branch.md § E/§ F` 가 한다.

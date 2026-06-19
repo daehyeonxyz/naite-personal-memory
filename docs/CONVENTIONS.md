@@ -56,7 +56,7 @@ This tree is about **what the user knows**, not a generic encyclopedia. Beyond p
 - **Questions** — open threads the user is thinking about but hasn't closed.
 - **People / orgs / tools** — `kind=entity`.
 
-These map to the `kind` facet enum (§ Ontology). The `kind` facet is *page essence* (concept/entity/source-record/project/decision/insight/comparison); `form` is *presentation shape* (prose/index). `domains` is a derived cache, not a facet. Do not mint new `kind` / `form` / `source-types` values without care-check-surfaced pressure + user decision.
+These map to the `kind` facet enum (§ Ontology). The `kind` facet is *page essence* (concept/entity/source-record/project/decision/insight/comparison/essay/personal); `form` is *presentation shape* (prose/index). `domains` is a derived cache, not a facet. Do not mint new `kind` / `form` / `source-types` values without care-check-surfaced pressure + user decision.
 
 `comparison` pages (A-vs-B, e.g. `[[k-means-vs-dbscan]]`) → `kind=comparison`. Query-derived pages absorb provenance into prose, no separate facet.
 
@@ -71,7 +71,8 @@ Every page has these frontmatter facets:
 ```yaml
 ---
 kind: concept | entity | source-record |          # page essence (immutable)
-      project | decision | insight | comparison
+      project | decision | insight | comparison |
+      essay | personal
 form: prose | index                               # presentation shape
 topics: [<canonical-topic>, ...]                  # folksonomy. 0-5 per page. Empty array OK.
 subject: [<skos-path>]                            # SKOS-lite path. Multi-value for cross-domain.

@@ -36,7 +36,7 @@ skill 의 핵심 가치는 빈 헤더를 채우게 하는 게 아니라 **누락
 
 ### 0. Pre-flight (every invocation)
 
-1. Read `<NAITE_ROOT>/CLAUDE.md` — 특히 § Soft ontology, § Decision threads (시냅스 layer), § Personal tree scope, § Ontology. 그리고 `.naite/ontology/subject-tree.md` (canonical paths) + `.naite/ontology/topics.md` (canonical vocabulary).
+1. Read `<NAITE_ROOT>/CLAUDE.md § Decision threads — synapse layer`, 그리고 `docs/CONVENTIONS.md § Soft ontology` / `§ Personal tree scope` / `§ Ontology`. 그리고 `.naite/ontology/subject-tree.md` (canonical paths) + `.naite/ontology/topics.md` (canonical vocabulary).
 2. Read `<NAITE_ROOT>/tree/trunk.md` 전체 — 도메인·기존 hub 페이지 candidate 수집.
 3. Last ~20 lines of `<NAITE_ROOT>/tree/rings.md` — 최근 맥락.
 4. Trigger 모드 판별. 자연 감지·작업 종료 모드면 사용자에게 한 줄 확인 후 진행.
