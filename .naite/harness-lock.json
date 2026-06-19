@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "version": "0.2.0",
-  "generated_at": "2026-06-19T03:18:52.991422+00:00",
+  "version": "0.3.0",
+  "generated_at": "2026-06-19T04:42:02.535104+00:00",
   "files": {
     ".agents/skills/naite/SKILL.md": "sha256:b715c1c5fa619a8276fadaadb8a5740041f7901c90c3baf321451c90f81ff709",
     ".agents/skills/naite/ask.md": "sha256:23bc362076cdced8ee517f837b6f8b0e8c17138dee8fdd3ded4b7ff01f891855",
@@ -15,8 +15,8 @@
     ".agents/skills/naite/ingest.md": "sha256:a5619bee77be62d01e89d8e40089e5feea11953b9407f17dfc4fb4acf36a3753",
     ".agents/skills/naite/start.md": "sha256:eb1787941ee98c6f19fc4122709cbaed2ee0e3f5f925eeb32364e605327f1928",
     ".agents/skills/naite/upgrade.md": "sha256:3189f352addd6939e839e83899c33c7b351df6fcaf3ed4171a84735848644608",
-    ".claude-plugin/marketplace.json": "sha256:ed03ef62d26c84c01df68c9abad8f2d5793170d2d8ac2f4e866b60e868ad9a9c",
-    ".claude-plugin/plugin.json": "sha256:ef9c2e706ad962d9a58baaa1ef4972a1f8253ab7be2732dcb8f72d39c98d567a",
+    ".claude-plugin/marketplace.json": "sha256:b4d240da7d0b2d6de8163446e81d68ec4607812ecd65b3c32a415a4e03a04d4a",
+    ".claude-plugin/plugin.json": "sha256:9ad1c232dbd41c3d9123f60fe0f0eca557fa4d38675ac1736c010c15c8c5b0b4",
     ".claude/skills/naite/SKILL.md": "sha256:fb0edb6d019c4a76e544789647bc717304d8714389dfef0a349badad8658665b",
     ".claude/skills/naite/ask.md": "sha256:23bc362076cdced8ee517f837b6f8b0e8c17138dee8fdd3ded4b7ff01f891855",
     ".claude/skills/naite/capture.md": "sha256:e653f89b7aabd99de4e97e31b25e38e4f75d3c6c0148ac6cda74006e5450752a",
@@ -48,8 +48,9 @@
     "README.md": "sha256:2d9e92f1a9365f6fdda5dd93b3dede802dcb0083c86116c73dfd6b11088380f3",
     "docs/ARCHITECTURE.md": "sha256:34c26b26f0f0b37b2ab14f040756caa140c8801f94c9f5b110195a816342170d",
     "docs/CONTEXT.md": "sha256:763cc7aa9fccb89421131527dae3b32c26b1f4b12fd1d187f1fa018a24b4516d",
-    "docs/CONVENTIONS.md": "sha256:5826c48dbed8d789de34c578226b4da018404b0f2a89c1d15318ac214010da50",
+    "docs/CONVENTIONS.md": "sha256:897d7616ff197fd6779be791a9fa4a17aeb96470c84bd69437094c243b2ca58b",
     "docs/QUALITY.md": "sha256:bedcd4b76b989c346553c8cb161747b848ed0a4b6c540f7b3335fcdf91c1c618",
+    "docs/VERSIONING.md": "sha256:1d6338a8932057031e5cdb730f4173e9af99151101facb72a70f61f783e671e4",
     "docs/connect-mcp.md": "sha256:9aa93d2459e8e7ae563b2946b888f1db38d00b301a4da0f54e74a7484ee19b1d",
     "docs/migrate-prompt.md": "sha256:70ad308c072e2c5777f6051f75ceaf1b97612c8cbcf985a95fecf3b5a0a0de2c"
   }

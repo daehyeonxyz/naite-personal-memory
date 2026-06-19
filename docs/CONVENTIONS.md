@@ -355,6 +355,12 @@ care-check runs idempotent; it surfaces, the user decides.
 
 Schema evolution history is distributed across 4 layers: git commit history + `tree/rings.md migration` entries + `docs/ARCHITECTURE.md` long-form rationale + `tree/decision-*` synapse pages. See `docs/ARCHITECTURE.md § 4.5`.
 
+**External contributors — schema autonomy mapping.** 위 A/B/C 등급은 내부 LLM 동작 기준입니다. 외부 기여자(PR을 여는 사람)에게는 동일 등급이 아래와 같이 적용됩니다.
+
+- **A (autonomous)**: 문서 오타 수정, 스크립트 버그 수정, 명백한 alias 추가 등 단일 파일 범위의 변경은 PR로 직접 제출합니다. 메인테이너가 리뷰 후 머지합니다.
+- **B (propose)**: subject narrower 추가, subject rename/reparent 등 온톨로지 구조에 영향을 주는 변경은 PR에 포함하되, 해당 ontology 파일에 `# PROPOSED` 주석으로 후보를 표시합니다. 메인테이너가 confirm 또는 revert합니다.
+- **C (user decision)**: 새 `kind`/`form`/`source-types` enum 값, 새 facet 필드, 새 top-level domain, subject deprecation은 **PR에서 직접 추가할 수 없습니다.** C 등급(내부 기준 'user decision')은 외부 기여자에게는 메인테이너가 소유자 결정을 집행하는 형태로 적용됩니다. 외부 기여자는 PR로 `.naite/ontology/facets.json` 을 직접 편집하지 않습니다 (core enum 변경은 C-level 메인테이너 결정; user kind 선언은 vault 소유자 행위로, 공유 하네스 repo의 PR 범위가 아닙니다). C-level 변경을 제안하려면 `.github/ISSUE_TEMPLATE/schema-change.md` 양식으로 issue를 여세요.
+
 **Skill promotion.** When the same multi-step manual procedure executes ≥3 times across sessions (visible in `rings.md` or reported as recurring), propose formalizing it as a new naite workflow skill. `/naite care --check` flags candidates. Successful procedures deserve to be codified; one-offs stay one-offs.
 
 **Out-of-tree failures.** `rings.md § aborted` covers tree operations. Failures *around* tree work — plugin install, git auth, path issues, Obsidian config, etc. — go to the project's auto-memory `gotchas.md` instead. Read at session start; after a non-trivial failure + fix, append an entry.
