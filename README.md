@@ -117,6 +117,10 @@ naite/
 - [docs/CONVENTIONS.md](docs/CONVENTIONS.md): 페이지가 지키는 규칙들.
 - [docs/CONTEXT.md](docs/CONTEXT.md): 에이전트가 무엇을 어떤 순서로 읽는지.
 
+## 기여
+
+naite 하네스 (스킬, 문서, 스크립트, 플러그인 설정) 는 공개되어 있고 기여를 환영합니다. fork 한 뒤 고쳐서 PR 을 보내면 메인테이너가 검토해 반영합니다. 다만 `tree/` 와 `roots/` 는 각자의 개인 기록이라 기여 대상이 아닙니다. 자세한 기여 흐름과 스키마 변경 규칙은 [CONTRIBUTING.md](CONTRIBUTING.md) 에 정리되어 있습니다.
+
 ## License
 
 MIT

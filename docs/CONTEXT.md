@@ -29,6 +29,7 @@ Agents should load the smallest set that can safely decide the task, then expand
 | Context routing | `docs/CONTEXT.md` |
 | Mutation invariants | `docs/CONVENTIONS.md` |
 | Architecture rationale | `docs/ARCHITECTURE.md` |
+| Output-quality rubric | `docs/QUALITY.md` |
 | Subject taxonomy | `.naite/ontology/subject-tree.md` |
 | Topic vocabulary | `.naite/ontology/topics.md` |
 | Agent page map | `.naite/ontology/tree-manifest.json` |
@@ -54,6 +55,8 @@ Agents should load the smallest set that can safely decide the task, then expand
 7. **Local evidence**: read only the source files, tree pages, ontology sections, and recent rings entries required by the task.
 8. **Verification**: after edits, run the relevant deterministic scripts and rebuild generated maps when page coordinates or links changed.
 
+For a first session, `/naite start` follows `.claude/skills/naite/start.md` and consults `docs/QUALITY.md` and `docs/migrate-prompt.md` to guide the memory export import and the first tree build.
+
 Do not use `tree/trunk.md` as an exhaustive search index. It is a curated human landing page. Use `.naite/ontology/tree-manifest.json` as the agent fast path, then read the specific tree pages it identifies.
 
 ---
@@ -62,6 +65,7 @@ Do not use `tree/trunk.md` as an exhaustive search index. It is a curated human 
 
 | Workflow | Always load | Load when needed |
 |---|---|---|
+| `/naite start` | bootloader, `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, active `start.md`, `docs/QUALITY.md`, `docs/migrate-prompt.md`, `.naite/ontology/tree-manifest.json` | `.naite/ontology/subject-tree.md`, `.naite/ontology/topics.md`, pasted memory export in `roots/conversations/` (+ `roots/conversations/_transcripts/`) |
 | `/naite ask` | bootloader, `docs/CONTEXT.md`, `.naite/ontology/tree-manifest.json` | `.naite/ontology/tree-dependencies.json`, target pages, `tree/rings.md` for timeline questions |
 | `/naite grow` (단발: conversation/file/stage-only) | bootloader, `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, active `grow.md` (+ internal `ingest.md`/`capture.md` as needed), `.naite/ontology/tree-manifest.json`, `tree/trunk.md`, `tree/seeds.md`, recent `tree/rings.md` | `.naite/ontology/subject-tree.md`, `.naite/ontology/topics.md`, `.naite/ontology/tree-dependencies.json`, source files |
 | `/naite grow` (branch 모드) | bootloader, `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, active `grow-branch.md`, `.naite/ontology/tree-manifest.json`, `tree/trunk.md`, recent `tree/rings.md` | `.naite/ontology/subject-tree.md`, `.naite/ontology/topics.md`, `.naite/ontology/tree-dependencies.json`, course source files, prior course pages |

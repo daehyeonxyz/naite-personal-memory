@@ -184,7 +184,7 @@ Rules:
 - No `## Domain:` prefix. Two fixed top-level sections (`## Knowledge domains`, `## Branches`) with `### <name>` subsections only.
 - **Not all pages get listed.** Domain section: 4-7 hub pages only (knowledge domain entry points). Branch chapter / subchapter meta pages **never appear in `trunk.md`** — they live in `course-{slug}-00-index.md § Chapters` and `course-{slug}-ch{NN}-00-index.md § Subchapters`.
 - **No completion status markers.** No "(완료)", "(진행중)" in trunk. That info lives in the branch meta page body — more token-efficient.
-- **Domain inclusion criteria**: subject-tree 의 top-level 중 **kind=concept + kind=entity 페이지 합 ≥ 10 AND 그 중 inbound 최고치 ≥ 10** 인 도메인만 `## Knowledge domains` 에 노출한다. 임계 미달 도메인 (예: 단발 코스 1개에만 콘텐츠가 묶이는 소수 도메인) 은 `## Branches` 의 drill-down 으로만 접근. 새 가지가 추가돼 임계를 통과하면 care-check § 5 가 surface, 사용자 confirm 후 도메인 섹션 추가. 노출돼 있던 도메인이 약화돼 임계 미달이 되면 care-check 가 약화 신호로 surface (유지·제거는 사용자 결정). 임계의 정량 기준은 care-check § 5 와 동기화 유지.
+- **Domain inclusion criteria**: subject-tree 의 top-level 중 **kind=concept + kind=entity 페이지 합 ≥ 10 AND 그 중 inbound 최고치 ≥ 10** 인 도메인만 `## Knowledge domains` 에 노출한다. 임계 미달 도메인 (예: 단발 코스 1개에만 콘텐츠가 묶이는 소수 도메인) 은 `## Branches` 의 drill-down 으로만 접근한다. 새 가지가 추가돼 임계를 통과하면 care-check § 5 가 그 사실을 surface 하고, 사용자가 confirm 한 뒤 도메인 섹션을 추가한다. 반대로 노출돼 있던 도메인이 약해져 임계에 못 미치면 care-check 가 약화 신호로 surface 한다 (유지할지 제거할지는 사용자가 결정한다). 임계의 정량 기준은 care-check § 5 와 동기화를 유지한다.
 - **Hub selection criteria**: high inbound link count + answers the domain's starting question. care-check § high-degree neurons surfaces candidates.
 - **Branches grouped by source/institution** (Anthropic Academy, your university department, single book, etc.). One branch added = one line added to trunk.
 - Target after one quarter of operation: 25-40 lines (도메인 섹션 늘면 비례 증가, 도메인당 약 3 line). Explosion → care-check surfaces.
@@ -279,6 +279,8 @@ Forbidden in body prose before `## Source`:
 
 After writing or rewriting pages, run the content guard described in `/naite care` and fix touched pages immediately. `/naite care --check` can surface deterministic violations later, but producer skills should prevent them first.
 
+Leaf-page depth rules (thin-leaf demotion, lint thresholds) live in `docs/QUALITY.md § Leaf-page depth rubric`.
+
 ---
 
 ## External skills — tree-relevant kinds
@@ -359,7 +361,7 @@ Schema evolution history is distributed across 4 layers: git commit history + `t
 
 - **A (autonomous)**: 문서 오타 수정, 스크립트 버그 수정, 명백한 alias 추가 등 단일 파일 범위의 변경은 PR로 직접 제출합니다. 메인테이너가 리뷰 후 머지합니다.
 - **B (propose)**: subject narrower 추가, subject rename/reparent 등 온톨로지 구조에 영향을 주는 변경은 PR에 포함하되, 해당 ontology 파일에 `# PROPOSED` 주석으로 후보를 표시합니다. 메인테이너가 confirm 또는 revert합니다.
-- **C (user decision)**: 새 `kind`/`form`/`source-types` enum 값, 새 facet 필드, 새 top-level domain, subject deprecation은 **PR에서 직접 추가할 수 없습니다.** C 등급(내부 기준 'user decision')은 외부 기여자에게는 메인테이너가 소유자 결정을 집행하는 형태로 적용됩니다. 외부 기여자는 PR로 `.naite/ontology/facets.json` 을 직접 편집하지 않습니다 (core enum 변경은 C-level 메인테이너 결정; user kind 선언은 vault 소유자 행위로, 공유 하네스 repo의 PR 범위가 아닙니다). C-level 변경을 제안하려면 `.github/ISSUE_TEMPLATE/schema-change.md` 양식으로 issue를 여세요.
+- **C (user decision)**: 새 `kind`/`form`/`source-types` enum 값, 새 facet 필드, 새 top-level domain, subject deprecation은 **PR에서 직접 추가할 수 없습니다.** 내부 기준의 'user decision'에 해당하는 C 등급은, 외부 기여자에게는 메인테이너가 소유자 결정을 대신 내려 주는 절차로 바뀝니다. 그래서 외부 기여자는 PR로 `.naite/ontology/facets.json` 을 직접 편집하지 않습니다 (core enum 변경은 C-level 메인테이너 결정이고, user kind 선언은 vault 소유자의 행위라서 공유 하네스 repo의 PR 범위에 들어가지 않습니다). C-level 변경을 제안하려면 `.github/ISSUE_TEMPLATE/schema-change.md` 양식으로 issue를 여세요.
 
 **Skill promotion.** When the same multi-step manual procedure executes ≥3 times across sessions (visible in `rings.md` or reported as recurring), propose formalizing it as a new naite workflow skill. `/naite care --check` flags candidates. Successful procedures deserve to be codified; one-offs stay one-offs.
 
@@ -373,7 +375,7 @@ Schema evolution history is distributed across 4 layers: git commit history + `t
 
 **어휘 (naming)**: 시스템·방법은 **naite**, 단위 (vault) 는 **나무 (tree)**, 전체 (나무들의 집합) 는 **숲 (forest)** 이다. 1차 이름은 이 세 단어로 통일한다.
 
-**분화 기준은 크기가 아니라 의미다.** 단순히 페이지가 늘어서가 아니라, 한 군집이 나머지와 분리된 사상 공간을 이룰 때 분화한다. 이 신호는 정량으로 보조 측정하되 (군집 modularity·conductance), 최종 cut 은 **"한 나무가 에이전트와 사용자에게 하나의 작업 맥락 (사상 공간) 으로 쓸모 있는가"** 라는 효용으로 정한다. 수치는 판관이 아니라 증거다.
+**분화 기준은 크기가 아니라 의미다.** 페이지가 늘었다고 분화하는 것이 아니라, 한 군집이 나머지와 분리된 사상 공간을 이룰 때 분화한다. 이 신호는 군집 modularity·conductance 로 정량 보조 측정을 하되, 최종 cut 은 **"한 나무가 에이전트와 사용자에게 하나의 작업 맥락 (사상 공간) 으로 쓸모 있는가"** 라는 효용으로 정한다. 수치는 판관이 아니라 증거다.
 
 **나무 소속은 과목·도메인 라벨이 아니라 개념 계보로 정한다.** 한 페이지는 자기 링크 이웃이 실제로 모이는 나무에 속한다. 한 과목에서 온 두 페이지라도 개념 계보가 다르면 다른 나무로 갈 수 있다 (예: 한쪽은 ai 계보, 다른 쪽은 statistics 계보). `forest-config.json` 이 도메인→나무 seed 를 주고, label propagation 이 최종 배정을 한다.
 
@@ -394,4 +396,4 @@ Schema evolution history is distributed across 4 layers: git commit history + `t
 - `.naite/forest/dashboard.md` — 나이테 forest 대시보드 (생성물, `forest-dashboard.py`).
 - 도구: `forest-communities.py` (분화 신호 S1), `forest-assign.py` (계보 배정+걸침 개념), `forest-dashboard.py` (나이테), `forest-retrieval-experiment.py` (숲 vs vault 효용 측정). 의존성: `.naite/scripts/requirements.txt`.
 
-**상태: 그림자 단계.** 물리 마이그레이션 전까지 forest 는 평평한 `tree/` 위에 manifest 를 투영해 운영한다 (파일 이동 0). 숲의 핵심 효용은 retrieval 정밀도가 아니라 **에이전트 맥락 범위 한정**이다. **Phase 1 (단일 나무) 에서는 이 layer 가 잠들어 있다** — 빈/작은 vault 에서는 forest 도구가 분화 후보를 거의/전혀 잡지 않는 것이 정상이다.
+**상태: 그림자 단계.** 물리 마이그레이션 전까지 forest 는 평평한 `tree/` 위에 manifest 를 투영해 운영한다 (파일 이동 0). 숲의 핵심 효용은 retrieval 정밀도가 아니라 **에이전트 맥락 범위 한정**이다. **Phase 1 (단일 나무) 에서는 이 layer 가 잠들어 있다.** 빈 vault 나 작은 vault 에서는 forest 도구가 분화 후보를 거의 또는 전혀 잡지 않는 것이 정상이다.

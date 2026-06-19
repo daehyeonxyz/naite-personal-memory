@@ -4,13 +4,13 @@
 **Replaces**: 이전 `type` / `role` / `source-type` schema (facet redesign 으로 `kind` / `form` / `source-types` 로 교체); 그 이전엔 hardcoded `domains: [single-enum]`.
 **Origin**: LLM 과의 ontology design 대화 + 사용자 explicit decisions + 후속 care 검토 결과 + zero-base facet redesign 세션.
 
-이 문서는 naite 의 **schema 와 운영 모델의 long-form rationale**. 운영 invariants 는 [`docs/CONVENTIONS.md`](../docs/CONVENTIONS.md), canonical data 는 [`.naite/ontology/`](../.naite/ontology/), 워크플로 절차는 `.claude/skills/naite/*` 에 분산. 본 문서는 *왜 그렇게 설계했나*, *어떤 대안을 거부했나*, *언제 깨지는가* 를 담는다.
+이 문서는 naite 의 **schema 와 운영 모델의 long-form rationale** 다. 운영 invariants 는 [`docs/CONVENTIONS.md`](../docs/CONVENTIONS.md), canonical data 는 [`.naite/ontology/`](../.naite/ontology/), 워크플로 절차는 `.claude/skills/naite/*` 에 나뉘어 있다. 본 문서는 *왜 그렇게 설계했나*, *어떤 대안을 거부했나*, *언제 깨지는가* 를 담는다.
 
 ---
 
 ## 0. TL;DR
 
-- **다축 분류(faceted) + SKOS-lite 계층 + curated folksonomy + cached materialized view** 의 4 결합. 정보과학 표준 3 개 (Ranganathan 1933, W3C SKOS 2009, modern PKM folksonomy) + DB 패턴 1 개 위에 LLM-driven curation 을 얹음.
+- **다축 분류(faceted) + SKOS-lite 계층 + curated folksonomy + cached materialized view** 의 네 가지를 결합한다. 정보과학 표준 3 개 (Ranganathan 1933, W3C SKOS 2009, modern PKM folksonomy) + DB 패턴 1 개 위에 LLM-driven curation 을 얹었다.
 - 페이지 frontmatter 는 5 facet (`kind`, `form`, `topics`, `subject`, `source-types`) + 1 cache (`domains`). 각 facet 직교 (Ranganathan). 이전 `type` / `role` / `source-type` schema 를 교체한 결과다.
 - Schema 진화는 **cardinality-graded autonomy A/B/C** — autonomy A 는 LLM 자율 (개념 페이지, canonical topic, 명백한 alias), B 는 candidate 제안 (subject 트리 변경), C 는 사용자 결정 (trunk schema).
 
@@ -28,37 +28,37 @@
 | Source-type 부재 | course / paper / docs / conversation 출처 정보가 본문 prose 또는 파일명 prefix 로만 존재. | `source-type` (singular) → `source-types` (list) 로 multi-provenance 반영 |
 | Self-knowledge ↔ study-knowledge 혼재 | "내가 결정한 것" 과 "내가 학습한 것" 이 그래프에서 구분 불가. | `kind=source-record` 도입 — literature note vs permanent note 명시 분리 (Zettelkasten 정통) |
 
-마지막 항목이 가장 결정적 — 이 tree 의 본질은 *사용자가 무엇을 알고 있나* 이고, 이 "앎" 은 두 갈래 (compiled self-knowledge + study knowledge) 의 결합이다. 초기엔 `role` facet 이 그 구분을 명시화했고, redesign 에서 `kind` facet 으로 더 정확히 표현됨 — `kind=source-record` (study knowledge) vs `kind=decision`/`insight`/`project` (compiled self-knowledge).
+마지막 항목이 가장 결정적 — 이 tree 의 본질은 *사용자가 무엇을 알고 있나* 이고, 이 "앎" 은 두 갈래 (compiled self-knowledge + study knowledge) 의 결합이다. 초기엔 `role` facet 이 그 구분을 명시화했고, redesign 에서 `kind` facet 으로 더 정확히 표현했다. `kind=source-record` (study knowledge) 와 `kind=decision`/`insight`/`project` (compiled self-knowledge) 가 그 결과다.
 
 ---
 
 ## 2. Theoretical bases — 6 토대 (개요)
 
-각 토대의 풀 설명은 tree 의 concept page 로 grow 됨. 본 섹션은 *왜 그 토대를 채택했는지* 한 단락씩.
+각 토대의 풀 설명은 tree 의 concept page 로 grow 한다. 본 섹션은 *왜 그 토대를 채택했는지* 한 단락씩 적는다.
 
 ### 2.1 Faceted classification (Ranganathan 1933)
 
-한 자료를 *여러 직교 차원* 으로 분류한다. PMEST(Personality, Matter, Energy, Space, Time)는 도서관 도메인 사례지만 핵심은 *facet 직교성*. 한 facet 변경이 다른 facet 에 영향 없음 = schema 변경의 영향 격리. 본 tree 의 5 facet 이 직접 적용. 자세히는 tree 의 `faceted-classification` 개념 페이지로 정리할 수 있다.
+한 자료를 *여러 직교 차원* 으로 분류한다. PMEST(Personality, Matter, Energy, Space, Time)는 도서관 도메인 사례지만 핵심은 *facet 직교성* 이다. 한 facet 변경이 다른 facet 에 영향 없음 = schema 변경의 영향 격리. 본 tree 의 5 facet 이 이를 직접 적용한다. 풀 설명은 tree 의 `faceted-classification` 개념 페이지가 담는다.
 
 ### 2.2 SKOS-lite (W3C 2009)
 
-W3C 의 Simple Knowledge Organization System 표준의 *부분집합* 채택. `narrower` 는 path notation (`ml/agents`) 으로 implicit, `altLabel` 은 명시. AltLabel 이 *renaming 비용을 0 으로 만드는* 핵심 메커니즘. 자세히는 tree 의 `skos` 개념 페이지로 정리할 수 있다.
+W3C 의 Simple Knowledge Organization System 표준의 *부분집합* 을 채택했다. `narrower` 는 path notation (`ml/agents`) 으로 implicit 하게 두고, `altLabel` 은 명시한다. AltLabel 이 *renaming 비용을 0 으로 만드는* 핵심 메커니즘. 표준 자체의 상세는 tree 의 `skos` 개념 페이지에 둔다.
 
 ### 2.3 Folksonomy + curated taxonomy
 
-순수 taxonomy (top-down rigid) 는 진화 비용 크고, 순수 folksonomy (bottom-up free) 는 카오스. 두 layer 결합 — `topics` 는 folksonomic emerge, `subject` 는 curated. 미등록 topic 은 입자도 가드 통과 시 LLM 자율 추가 (autonomy A), 가드 실패면 surface 만. 입자도 가드는 `.naite/ontology/topics.md § Topic granularity guidance`. 자세히는 tree 의 `folksonomy` 개념 페이지로 정리할 수 있다.
+순수 taxonomy (top-down rigid) 는 진화 비용이 크고, 순수 folksonomy (bottom-up free) 는 카오스로 흐른다. 그래서 두 layer 를 결합한다. `topics` 는 folksonomic 하게 emerge 하고, `subject` 는 curated 다. 미등록 topic 은 입자도 가드 통과 시 LLM 자율 추가 (autonomy A), 가드 실패면 surface 만. 입자도 가드는 `.naite/ontology/topics.md § Topic granularity guidance` 에 있다. 두 layer 결합의 배경은 tree 의 `folksonomy` 개념 페이지에서 더 다룬다.
 
 ### 2.4 Cached materialized view
 
-DB 의 materialized view 패턴. 매 query 재계산 (computed) 도, 박제 (cached) 도 trade-off. 본 tree 의 `domains` field 는 *cached + care-check refresh* — Obsidian graph view 호환성이 결정 변수. 자세히는 tree 의 `materialized-view` 개념 페이지로 정리할 수 있다.
+DB 의 materialized view 패턴이다. 매 query 재계산 (computed) 도, 박제 (cached) 도 각각 trade-off 가 있다. 본 tree 의 `domains` field 는 *cached + care-check refresh* — Obsidian graph view 호환성이 결정 변수. 패턴의 전체 맥락은 tree 의 `materialized-view` 개념 페이지를 참고한다.
 
 ### 2.5 LLM-as-curator
 
-전통 ontology 는 사람 schema steward. 1 인 운영 tree 에서 LLM 이 그 mechanical 부분 (facet 선택, alias cluster 감지, 모호 케이스 결정, narrower 후보 발견) 을 수행. 비용 가정: Codex Pro / Claude Pro 토큰 풍부. 자세히는 tree 의 `llm-as-curator` 개념 페이지로 정리할 수 있다.
+전통 ontology 는 사람이 schema steward 를 맡는다. 1 인 운영 tree 에서는 LLM 이 그 mechanical 부분 (facet 선택, alias cluster 감지, 모호 케이스 결정, narrower 후보 발견) 을 수행한다. 비용 가정: Codex Pro / Claude Pro 토큰 풍부. 이 역할 모델의 자세한 논의는 tree 의 `llm-as-curator` 개념 페이지에 모은다.
 
 ### 2.6 Graph-derived structure (Louvain, Blondel 2008)
 
-페이지간 wikilink graph 가 의미 graph 의 *근사*. modularity 최적화 (Louvain) 로 narrower 후보 추출 가능 — top-down 강제가 아니라 *data-driven evolution*. care-check 의 high-degree neurons 는 단순 centrality. 자세히는 tree 의 `louvain-modularity` 개념 페이지로 정리할 수 있다.
+페이지간 wikilink graph 가 의미 graph 의 *근사*. modularity 최적화 (Louvain) 가 narrower 후보를 추출한다. top-down 강제가 아니라 *data-driven evolution* 이다. care-check 의 high-degree neurons 는 단순 centrality 다. 이 방법론의 자세한 설명은 tree 의 `louvain-modularity` 개념 페이지에 따로 적는다.
 
 ---
 
@@ -83,9 +83,9 @@ updated: YYYY-MM-DD
 ---
 ```
 
-운영 룰 (필드별 enum, granularity gate, alias 처리) 은 [`docs/CONVENTIONS.md § Ontology`](../docs/CONVENTIONS.md) 가 단일 source. 본 섹션은 *왜 이 5 facet 인가* 의 rationale 만.
+운영 룰 (필드별 enum, granularity gate, alias 처리) 은 [`docs/CONVENTIONS.md § Ontology`](../docs/CONVENTIONS.md) 가 단일 source 다. 본 섹션은 *왜 이 5 facet 인가* 의 rationale 만 다룬다.
 
-**Facet redesign**: 이전 `type` / `role` / `source-type` schema 가 `kind` / `form` / `source-types` 로 교체됨. 핵심 변화: (1) `kind=source-record` 부활로 literature note (source-bound) 와 permanent note (재사용 개념) 분리, (2) `role` 폐지 + `form` 도입 (page 는 정보 artifact 라 role 개념 부적합), (3) `source-types` plural 화 (multi-provenance).
+**Facet redesign**: 이전 `type` / `role` / `source-type` schema 를 `kind` / `form` / `source-types` 로 교체했다. 핵심 변화: (1) `kind=source-record` 부활로 literature note (source-bound) 와 permanent note (재사용 개념) 분리, (2) `role` 폐지 + `form` 도입 (page 는 정보 artifact 라 role 개념 부적합), (3) `source-types` plural 화 (multi-provenance).
 
 ### 3.2 Field 책임 분리
 
@@ -108,7 +108,7 @@ updated: YYYY-MM-DD
 - [`CLAUDE.md`](../CLAUDE.md) (+ auto-mirror `AGENTS.md`) — **Bootloader** — 라우팅·트리거·hard safety.
 - `.claude/skills/naite/*.md` — **How** — workflow 절차.
 
-`.naite/ontology/` 디렉토리는 spec data 라 양 surface 가 동일하게 참조. mirror 안 됨 (`.naite/scripts/sync-agents.ps1` 갱신 불필요).
+`.naite/ontology/` 디렉토리는 spec data 라 양 surface 가 동일하게 참조한다. mirror 하지 않는다 (`.naite/scripts/sync-agents.ps1` 갱신 불필요).
 
 ### 3.4 Topic governance — graded autonomy
 
@@ -123,18 +123,18 @@ updated: YYYY-MM-DD
 
 ## 4. Operating model — rationale
 
-본 섹션은 *왜 이렇게 운영하는가*. 절차 자체는 `.claude/skills/naite/{grow,grow-branch,care-check,care,...}.md` 가 단일 source.
+본 섹션은 *왜 이렇게 운영하는가* 를 다룬다. 절차 자체는 `.claude/skills/naite/{grow,grow-branch,care-check,care,...}.md` 가 단일 source 다.
 
 ### 4.1 Grow 시점 facet 결정 — 왜 LLM 자율
 
-새 페이지 작성 시 LLM 이 5 facet 결정 (입자도 가드 + canonical list 참조). 사람 큐레이터에 비해 *일관성* (같은 룰 매 페이지 동일 적용) 이 강점. 이 가정의 비용 base 는 § 2.5 LLM-as-curator.
+새 페이지 작성 시 LLM 이 5 facet 을 결정한다 (입자도 가드 + canonical list 참조). 사람 큐레이터에 비해 *일관성* (같은 룰 매 페이지 동일 적용) 이 강점이다. 이 가정의 비용 base 는 § 2.5 LLM-as-curator 다.
 
 ### 4.2 care 의 두 모드 — 분리된 책임
 
 - **`care --check`** (`.naite/scripts/lint-ontology.py` deterministic + `.claude/skills/naite/care-check.md` LLM-driven) — schema/정책 compliance. report-only. 3a frontmatter completeness, 3b subject tree, 3c topic canonical, 3d domain cache, 3e kind/form/source-types distribution, 3f BOM, 3g legacy drift, 3h language-shape. § 14 autonomy garbage collector (LLM-driven, 30 일 윈도우).
 - **`care`** (돌봄 모드) — qualitative review/repair. narrative prose verdict 도 이 모드로 흡수: 점수 없음, threshold 없음. page/branch review, 직접 content 수선, 대규모 sweep, recurring-rule 학습. 사용자 수동 호출.
 
-분리 이유: `care --check` 의 mechanical 검사와 `care` 의 *맥락 판단* 이 다른 영역. 자세히: `.claude/skills/naite/{care-check,care}.md`.
+분리 이유: `care --check` 의 mechanical 검사와 `care` 의 *맥락 판단* 은 서로 다른 영역에 있다. 자세히: `.claude/skills/naite/{care-check,care}.md`.
 
 ### 4.3 Schema evolution — graded autonomy
 

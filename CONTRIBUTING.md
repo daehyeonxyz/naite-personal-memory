@@ -51,7 +51,7 @@ python .naite/scripts/lint-ontology.py
 ```
 
 - `.agents/` + `AGENTS.md`는 `sync-agents.ps1`의 생성물입니다. 직접 수정하지 마세요.
-- 외부 기여자는 PR로 `.naite/ontology/facets.json` 을 직접 편집하지 않습니다 (core enum 변경은 C-level 메인테이너 결정; user kind 선언은 vault 소유자 행위로, 공유 하네스 repo의 PR 범위가 아닙니다). 아래 Schema governance 섹션을 참고하세요.
+- 외부 기여자는 PR로 `.naite/ontology/facets.json` 을 직접 편집하지 않습니다. core enum 변경은 C-level 메인테이너 결정 사항입니다. user kind 선언은 vault 소유자의 행위이므로, 공유 하네스 repo의 PR 범위에 들어가지 않습니다. 아래 Schema governance 섹션을 참고하세요.
 
 ---
 
@@ -64,7 +64,7 @@ Full rules: `docs/CONVENTIONS.md § Schema evolution`
 |---|---|---|
 | **A (autonomous)** | Single-page doc fix, script bug, obvious alias | PR directly. Maintainer merges. |
 | **B (propose)** | Subject narrower / rename / move | PR + append candidate to ontology file with `# PROPOSED` comment. Maintainer confirms or reverts. |
-| **C (user decision)** | New `kind`/`form`/`source-types` enum value, new facet field, new top-level domain, subject deprecation | **Do not add in a PR.** C 등급(내부 기준 'user decision')은 외부 기여자에게는 메인테이너가 소유자 결정을 집행하는 형태로 적용됩니다. Open a schema-change issue instead (`.github/ISSUE_TEMPLATE/schema-change.md`). |
+| **C (user decision)** | New `kind`/`form`/`source-types` enum value, new facet field, new top-level domain, subject deprecation | **Do not add in a PR.** 외부 기여자는 C 등급(내부 기준 'user decision') 스키마를 PR로 직접 추가하지 못합니다. issue로 제안하고, 실제 변경은 메인테이너만 합니다. Open a schema-change issue instead (`.github/ISSUE_TEMPLATE/schema-change.md`). |
 
 ---
 
