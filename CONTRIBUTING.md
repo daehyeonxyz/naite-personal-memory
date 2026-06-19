@@ -41,7 +41,10 @@ Before opening a PR, run these three commands and confirm each exits clean:
 
 ```bash
 # 1. Regenerate the .agents/ mirror from the canonical .claude/ side
+#    Windows (PowerShell)
 powershell -File .naite/scripts/sync-agents.ps1
+#    Mac / Linux
+python .naite/scripts/sync-agents.py
 
 # 2. Rebuild harness-lock (embed version + dependency snapshot)
 python .naite/scripts/build-harness-lock.py
@@ -50,7 +53,7 @@ python .naite/scripts/build-harness-lock.py
 python .naite/scripts/lint-ontology.py
 ```
 
-- `.agents/` + `AGENTS.md`는 `sync-agents.ps1`의 생성물입니다. 직접 수정하지 마세요.
+- `.agents/` + `AGENTS.md`는 `sync-agents` 스크립트의 생성물입니다. 직접 수정하지 마세요.
 - 외부 기여자는 PR로 `.naite/ontology/facets.json` 을 직접 편집하지 않습니다. core enum 변경은 C-level 메인테이너 결정 사항입니다. user kind 선언은 vault 소유자의 행위이므로, 공유 하네스 repo의 PR 범위에 들어가지 않습니다. 아래 Schema governance 섹션을 참고하세요.
 
 ---
@@ -85,7 +88,7 @@ Detail: `docs/CONVENTIONS.md § Naming`, `CLAUDE.md § 응답 스타일`.
 |---|---|
 | `.claude/` + `CLAUDE.md` | `.agents/` + `AGENTS.md` |
 
-`sync-agents.ps1`을 실행하면 미러가 자동 재생성됩니다. 두 표면이 같은 커밋에 스테이징되어야 합니다.
+`sync-agents` 스크립트를 실행하면 미러가 자동 재생성됩니다. 두 표면이 같은 커밋에 스테이징되어야 합니다.
 
 ---
 
