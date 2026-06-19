@@ -1,6 +1,16 @@
-# naite
+<p align="center">
+  <img src="assets/naite-banner.png" alt="naite" width="640" />
+</p>
 
-*A personal knowledge system you own — a shared brain for your AI agents.*
+<p align="center"><em>A personal knowledge system you own — a shared brain for your AI agents.</em></p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/license-MIT-7cc15a" alt="MIT" />
+  <img src="https://img.shields.io/badge/version-0.4.0-a9621f" alt="v0.4.0" />
+  <img src="https://img.shields.io/badge/Claude_Code-ready-a9621f" alt="Claude Code" />
+  <img src="https://img.shields.io/badge/Codex-ready-7cc15a" alt="Codex" />
+  <img src="https://img.shields.io/badge/Obsidian-compatible-a9621f" alt="Obsidian" />
+</p>
 
 naite 는 내가 아는 것을 평문 Markdown 으로 쌓아 두는 개인용 지식 시스템입니다. 일을 대신 처리하는 도구가 아니라, 내 지식을 모아 두고 관리하는 곳입니다. 자료를 넣고 질문하면, 유지 관리자 역할을 맡은 LLM 에이전트(Claude Code·Codex)가 그것을 읽고 서로 연결된 페이지로 정리합니다.
 
