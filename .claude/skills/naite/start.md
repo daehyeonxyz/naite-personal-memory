@@ -101,9 +101,19 @@ export 에서 `[있음]` 으로 표시된 주제는, 그 원본 자료로 골격
 
 이어서 다음 한두 수를 제안한다 (관심 주제로 `/naite ask`, 새 자료로 `/naite grow`).
 
+### 9. 표면 준비 (선택, 동의 기반)
+
+나무가 처음 생긴 뒤, 에이전트의 instruction surface 를 갖출지 **제안한다** (단정하지 않고 사용자 동의로 채운다).
+
+- **USER.md**: 응답 선호를 한두 가지 묻고 (톤·길이·피할 것 등), 동의하면 `.naite/templates/USER.md` 를 vault 루트 `USER.md` 로 복사해 채운다. PII 는 적지 않고, 신원은 `[[personal-profile]]` 로 가리킨다. 루트 `USER.md` 는 `.gitignore` 되어 공개되지 않는다.
+- **MEMORY.md**: 진행 중 작업·운영 사실을 모을 곳이 필요하면 `.naite/templates/MEMORY.md` 를 루트 `MEMORY.md` 로 복사한다. 비워 두고 시작해도 된다.
+- **SOUL.md**: 에이전트의 기본 정체성·응답 스타일이 담긴 파일임을 한 줄로 안내한다. 톤을 바꾸고 싶으면 이 파일을 함께 다듬는다.
+
+사용자가 원치 않으면 만들지 않는다. 표면이 없으면 bootloader 가 자동으로 건너뛴다. 이 단계는 `tree/` 를 건드리지 않는다.
+
 ## What this command never does
 
-- `roots/` 의 import 기록 외에는 직접 쓰지 않는다 (`tree/` 변환은 `ingest`/`grow` 위임).
+- `roots/` 의 import 기록과 (동의 시) 루트 instruction surface (`USER.md`/`MEMORY.md`) 외에는 직접 쓰지 않는다. `tree/` 변환은 `ingest`/`grow` 에 위임한다.
 - secrets pre-check 를 건너뛰지 않는다.
 - 게이트를 통과하지 못한 얕은 export 를 ingest 하지 않는다.
 - 새 rings op 를 만들지 않는다.

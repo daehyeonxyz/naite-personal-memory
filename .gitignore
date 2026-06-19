@@ -11,6 +11,13 @@ secrets.json
 *_dsa
 *_ed25519
 
+# Per-clone instruction surfaces — the user's live USER.md / MEMORY.md hold
+# real preferences and working memory. Templates ship in .naite/templates/;
+# the live root files are user-owned and must never reach the public repo.
+# (SOUL.md IS tracked — it is the shared, public default persona.)
+/USER.md
+/MEMORY.md
+
 # OS / editor noise
 .DS_Store
 Thumbs.db

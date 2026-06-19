@@ -7,11 +7,13 @@ The lock records, at release time, the sha256 of every file the starter kit owns
 "unmodified, safe to auto-replace" apart from "user-customized, propose 3-way".
 
 Harness set (tracked files only):
-    CLAUDE.md, AGENTS.md, README.md, LICENSE, .gitignore,
-    .claude/**, .agents/**, .claude-plugin/**, docs/**, .naite/scripts/**
+    CLAUDE.md, AGENTS.md, SOUL.md, README.md, LICENSE, .gitignore,
+    .claude/**, .agents/**, .claude-plugin/**, docs/**, .naite/scripts/**,
+    .naite/templates/**
 
 Excluded (user-owned or generated, never overwritten by upgrade):
     roots/**, tree/**, .naite/ontology/**, .naite/reports/**,
+    USER.md, MEMORY.md (gitignored, per-clone user state),
     .naite/harness-lock.json itself
 
 Usage:
@@ -33,8 +35,8 @@ NAITE_ROOT = Path(__file__).resolve().parent.parent.parent
 LOCK_PATH = NAITE_ROOT / '.naite' / 'harness-lock.json'
 PLUGIN_PATH = NAITE_ROOT / '.claude-plugin' / 'plugin.json'
 
-HARNESS_FILES = ('CLAUDE.md', 'AGENTS.md', 'README.md', 'LICENSE', '.gitignore')
-HARNESS_DIR_PREFIXES = ('.claude/', '.agents/', '.claude-plugin/', 'docs/', '.naite/scripts/')
+HARNESS_FILES = ('CLAUDE.md', 'AGENTS.md', 'SOUL.md', 'README.md', 'LICENSE', '.gitignore')
+HARNESS_DIR_PREFIXES = ('.claude/', '.agents/', '.claude-plugin/', 'docs/', '.naite/scripts/', '.naite/templates/')
 
 
 def list_harness_files() -> list[str]:

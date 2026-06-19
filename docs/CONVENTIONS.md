@@ -397,3 +397,37 @@ Schema evolution history is distributed across 4 layers: git commit history + `t
 - 도구: `forest-communities.py` (분화 신호 S1), `forest-assign.py` (계보 배정+걸침 개념), `forest-dashboard.py` (나이테), `forest-retrieval-experiment.py` (숲 vs vault 효용 측정). 의존성: `.naite/scripts/requirements.txt`.
 
 **상태: 그림자 단계.** 물리 마이그레이션 전까지 forest 는 평평한 `tree/` 위에 manifest 를 투영해 운영한다 (파일 이동 0). 숲의 핵심 효용은 retrieval 정밀도가 아니라 **에이전트 맥락 범위 한정**이다. **Phase 1 (단일 나무) 에서는 이 layer 가 잠들어 있다.** 빈 vault 나 작은 vault 에서는 forest 도구가 분화 후보를 거의 또는 전혀 잡지 않는 것이 정상이다.
+
+---
+
+## Instruction surfaces
+
+naite 의 지침은 안정도(변하는 빈도)가 다른 표면으로 나뉜다. 안정한 것일수록 위에, 휘발적인 것일수록 아래에 둔다 (안정 → 휘발 순서의 3단 조립이다).
+
+| 표면 | 역할 | 누가 편집 | 추적 |
+|---|---|---|---|
+| `CLAUDE.md` / `AGENTS.md` | bootloader: 라우팅·안전·포인터 | LLM (정본 `CLAUDE.md`) | tracked, 미러됨 |
+| `SOUL.md` | 에이전트 정체성·응답 스타일·일하는 자세 | LLM + 사용자 | tracked, shared (미러 안 함) |
+| `USER.md` | 사용자 응답 선호 + `[[personal-profile]]` 포인터 | 사용자 주도, LLM 보조 | gitignore (양식 `.naite/templates/USER.md`) |
+| `MEMORY.md` | 진행 중 작업·운영 사실 통합 인덱스 | LLM curate, 사용자 confirm | gitignore (양식 `.naite/templates/MEMORY.md`) |
+| `tree/personal-profile.md` | 신원·이력 (PII), 그래프 참여 | LLM (tree 규약, `kind=personal`) | tree 콘텐츠 |
+
+**USER.md vs personal-profile.md.** USER.md 는 "에이전트가 사용자를 어떻게 대할지 (선호·톤·작업 방식)" 를 담는 시스템 표면이다. personal-profile.md 는 "사용자가 누구인지 (신원·이력)" 를 담는 그래프 콘텐츠다. PII 는 USER.md 에 복제하지 않고 `[[personal-profile]]` 로 가리킨다.
+
+**MEMORY.md 규율.** 메모리는 선언적 사실로 적고 출처·날짜를 단다. 낡으면 (일주일 기준) 지운다. 나무는 큐레이션된 장기 지식이고 MEMORY.md 는 휘발적 운영 기억이다. 오래 남길 지식은 `/naite grow` 로 나무에 새긴다.
+
+**로딩.** claude / codex 는 이 표면들을 자동 로드하지 않는다. bootloader (`CLAUDE.md` § Instruction surfaces) 가 세션 시작 시 읽도록 지시한다. `SOUL.md` 는 항상, `USER.md` / `MEMORY.md` 는 있으면 읽는다.
+
+**미러 정책.** SOUL / USER / MEMORY 는 shared 단일 파일이다 (docs/ 처럼 양 도구가 같은 파일을 읽는다). `CLAUDE.md`↔`AGENTS.md` 와 `.claude/skills`↔`.agents/skills` 만 `sync-agents` 로 미러한다. 새 표면 파일명에 도구 토큰 ("Claude" 등) 이 없어 sync 치환에 영향받지 않는다.
+
+---
+
+## Obsidian co-editing — operational gotcha
+
+The user keeps Obsidian open on the repo root for graph view and reading. Editing is still the agent's job. Two failure modes to watch:
+
+1. **Editor buffer race**: Obsidian holding a file open in its UI buffer can overwrite agent-committed working-tree changes via auto-save when its buffer is stale. HEAD is safe; only the working tree is affected.
+   - **Defense**: `.git/hooks/post-commit` (per-clone, not tracked) auto-pushes `main` to origin immediately after every commit. Origin becomes the canonical recovery source. Reinstall by copying from another clone's `.git/hooks/post-commit`.
+   - **Recovery**: `git checkout HEAD -- <file>` (commit not pushed) or `git checkout origin/main -- <file>` (pushed and Obsidian reverted afterward). Then re-apply pending working-tree changes.
+   - **Agent rule**: before staging an edit, run `git diff HEAD -- <target>`. If unexpected modifications appear that you did not make, surface to the user and restore from HEAD before proceeding.
+2. **Multi-file edit runs**: before `/naite grow` on a directory or a branch-mode chapter ingest, suggest the user pause Obsidian editing — not required, just reduces conflict risk.

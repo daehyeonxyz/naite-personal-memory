@@ -26,6 +26,9 @@ Agents should load the smallest set that can safely decide the task, then expand
 |---|---|
 | Claude bootloader | `CLAUDE.md` |
 | Codex bootloader | `AGENTS.md` |
+| Agent identity / persona | `SOUL.md` |
+| User preferences | `USER.md` (양식 `.naite/templates/USER.md`) |
+| Working memory | `MEMORY.md` (양식 `.naite/templates/MEMORY.md`) |
 | Context routing | `docs/CONTEXT.md` |
 | Mutation invariants | `docs/CONVENTIONS.md` |
 | Architecture rationale | `docs/ARCHITECTURE.md` |
@@ -46,7 +49,7 @@ Agents should load the smallest set that can safely decide the task, then expand
 
 ## Default loading order
 
-1. **Bootloader**: read `CLAUDE.md` or `AGENTS.md` for the active surface.
+1. **Bootloader + instruction surfaces**: read `CLAUDE.md` or `AGENTS.md` for the active surface, then `SOUL.md` (always) and `USER.md` / `MEMORY.md` (if present). See `docs/CONVENTIONS.md § Instruction surfaces`.
 2. **Route intent**: classify the user request into a workflow or a non-mutating answer.
 3. **Context contract**: read this file when the task involves tree mutation, tree query, context selection, routing, dependency propagation, care, or care-check.
 4. **Mutation authority**: for any tree mutation, read `docs/CONVENTIONS.md`.
