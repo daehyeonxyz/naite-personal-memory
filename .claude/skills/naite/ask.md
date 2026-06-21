@@ -9,6 +9,7 @@ Answer a question from the tree. Cite pages. Offer to file the answer.
 - Read `tree/trunk.md` in full. This is the cheap way to find relevant pages without grepping the whole repo.
 - Identify candidate pages from trunk entries and one-line summaries.
 - Read each candidate page. If the question crosses domains, follow `[[wikilinks]]` between pages.
+- This grounding (reading trunk, picking candidates, following links) is internal work. Do **not** narrate it in the answer ("trunk.md 를 먼저 읽겠습니다", "후보 페이지가 명확합니다", file lists). It belongs to the agent's thinking, never the user-facing reply. See `SOUL.md § 응답 스타일`.
 
 ### 2. If the tree is silent
 
@@ -22,16 +23,13 @@ Do **not** silently answer from general knowledge as if it were tree-grounded. T
 
 ### 3. Synthesize
 
-Write the answer with:
+Write the answer as the finished, user-facing result, not a log of how it was found. Apply `SOUL.md § 응답 스타일` for voice and format: structure with headings and lists when it helps, no emoji, no process narration, no naite-internal jargon ("나무 기준", "개인 hub", "/naite ask 절차"); 존댓말 by default, or English if the user's language is English.
 
-- **Citations inline** as `[[page-slug]]`.
+- **Citations** as `[[page-slug]]`, placed at the **end of the sentence or clause** the page supports, so the reader sees a trailing source marker rather than a filename dropped mid-phrase. Reuse the same `[[slug]]` for the same page.
 - **Conflicts surfaced**: if two tree pages disagree, quote both and flag the disagreement.
 - **Gaps named**: if the answer depends on something the tree doesn't yet cover, say so and consider proposing a stub.
 
-Choose the output format based on the question:
-- Narrative prose for an explanation.
-- A table for a comparison.
-- A short list for a lookup.
+Choose the output shape by question type: narrative prose for an explanation, a table for a comparison, a short list for a lookup.
 
 ### 4. Offer to file
 
