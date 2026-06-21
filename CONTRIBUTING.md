@@ -102,7 +102,7 @@ Full rules: `docs/CONVENTIONS.md § Schema evolution`
 - 파일명: `lowercase-kebab-case.md`. 공백, 대문자 금지.
 - Wikilinks: `[[page-slug]]` 또는 `[[page-slug|Display Text]]`. Plain `[[...]]`만 사용합니다.
 
-Detail: `docs/CONVENTIONS.md § Naming`, `CLAUDE.md § 응답 스타일`.
+Detail: `docs/CONVENTIONS.md § Naming`, `SOUL.md § 응답 스타일`.
 
 ---
 
