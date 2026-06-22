@@ -39,7 +39,7 @@ naite-app과 이 하네스는 한 제품의 두 면이라, 역할을 나눠 함�
 - **patch 증가 (예: 0.3.0 → 0.3.1)**: 버그 수정, 문서 개선, 스크립트 수정 등 하위 호환 변경 시.
 - **major 증가 (예: 0.x.y → 1.0.0)**: 하네스 구조가 전면 개편될 때 (1.0 전까지는 major 증가 없음).
 
-현재 버전: **0.5.0**
+현재 버전: **0.5.1**
 
 ---
 
@@ -92,3 +92,4 @@ naite-app 쪽의 `min-harness-version` 선언과 호환 판단 로직은 비공�
 | 0.3.0 | Phase 3 공진화 계약: CONTRIBUTING, PR/issue 템플릿, schema governance, VERSIONING 규약 |
 | 0.4.0 | `SOUL.md` / `USER.md` / `MEMORY.md` instruction surfaces, `/naite start`, onboarding 품질 기준 |
 | 0.5.0 | `/naite upgrade`가 하네스 갱신 뒤 필요한 vault schema migration을 계획, 승인, 적용하는 흐름으로 확장 |
+| 0.5.1 | 앱과 버전 라인 동기화 (naite-app IA/UX 정비 릴리스에 맞춤, 하네스 기능 변경 없음) |
