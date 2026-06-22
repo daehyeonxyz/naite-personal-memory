@@ -2,6 +2,12 @@
 
 Answer a question from the tree. Cite pages. Offer to file the answer.
 
+## 언제 켜는가 (그리고 언제 켜지 않는가)
+
+이 절차는 **tree 내용 (개념·entity·decision·source·rings·trunk·page) 의 조회나 추론이 필요한 질문**, 또는 사용자가 명시적으로 `/naite ask` 를 호출했을 때만 실행한다.
+
+정체성·말투·선호·라우팅·단순 operational 질문 ("너는 누구야?", "네 역할이 뭐야?", "어떻게 답해?") 은 `/naite ask` 로 처리하지 않는다. tree 를 읽지 말고, `AGENTS.md § 기본 정체성과 라우팅` 과 `SOUL.md § 보이는 정체성과 런타임` 의 기본 정체성으로 바로 답한다.
+
 ## Workflow
 
 ### 1. Ground in the tree

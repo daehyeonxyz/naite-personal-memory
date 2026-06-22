@@ -6,7 +6,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-7cc15a" alt="MIT" />
-  <img src="https://img.shields.io/badge/version-0.5.0-a9621f" alt="v0.5.0" />
+  <img src="https://img.shields.io/badge/version-0.5.2-a9621f" alt="v0.5.2" />
   <img src="https://img.shields.io/badge/Claude_Code-ready-a9621f" alt="Claude Code" />
   <img src="https://img.shields.io/badge/Codex-ready-7cc15a" alt="Codex" />
   <img src="https://img.shields.io/badge/Obsidian-compatible-a9621f" alt="Obsidian" />

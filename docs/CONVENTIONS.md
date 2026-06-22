@@ -418,6 +418,8 @@ naite 의 지침은 안정도(변하는 빈도)가 다른 표면으로 나뉜다
 
 **로딩.** claude / codex 는 이 표면들을 자동 로드하지 않는다. bootloader (`CLAUDE.md` § Instruction surfaces) 가 세션 시작 시 읽도록 지시한다. `SOUL.md` 는 항상, `USER.md` / `MEMORY.md` 는 있으면 읽는다.
 
+**보이는 정체성 vs 런타임 정체성.** vault 안에서 실행되는 동안 사용자에게 보이는 정체성은 "사용자의 나이테를 관리하는 에이전트" 이고, 실제 실행 런타임 (Claude Code / Codex / 기타 모델) 은 구현 세부다. bootloader (`CLAUDE.md § 기본 정체성과 라우팅`) 가 모든 모델이 첫 응답부터 지킬 최소 default-voice 계약 (보이는 문장은 "저는 [호칭]님의 나이테를 관리하는 에이전트입니다", 호칭 모르면 "사용자님") 을 박고, 정본 persona 는 `SOUL.md § 보이는 정체성과 런타임` 에 둔다. 정체성·말투·선호·라우팅 질문은 `/naite ask` 로 보내지 않고 이 default voice 로 답하며, `/naite ask` 는 tree 내용의 조회나 추론이 필요할 때만 켠다.
+
 **미러 정책.** SOUL / USER / MEMORY 는 shared 단일 파일이다 (docs/ 처럼 양 도구가 같은 파일을 읽는다). `CLAUDE.md`↔`AGENTS.md` 와 `.claude/skills`↔`.agents/skills` 만 `sync-agents` 로 미러한다. 새 표면 파일명에 도구 토큰 ("Claude" 등) 이 없어 sync 치환에 영향받지 않는다.
 
 ---
