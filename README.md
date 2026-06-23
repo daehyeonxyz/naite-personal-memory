@@ -6,7 +6,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-7cc15a" alt="MIT" />
-  <img src="https://img.shields.io/badge/version-0.5.2-a9621f" alt="v0.5.2" />
+  <img src="https://img.shields.io/badge/version-0.6.0-a9621f" alt="v0.6.0" />
   <img src="https://img.shields.io/badge/Claude_Code-ready-a9621f" alt="Claude Code" />
   <img src="https://img.shields.io/badge/Codex-ready-7cc15a" alt="Codex" />
   <img src="https://img.shields.io/badge/Obsidian-compatible-a9621f" alt="Obsidian" />
@@ -89,6 +89,18 @@ https://github.com/daehyeonxyz/naite-personal-memory 를 이 폴더에 설치해
 ```
 
 설치가 끝나면 `/naite start` 로 첫 세션을 시작하세요. 처음부터 모든 걸 정리할 필요는 없습니다. 나무는 자랄수록 쓸모가 커집니다.
+
+### 데스크톱 앱 (보기 전용)
+
+나무를 보고·찾고·에이전트에게 일을 맡기는 GUI 입니다. 쓰는 도구가 아니라 뷰어라, 잎과 맥과 열매를 한눈에 펼쳐 보여 줍니다. 하네스와 같은 버전으로 함께 움직입니다.
+
+[최신 릴리스](https://github.com/daehyeonxyz/naite-app-releases/releases/latest)에서 내려받습니다.
+
+- Windows — `naite_*_x64-setup.exe`
+- macOS — `naite_*_universal.dmg` (Intel·Apple Silicon)
+- Linux — `naite_*_amd64.AppImage`
+
+설치하면 새 버전이 나올 때 앱이 알아서 업데이트합니다.
 
 ## 명령어
 
