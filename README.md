@@ -84,8 +84,9 @@ https://github.com/daehyeonxyz/naite-personal-memory 를 이 폴더에 설치해
 
 1. 위 저장소를 임시 폴더에 클론한 다음, .git 을 제외한 모든 파일을 이 폴더 루트로 복사해.
 2. 복사가 끝나면 임시 폴더를 지우고, CLAUDE.md (Codex 라면 AGENTS.md) 를 읽어.
-3. "naite install" 메시지로 첫 커밋을 만들어줘.
-4. 끝나면 내가 지금 바로 해볼 수 있는 것을 한두 가지 알려줘.
+3. `git config core.hooksPath .naite/hooks` 로 가드 훅을 켜(개인정보·비밀키·개인 vault 내용이 실수로 커밋되는 걸 막아).
+4. "naite install" 메시지로 첫 커밋을 만들어줘.
+5. 끝나면 내가 지금 바로 해볼 수 있는 것을 한두 가지 알려줘.
 ```
 
 설치가 끝나면 `/naite start` 로 첫 세션을 시작하세요. 처음부터 모든 걸 정리할 필요는 없습니다. 나무는 자랄수록 쓸모가 커집니다.

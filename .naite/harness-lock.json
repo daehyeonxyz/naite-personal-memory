@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "version": "0.7.0",
-  "generated_at": "2026-07-02T16:36:00.128081+00:00",
+  "generated_at": "2026-07-02T16:38:48.692715+00:00",
   "files": {
     ".agents/skills/naite/SKILL.md": "sha256:7e2bac70c81ee5c99b34bade765e8ee05b311e0839a68eb9459041e50710447f",
     ".agents/skills/naite/ask.md": "sha256:dc403b7aa4c32733b2fabfd49215527f22017bd334b3eb827446e2fc3d323cc8",
@@ -47,7 +47,7 @@
     "AGENTS.md": "sha256:1ea437f63c0425eebe0660a839d6b120b3db5682fe96f79a78f41369af70a942",
     "CLAUDE.md": "sha256:00224aa97f530ef11e0973004a2cb2dcb1027080177c354505a58c87788ad89c",
     "LICENSE": "sha256:f473ccd70f61def432d279d6004a03b9f672cc019c5e9b6232f88d65ee9af350",
-    "README.md": "sha256:10970e9c878c00f02156f7ad37db9de73465380fb494ac45eb90dfa9c6c45e9b",
+    "README.md": "sha256:ab66f14a2f48c4bca51c30e24c63392926cfc0449211e8bb69b16639cba4447e",
     "SOUL.md": "sha256:d05ce22a1bd8863e0dc164f372f48d69954d7e374de01845aa2d2336ab8bf22d",
     "docs/ARCHITECTURE.md": "sha256:ca217825e470f663c937d6bc33e5bbf071fa93f22ca7cc7fe8bd462dc11be865",
     "docs/CONTEXT.md": "sha256:db45b7942756ce39a0d3c523d0149e97259a424d0dd2fd63780a7d4a4c78fa65",
