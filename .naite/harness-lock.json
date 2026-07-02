@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "version": "0.7.0",
-  "generated_at": "2026-06-30T09:33:15.708445+00:00",
+  "generated_at": "2026-07-02T16:36:00.128081+00:00",
   "files": {
     ".agents/skills/naite/SKILL.md": "sha256:7e2bac70c81ee5c99b34bade765e8ee05b311e0839a68eb9459041e50710447f",
     ".agents/skills/naite/ask.md": "sha256:dc403b7aa4c32733b2fabfd49215527f22017bd334b3eb827446e2fc3d323cc8",
@@ -47,13 +47,13 @@
     "AGENTS.md": "sha256:1ea437f63c0425eebe0660a839d6b120b3db5682fe96f79a78f41369af70a942",
     "CLAUDE.md": "sha256:00224aa97f530ef11e0973004a2cb2dcb1027080177c354505a58c87788ad89c",
     "LICENSE": "sha256:f473ccd70f61def432d279d6004a03b9f672cc019c5e9b6232f88d65ee9af350",
-    "README.md": "sha256:9363df5625890782cfe3539c81b22584e6ebdf045e04b009a6153a1cd6546a10",
+    "README.md": "sha256:10970e9c878c00f02156f7ad37db9de73465380fb494ac45eb90dfa9c6c45e9b",
     "SOUL.md": "sha256:d05ce22a1bd8863e0dc164f372f48d69954d7e374de01845aa2d2336ab8bf22d",
     "docs/ARCHITECTURE.md": "sha256:ca217825e470f663c937d6bc33e5bbf071fa93f22ca7cc7fe8bd462dc11be865",
     "docs/CONTEXT.md": "sha256:db45b7942756ce39a0d3c523d0149e97259a424d0dd2fd63780a7d4a4c78fa65",
     "docs/CONVENTIONS.md": "sha256:f5b7af28c2def204378beffaaade449e0eb9407f4c99d3cdc0b02797e42122c9",
     "docs/QUALITY.md": "sha256:1cda707562ed84cdb9c6a229fe4aacc8245116b0755341d34c40018ea4ce5401",
-    "docs/VERSIONING.md": "sha256:1a9c86a5758f70295a453d752e8936b40cd283e1dde87b56ac62446caa4cab43",
+    "docs/VERSIONING.md": "sha256:86e987042d95f947eedef7dcd22a88c4910b10e1b0fa6b0b3bf32f9e5430727d",
     "docs/agent-runtimes.md": "sha256:d37755fbe1061bade99ad2f3d2138fd6421f70fcfe1c39ec92d714098c7d9a60",
     "docs/connect-mcp.md": "sha256:9aa93d2459e8e7ae563b2946b888f1db38d00b301a4da0f54e74a7484ee19b1d",
     "docs/migrate-prompt.md": "sha256:70ad308c072e2c5777f6051f75ceaf1b97612c8cbcf985a95fecf3b5a0a0de2c"
