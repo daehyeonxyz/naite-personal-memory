@@ -10,16 +10,22 @@ Answer a question from the tree. Cite pages. Offer to file the answer.
 
 ## Workflow
 
-### 1. Ground in the tree
+### 1. Grasp the index once, then answer from what you know — read page bodies only on demand
 
-- Read `tree/trunk.md` in full. This is the cheap way to find relevant pages without grepping the whole repo.
-- Identify candidate pages from trunk entries and one-line summaries.
-- Read each candidate page. If the question crosses domains, follow `[[wikilinks]]` between pages.
-- This grounding (reading trunk, picking candidates, following links) is internal work. Do **not** narrate it in the answer ("trunk.md 를 먼저 읽겠습니다", "후보 페이지가 명확합니다", file lists). It belongs to the agent's thinking, never the user-facing reply. See `SOUL.md § 응답 스타일`.
+The tree **index** tells you what the tree covers. It is small and cheap. Read it **once, early** in a conversation — in a continuing thread it is already in your context, so do **not** re-read it:
 
-### 2. If the tree is silent
+- `tree/trunk.md` — the map: domains, hub pages, one-line summaries. This is the primary index.
+- For status / progress questions ("오늘 뭘 공부할까", "뭐가 진행 중이지", "다음은 뭐야", "최근 활동") also read the **recent tail of `tree/rings.md`** (it is append-chronological — the newest entries are at the bottom; read the tail, not the whole file). Use `.naite/ontology/subject-tree.md` or `.naite/ontology/tree-manifest.json` only when you specifically need the subject structure or per-domain counts.
 
-If no page touches the question:
+Then **answer from the index plus your own knowledge.** You are a capable model — for navigational questions, overviews, recommendations, and any topic the index shows the tree already covers, reason from the map and your own understanding, and cite the relevant pages by `[[slug]]` (you know the slugs from the index). This is the **fast default and it is enough for most asks.**
+
+**Open an individual page's body only when the answer genuinely needs its specifics** — an exact definition, number, or wording the tree recorded; the actual content to compare what two pages say; or detail the index and your own knowledge don't already give. Then read just those pages, following `[[wikilinks]]` only as far as the answer actually uses. Never open a page "to be safe".
+
+Speed comes from **reading the index once and reasoning from it**, not from re-spelunking files every turn — and from keeping the model and effort steady across a conversation so the session's prompt cache stays warm (do not switch engine per question). This grounding is internal work: never narrate it in the answer ("trunk.md 를 먼저 읽겠습니다", 후보 페이지 목록). See `SOUL.md § 응답 스타일`.
+
+### 2. If the index shows the tree is silent
+
+If nothing in the index (trunk, and the pages it points to) touches the question:
 - Say so explicitly ("nothing in the tree covers this yet").
 - Offer two options:
   1. Answer from general knowledge, clearly labeled as outside-tree.
@@ -29,13 +35,11 @@ Do **not** silently answer from general knowledge as if it were tree-grounded. T
 
 ### 3. Synthesize
 
-Write the answer as the finished, user-facing result, not a log of how it was found. Apply `SOUL.md § 응답 스타일` for voice and format: structure with headings and lists when it helps, no emoji, no process narration, no naite-internal jargon ("나무 기준", "개인 hub", "/naite ask 절차"); 존댓말 by default, or English if the user's language is English.
+Write the answer as the finished, user-facing result, not a log of how it was found. Voice and format (this is the working copy of `SOUL.md § 응답 스타일` — follow it inline, no need to open SOUL.md for a normal answer): **존댓말** by default (English if the user writes in English); structure with headings and lists when it helps; **no emoji, no em-dash, no process narration, no naite-internal jargon** ("나무 기준", "개인 hub", "/naite ask 절차"). Choose the output shape by question type: narrative prose for an explanation, a table for a comparison, a short list for a lookup.
 
 - **Citations** as `[[page-slug]]`, placed at the **end of the sentence or clause** the page supports, so the reader sees a trailing source marker rather than a filename dropped mid-phrase. Reuse the same `[[slug]]` for the same page.
 - **Conflicts surfaced**: if two tree pages disagree, quote both and flag the disagreement.
 - **Gaps named**: if the answer depends on something the tree doesn't yet cover, say so and consider proposing a stub.
-
-Choose the output shape by question type: narrative prose for an explanation, a table for a comparison, a short list for a lookup.
 
 ### 4. Offer to file
 
@@ -63,7 +67,9 @@ If the ask produced material new content that belongs in an existing page (e.g. 
 
 ## What this command never does
 
-- Never answers without first reading `trunk.md`.
+- Never answers a tree question without at least grasping `trunk.md` (the index) — but grasping the index once is enough; it does not require reading every candidate page.
+- Never opens a tree page whose content the answer doesn't actually use. The index is the default; page bodies are on demand.
+- Never re-reads the index or `SOUL.md` on a follow-up turn when they are already in the conversation's context.
 - Never writes to the tree without explicit user consent.
 - Never mixes tree-grounded and out-of-tree claims without labeling which is which.
 - Never commits to git.
