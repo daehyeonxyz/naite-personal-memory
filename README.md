@@ -6,7 +6,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-7cc15a" alt="MIT" />
-  <img src="https://img.shields.io/badge/version-0.6.0-a9621f" alt="v0.6.0" />
+  <img src="https://img.shields.io/badge/version-0.7.0-a9621f" alt="v0.7.0" />
   <img src="https://img.shields.io/badge/Claude_Code-ready-a9621f" alt="Claude Code" />
   <img src="https://img.shields.io/badge/Codex-ready-7cc15a" alt="Codex" />
   <img src="https://img.shields.io/badge/Obsidian-compatible-a9621f" alt="Obsidian" />
@@ -89,6 +89,9 @@ https://github.com/daehyeonxyz/naite-personal-memory 를 이 폴더에 설치해
 ```
 
 설치가 끝나면 `/naite start` 로 첫 세션을 시작하세요. 처음부터 모든 걸 정리할 필요는 없습니다. 나무는 자랄수록 쓸모가 커집니다.
+
+> [!NOTE]
+> 이 공개 저장소를 fork 하거나 그대로 clone 해서 시작했다면, 개인 기록을 쌓기 전에 origin 을 본인 소유의 새 Private 저장소로 바꿔 주세요 (`git remote set-url origin <내 저장소 URL>`). 공개 fork 에는 개인 기록이 공개로 올라가고, 원본 저장소를 가리키는 clone 에서는 push 권한이 없어 백업이 실패합니다.
 
 ### 데스크톱 앱 (보기 전용)
 

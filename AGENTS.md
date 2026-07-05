@@ -51,7 +51,7 @@ This file is the **entrypoint**. It pins the standing default-voice contract, th
 
 | Trigger signal from user | Workflow | Body |
 |---|---|---|
-| 신규 사용자 첫 세션 (설치 직후, 빈 vault, "어떻게 시작") | `/naite start` | `.agents/skills/naite/start.md` |
+| 신규 사용자 첫 세션 (설치 직후, 빈 vault, "어떻게 시작", 다른 AI 기억 추출·이전 프롬프트 요청, 빈 vault 에 먼저 던져진 컨텍스트 덤프·export) | `/naite start` | `.agents/skills/naite/start.md` |
 | 학습·자료 반영 전반 (대화 마무리 "반영해줘", 파일 첨부, syllabus·"Ch1 끝" 같은 장기 신호, 소스만 던져짐) | `/naite grow` | `.agents/skills/naite/grow.md` |
 | 이미 학습 완료한 과목·아카이브를 dialogue 없이 일괄 보강 | `/naite grow backfill <slug>` | `.agents/skills/naite/grow-backfill.md` |
 | 쌓인 tree 내용의 조회·추론이 필요한 질문 (또는 `/naite ask` 명시 호출) | `/naite ask` | `.agents/skills/naite/ask.md` |
