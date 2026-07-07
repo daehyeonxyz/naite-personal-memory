@@ -40,6 +40,7 @@ Tree maintenance has two user-facing modes, both under `/naite care`:
 ## Naming
 
 - Files: `lowercase-kebab-case.md`. No spaces, no capitals. One concept per file.
+- Avoid Windows reserved device names as a slug (`con`, `prn`, `aux`, `nul`, `com1`–`com9`, `lpt1`–`lpt9`, any case, with or without extension). A `tree/con.md` commits fine on macOS/Linux but fails to check out on Windows (`Invalid path`), breaking the cross-platform Git-shared vault. The pre-commit guard blocks these; if a concept collides, disambiguate the slug (e.g. `con-argument.md`).
 - Wikilinks: `[[page-slug]]` or `[[page-slug|Display Text]]`. Plain `[[...]]` only — no typed relations (relations live in prose; see § Soft ontology).
 - Aliases: list at top of page under `## Also known as` heading. `trunk.md` lists only the canonical slug.
 - **Migration 보존본 예외:** `/naite start` 가 가져온 메모리 export 의 영구 보존본은 `roots/conversations/_transcripts/migration-<service>.md` 로 **날짜 prefix 없이 서비스별 stable 이름**을 쓴다. 재import 시 같은 파일을 갱신하기 위한 의도된 예외다 (`<service>` = `chatgpt`/`gemini`/`claude`). 일반 transcript 의 `YYYY-MM-DD-<slug>.md` 규칙과 다르다.
@@ -92,7 +93,7 @@ updated: YYYY-MM-DD
 - `kind` enum (9 values): `concept` (reusable concept/method/technique/pattern), `entity` (person/org/tool/platform/model/product), `source-record` (single source unit recorded in the tree — course top/chapter/subchapter, paper note, book note, article note), `project` (user's project tracker), `decision` (synapse / decision record), `insight` (extracted/synthesized observation), `comparison` (A-vs-B page where the comparison itself is the subject), `essay` (사용자가 직접 작성한 에세이 또는 학문 도메인 밖 개인 글쓰기. `source-types: [essay]` 와 짝을 이루며 `subject: [personal]` 을 사용한다. `source-record` 는 외부 source 의 study note 이고, `essay` 는 사용자 본인이 직접 쓴 글이다), `personal` (사용자 본인의 신원, 학력, 산출물 목차, 진로 hub 등 self-reference 메타 페이지. `subject: [personal]` 과 짝을 이루며 source-types 는 보통 [conversation, external]. essay 가 본인이 쓴 학문 외 글이라면 personal 은 본인에 대한 메타-기록 페이지다. C-level 신설로 사용자 승인 후 추가된 enum 사례). `question` is **not** a kind — earlier `role=question` deprecated in 2026-05-18 (no corpus use case; future C-level decision if needed).
 - `form` enum (2 values): `prose` (body is flowing text — explanation, decision record, insight, etc.), `index` (body is a list/navigation hub of wikilinks).
 - `topics`: 0-5 per page. Canonical list (`.naite/ontology/topics.md`) preferred. Uncanonicalized topic → care-check warns (does not block — folksonomy philosophy). Empty array OK (e.g. `kind=entity`). Do not force topics. Topics are **re-usable concept/technique level** — not broad domain names.
-- `subject`: SKOS-lite path notation (`parent/child[/grandchild]`, slash-separated). Single path is default; multi only for genuine cross-domain (`[a/x, b/y]`). Canonical tree: `.naite/ontology/subject-tree.md`. **Course / collection / institution / source names are NOT subjects** — `course`, `course-{slug}`, `anthropic-academy`, `ode`, `laplace-transform` are page slugs/entities, not subject paths. Course membership is carried by the `course-{slug}-*` filename prefix.
+- `subject`: SKOS-lite path notation (`parent/child`, two levels, slash-separated — the validator blocks a third level; use `topics` for finer granularity). Single path is default; multi only for genuine cross-domain (`[a/x, b/y]`). Canonical tree: `.naite/ontology/subject-tree.md`. **Course / collection / institution / source names are NOT subjects** — `course`, `course-{slug}`, `anthropic-academy`, `ode`, `laplace-transform` are page slugs/entities, not subject paths. Course membership is carried by the `course-{slug}-*` filename prefix.
 - `source-types` (always list, 8 values): `course` (academic/online courses), `paper` (peer-reviewed academic), `article` (informal: blog / news / X thread / Substack), `docs` (official docs: Anthropic / OpenAI / library docs), `book` (book), `conversation` (user dialogue capture), `essay` (self-authored essay/long-form), `external` (fallback). A page can be informed by multiple sources — `source-types: [course, paper]` is valid. `legacy` is **not** a value — it's an import channel; staged legacy notes ingest with the source-types matching their content nature. Detail: `docs/ARCHITECTURE.md § 7`.
 - `domains` (CACHED, NOT a facet): top-level path component of `subject`. **care-check auto-derives** (`.naite/scripts/lint-ontology.py --refresh-domains`); never hand-write. Idempotent on schema change.
 
@@ -273,7 +274,7 @@ Forbidden in body prose before `## Source`:
 
 - raw/process voice such as `raw`, `staging`, `source bundle`, `PDF page`, `page range`, `render`, `image-read`, `backfill`, `run-log`, `extraction`.
 - Korean source-voice phrasing such as "필기에는", "필기에서", "강의 노트에는", "노트에서는", "원문에서는", "원자료", "자료에서는", "페이지에서는", "이 페이지에서는", "이 자료".
-- generic course-page rubric headings such as `Core idea`, `Details`, `Overview`, `Related`, `Maps to`, `Source Staging`, `Practice & Assignments`, unless an explicit non-course template allows them.
+- generic course-page rubric headings such as `Core idea`, `Details`, `Overview`, `Related`, `Maps to`, `Source Staging`, `Practice & Assignments`, unless an explicit template allows them. `course-*-00-index.md` meta pages are the standing exception: their templates (`grow-branch.md § Templates`) mandate these headings and a `Staging: roots/...` pointer, so the heading/leakage rules do not apply there (mojibake check still does).
 
 **`kind=essay` / `kind=personal` 예외**: 사용자 본인이 직접 쓴 글 또는 자기-기록 메타 페이지다. 재서술 (source 흡수, 문체 교정, 서술 밀도 강제) 대상에서 제외하고 voice 를 보존한다. raw/process-voice 금지와 self-contained 원칙은 동일 적용하되, source 흡수와 prose 밀도 기준은 적용하지 않는다.
 
@@ -355,7 +356,7 @@ Evolution channels:
 
 care-check runs idempotent; it surfaces, the user decides.
 
-Schema evolution history is distributed across 4 layers: git commit history + `tree/rings.md migration` entries + `docs/ARCHITECTURE.md` long-form rationale + `tree/decision-*` synapse pages. See `docs/ARCHITECTURE.md § 4.5`.
+Schema evolution history is distributed across 4 layers: git commit history + `tree/rings.md migration` entries + `docs/ARCHITECTURE.md` long-form rationale + `tree/decision-*` synapse pages. See `docs/ARCHITECTURE.md § 4.4`.
 
 **External contributors — schema autonomy mapping.** 위 A/B/C 등급은 내부 LLM 동작 기준입니다. 외부 기여자(PR을 여는 사람)에게는 동일 등급이 아래와 같이 적용됩니다.
 
@@ -429,7 +430,7 @@ naite 의 지침은 안정도(변하는 빈도)가 다른 표면으로 나뉜다
 The user keeps Obsidian open on the repo root for graph view and reading. Editing is still the agent's job. Two failure modes to watch:
 
 1. **Editor buffer race**: Obsidian holding a file open in its UI buffer can overwrite agent-committed working-tree changes via auto-save when its buffer is stale. HEAD is safe; only the working tree is affected.
-   - **Defense**: `.git/hooks/post-commit` (per-clone, not tracked) auto-pushes `main` to origin immediately after every commit. Origin becomes the canonical recovery source. Reinstall by copying from another clone's `.git/hooks/post-commit`.
+   - **Defense (optional, opt-in)**: a per-clone `post-commit` hook that auto-pushes `main` to origin makes origin a canonical recovery source. Two caveats before enabling it: (a) if you set `core.hooksPath .naite/hooks` (the documented activation), git ignores `.git/hooks/` entirely — put the `post-commit` under `.naite/hooks/` too, or it never runs; (b) it conflicts with `grow-branch.md`'s course-atomic model, which accumulates chapter commits *local-only* and pushes once at branch-finish — auto-push would break that batching. So enable it only for single-commit workflows, or pause it during a branch. It is not shipped by default.
    - **Recovery**: `git checkout HEAD -- <file>` (commit not pushed) or `git checkout origin/main -- <file>` (pushed and Obsidian reverted afterward). Then re-apply pending working-tree changes.
    - **Agent rule**: before staging an edit, run `git diff HEAD -- <target>`. If unexpected modifications appear that you did not make, surface to the user and restore from HEAD before proceeding.
 2. **Multi-file edit runs**: before `/naite grow` on a directory or a branch-mode chapter ingest, suggest the user pause Obsidian editing — not required, just reduces conflict risk.

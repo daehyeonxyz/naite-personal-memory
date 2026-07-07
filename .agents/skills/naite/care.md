@@ -83,7 +83,7 @@ Step D. Write `.naite/reports/daily/YYYY-MM-DD-care.md` with:
 - which candidate needs a user decision before repair,
 - which candidate should be routed to a focused `/naite care {slug}` or `/naite care --fruits` pass.
 
-Step E. Append a coarse `tree/rings.md` entry with `updated: 0 tree content pages` unless the user explicitly asked for repair. Do not edit `tree/*.md`, `tree/trunk.md`, or `seeds.md` in daily triage.
+Step E. Append a coarse `tree/rings.md` entry with `updated: 0 tree content pages` unless the user explicitly asked for repair. Do not edit any **tree content page** (a `tree/*.md` leaf/index), nor `tree/trunk.md` or `tree/seeds.md`, in daily triage. (Appending to `tree/rings.md` is the one allowed write here — the log is not a content page.)
 
 ### Repair
 
@@ -135,7 +135,7 @@ Forbidden in the body before `## Source`:
 
 - raw/source-process voice: "raw", "staging", "source bundle", "PDF page", "page range", "필기에는", "강의 노트에는", "원문에서는", "자료에서는", "이 페이지에서는".
 - explanations of how the page was produced: extraction, backfill, render, image-read, note mapping, run-log.
-- generic wiki-rubric headings such as `Core idea`, `Details`, `Overview`, `Related`, `Maps to`, `Source Staging`, `Practice & Assignments`, unless they are part of a non-course page template that explicitly allows them.
+- generic wiki-rubric headings such as `Core idea`, `Details`, `Overview`, `Related`, `Maps to`, `Source Staging`, `Practice & Assignments`, unless they are part of a page template that explicitly allows them (the course/chapter meta index templates in `grow-branch.md § Templates` mandate `Also known as` / `Overview` / `Scope` / `Chapters` / `Related` / `Subchapters` / `Chapter summary` / `Maps to` on `course-*-00-index.md` pages — those are correct, not drift).
 
 ## Content Guard
 
@@ -147,7 +147,7 @@ Flag and fix:
 - `PDF page`, `raw PDF`, `source PDF`, `source page`, `lecture notes`, `page range`, `render`, `image-read`, `backfill`, `run-log`, `extraction`
 - `필기에는`, `필기에서`, `강의 노트`, `노트에서는`, `원문에서는`, `원자료`, `자료에서는`, `페이지에서는`, `이 페이지에서는`, `이 자료`
 - mojibake markers: `???`, `�`, `Ã`, `Â`
-- generic English headings on branch pages: `Status`, `Scope`, `Chapters`, `Projects`, `Connections`, `Also known as`, `Overview`, `Related`, `Sequence Logic`, `Practice & Assignments`, `Course Bridges`, `Concept Extraction`, `Source Staging`, `Names`, `Maps to`
+- generic English headings on branch pages: `Status`, `Scope`, `Chapters`, `Projects`, `Connections`, `Also known as`, `Overview`, `Related`, `Sequence Logic`, `Practice & Assignments`, `Course Bridges`, `Concept Extraction`, `Source Staging`, `Names`, `Maps to`. **Exempt `course-*-00-index.md` meta pages (mojibake check still applies)** — their templates (`grow-branch.md § Templates`) mandate these headings and a `Staging: roots/...` pointer; flag them only on subchapter note pages and general leaves.
 
 False positives are possible. Preserve legitimate technical English, formulas, commands, file paths inside `## Source`, and quoted titles that belong to the branch.
 

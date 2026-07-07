@@ -39,7 +39,7 @@ naite-app과 이 하네스는 한 제품의 두 면이라, 역할을 나눠 함�
 - **patch 증가 (예: 0.3.0 → 0.3.1)**: 버그 수정, 문서 개선, 스크립트 수정 등 하위 호환 변경 시.
 - **major 증가 (예: 0.x.y → 1.0.0)**: 하네스 구조가 전면 개편될 때 (1.0 전까지는 major 증가 없음).
 
-현재 버전: **0.7.0**
+현재 버전: **0.8.0**
 
 ---
 
@@ -98,3 +98,4 @@ naite-app 쪽의 `min-harness-version` 선언과 호환 판단 로직은 비공�
 | 0.6.5 | 앱과 버전 라인 동기화 (naite-app 채팅 홈 재편 릴리스에 맞춤). 앱: 홈을 상용 AI 식 가운데 채팅으로, 지난 대화는 레일 목록으로, 에이전트 라이브 모니터 탭 폐기. 하네스 기능·스키마 변경 없음 (0.5.1 과 같은 버전 라인 동기화 릴리스). |
 | 0.6.7 | 앱과 버전 라인 동기화 (naite-app 0.6.7 에 맞춤, 0.6.6 건너뜀). 앱: 슬래시 스킬 연동(`/` 팔레트가 엔진 실제 스킬을 dispatch)·모델/노력 엔진 연동·마크다운 강화·iOS 스퀘어클 모서리. 하네스 기능·스키마 변경 없음. |
 | 0.7.0 | 앱과 하네스 0.7.0 동시 릴리스. 앱: 셸 프레임(상단+좌측=한 프레임, 메인 떠있는 카드), 숲을 나무 단위 지도로(perf·읽힘), 그래프 실제 연결 표시, 나무/검색/도움말 고급화, 마크다운 복사 버튼·코드블록 정제, codex 식 작업 요약, 대화 펼침/접힘. 하네스: 답변 출력 규약을 `SOUL.md § 응답 스타일` 에 명시(답변을 코드블록으로 감싸지 않기, GFM alert 콜아웃 문법) + CLAUDE/AGENTS 미러. C-level 스키마 변경은 없음. |
+| 0.8.0 | 하네스 minor 릴리스 (plugin vault-scaffold + guard starter/vault 모드 + secret/PII 강화 + 크로스플랫폼 + 문서·코드 정합). 신규 기능: 플러그인만 설치해 vault 가 없는 사용자를 위해 `/naite start` §0 이 열린 폴더에 vault 뼈대(`roots/`·`tree/`·`docs/`)를 scaffold 함 (새 user-facing 기능이라 minor). 가드 훅을 starter/vault 모드로 분기(`.naite/PUBLIC_STARTER` sentinel + `NAITE_HOOK_MODE` override)해 개인 vault 의 `tree/`·`roots/` 커밋을 막지 않으면서 secret 스캔은 유지하고, pre-push 백스톱·KV/PII 스캔·`sk-ant-`/`AIza` 등 키 패턴·Windows 예약어·비ASCII 경로 우회 차단을 추가. 크로스플랫폼: `sync-agents`/harness-lock LF 출력, 진단 스크립트 cp949 콘솔 가드, NFC 슬러그 정규화. 문서·코드 정합: `plugin.json`==`marketplace.json` 버전 패리티 가드, CI starter-repo 가드, lint/ARCHITECTURE/CONVENTIONS 문서를 검증기(2-tier subject·lint 3a-3k) 와 일치. C-level 스키마 변경은 없음. |

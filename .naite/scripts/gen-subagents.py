@@ -87,16 +87,33 @@ def main() -> None:
         return
     if not args.dry_run:
         AGENTS_DIR.mkdir(parents=True, exist_ok=True)
+    current = set()
     for t in trees:
         md = build_md(t, vault, bridges)
         path = AGENTS_DIR / f"naite-{t['tree']}.md"
+        current.add(path.name)
         if args.dry_run:
             print(f"# would write {path} ({len(md)} chars)")
         else:
             path.write_text(md, encoding="utf-8")
             print(f"wrote {path}")
+    # Remove orphaned definitions: a tree that was renamed or dropped from the
+    # forest would otherwise leave a stale naite-<tree>.md keeping a live persona.
+    if AGENTS_DIR.exists():
+        for stale in sorted(AGENTS_DIR.glob("naite-*.md")):
+            if stale.name not in current:
+                if args.dry_run:
+                    print(f"# would remove orphan {stale}")
+                else:
+                    stale.unlink()
+                    print(f"removed orphan {stale}")
     print(f"{len(trees)} subagent(s).")
 
 
 if __name__ == "__main__":
+    import sys
+    try:  # keep non-ASCII report output from crashing a cp949/legacy Windows console
+        sys.stdout.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
     main()

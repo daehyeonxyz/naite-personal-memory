@@ -53,20 +53,29 @@ def repair_agents_entrypoint(text: str) -> str:
 
 
 def write_text(path: Path, text: str) -> None:
-    # UTF-8 no BOM. Normalize to CRLF so output matches sync-agents.ps1 and the
-    # repo's CRLF mirror files (read_text normalizes CRLF->LF on read; write_bytes
-    # is Python 3.x-wide, unlike Path.write_text(newline=) which is 3.10+).
-    data = text.replace("\r\n", "\n").replace("\n", "\r\n").encode("utf-8")
+    # UTF-8 no BOM. Normalize to LF so output matches the committed blobs on any
+    # platform (repo blobs are LF; CI diffs the mirror on a checkout without
+    # autocrlf, so writing CRLF would show every line as changed).
+    data = text.replace("\r\n", "\n").encode("utf-8")
     path.write_bytes(data)
 
 
 def main() -> None:
     SKILL_DST.mkdir(parents=True, exist_ok=True)
+    src_names = set()
     for src in sorted(SKILL_SRC.glob("*.md")):
+        src_names.add(src.name)
         dst = SKILL_DST / src.name
         converted = convert_to_codex(src.read_text(encoding="utf-8"))
         write_text(dst, converted)
         print(f"synced  {src.name}")
+
+    # Remove orphan mirrors (canonical skill deleted but mirror left behind —
+    # otherwise the CI mirror gate passes on a stale .agents/ copy).
+    for dst in sorted(SKILL_DST.glob("*.md")):
+        if dst.name not in src_names:
+            dst.unlink()
+            print(f"removed orphan  {dst.name}")
 
     agents = convert_to_codex(CLAUDE_MD.read_text(encoding="utf-8"))
     agents = repair_agents_entrypoint(agents)

@@ -164,9 +164,19 @@ def parse_yaml_list(value):
     return None
 
 
+def _read_ontology_source(name: str) -> str:
+    """Read an ontology source file, failing with an actionable message (not a raw
+    traceback) if it is missing — e.g. run outside a vault or a partial clone."""
+    path = ONTOLOGY_DIR / name
+    if not path.exists():
+        sys.exit(f'lint-ontology: missing ontology source: {path}\n'
+                 f'  Run from a naite vault root (the starter ships .naite/ontology/{name}).')
+    return path.read_text(encoding='utf-8')
+
+
 def load_subject_tree():
     """Parse subjects + top-level altLabels from .naite/ontology/subject-tree.md."""
-    text = (ONTOLOGY_DIR / 'subject-tree.md').read_text(encoding='utf-8')
+    text = _read_ontology_source('subject-tree.md')
     match = re.search(r'```yaml\s*\n\s*subjects:\s*\n(.*?)\n```', text, re.DOTALL)
     if not match:
         raise RuntimeError('Could not find subjects YAML block in .naite/ontology/subject-tree.md')
@@ -216,7 +226,7 @@ CANONICAL_TREE, SUBJECT_ALIASES = load_subject_tree()
 
 def load_topic_governance():
     """Parse canonical_topics + aliases from .naite/ontology/topics.md YAML blocks."""
-    text = (ONTOLOGY_DIR / 'topics.md').read_text(encoding='utf-8')
+    text = _read_ontology_source('topics.md')
     canonical, aliases = [], {}
 
     m = re.search(r'```yaml\s*\n\s*canonical_topics:\s*\n(.*?)\n```', text, re.DOTALL)
@@ -263,13 +273,15 @@ def parse_frontmatter(path):
 
 
 def parse_list_value(val):
-    """YAML flow list `[a, b]` → ['a', 'b']. Empty `[]` → []."""
+    """YAML flow list `[a, b]` → ['a', 'b']. Empty `[]` → []. Quoted items
+    (`["a", 'b']`) are unquoted, matching build-tree-manifest.py's parser —
+    the two must agree or a valid page passes manifest but fails lint."""
     if val.startswith('[') and val.endswith(']'):
         inner = val[1:-1].strip()
         if not inner:
             return []
-        return [x.strip() for x in inner.split(',')]
-    return [val]
+        return [x.strip().strip('"\'') for x in inner.split(',')]
+    return [val.strip('"\'')]
 
 
 def derive_domains(subject_paths):
@@ -409,6 +421,12 @@ def find_output_quality_findings(path):
     if not path.name.startswith('course-'):
         return []
 
+    # Course/chapter meta index pages (course-*-00-index.md) are template-driven:
+    # grow-branch.md § Templates mandates the generic headings and a
+    # `Staging: roots/...` pointer there. Only mojibake applies to them; the
+    # heading/leakage guard targets prose pages (subchapter notes, leaves).
+    is_meta_index = path.name.endswith('-00-index.md')
+
     text = path.read_text(encoding='utf-8-sig', errors='replace')
     lines, start, end = body_line_bounds_before_source(text)
     findings = []
@@ -431,12 +449,14 @@ def find_output_quality_findings(path):
         if in_math_block or not stripped:
             continue
 
-        if stripped.startswith('#'):
+        if not is_meta_index and stripped.startswith('#'):
             heading = normalize_heading_text(stripped).lower()
             if heading in GENERIC_EN_COURSE_HEADINGS:
                 findings.append((line_no, 'generic-heading', normalize_heading_text(stripped)))
 
         for kind, pattern in OUTPUT_QUALITY_PATTERNS:
+            if is_meta_index and kind != 'mojibake':
+                continue
             match = pattern.search(line)
             if match:
                 findings.append((line_no, kind, match.group(0)))
@@ -476,7 +496,7 @@ def find_leaf_depth_findings(path, form):
             continue
         if stripped.startswith('#'):
             continue
-        wikilinks += len(re.findall(r'\[\[[^\]]+\]\]', stripped))
+        wikilinks += len(re.findall(r'\[\[[^\][]+\]\]', stripped))  # exclude '[' → no O(n^2) on "[[[[..."
         prose_chars += len(stripped)
     findings = []
     if wikilinks == 0:
@@ -495,7 +515,7 @@ def find_non_tree_dirt(repo_root):
     """
     try:
         out = subprocess.run(
-            ['git', '-C', str(repo_root), 'ls-files'],
+            ['git', '-C', str(repo_root), '-c', 'core.quotePath=false', 'ls-files'],
             capture_output=True, text=True, check=True,
         ).stdout.splitlines()
     except (FileNotFoundError, subprocess.CalledProcessError):
@@ -842,7 +862,7 @@ def lint(args):
             new_domains = '[' + ', '.join(derive_domains(parse_list_value(fm['subject']))) + ']'
             text = p.read_text(encoding='utf-8-sig')
             new_text = re.sub(r'(?m)^domains:.*$', f'domains: {new_domains}', text, count=1)
-            p.write_text(new_text, encoding='utf-8')
+            p.write_bytes(new_text.encode('utf-8'))  # explicit LF (write_text emits CRLF on Windows)
             print(f'  {name}: domains -> {new_domains}')
         cache_stale.clear()
 

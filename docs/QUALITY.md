@@ -70,4 +70,4 @@
 
 미달 시: 그 항목을 stub 으로 정직하게 두되 `seeds.md` 에 깊이 보강 후보로 적고, **소스에 있던 자료라면 미루지 말고 펼쳐 쓴다.**
 
-강제 결선은 Phase 2 다: `lint-ontology.py` 에 본문 길이·wikilink 수 floor 미만을 잡는 결정적 backstop 을 두고(blocking 여부 결정, course-* 한정 스코프 해제), `ingest.md § 5` 가 생산 시점에 이 루브릭을 호출하게 한다. 지금은 바를 명문화해 둔다.
+작성 시점 게이트는 이미 shipped 다: `ingest.md § 5` 가 각 `form=prose` leaf 를 완성하기 직전 이 루브릭(LEAF-1~4)으로 self-check 하고 미달 leaf 를 `tree/` 에 내보내지 않는다. `lint-ontology.py § 3k` 도 warn-only 로 얕은 leaf 를 계측한다. 남은 Phase 2 는 그 § 3k 계측을 blocking 으로 승격할지 결정하는 것뿐이다(현재는 non-blocking).

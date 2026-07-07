@@ -2,10 +2,10 @@
 
 Canonical SKOS-lite hierarchical subject taxonomy for naite.
 
-- Page frontmatter `subject` field uses path notation: `parent/child[/grandchild]`.
+- Page frontmatter `subject` field uses path notation: `parent/child` (two levels; the validator rejects a deeper path — use `topics` for finer granularity).
 - Cross-domain pages declare multi-value subject: `subject: [a/x, b/y]`.
 - Renaming uses `altLabels` — old name continues to resolve via care-check.
-- Adding `narrower` doesn't affect existing pages (prefix match: `subject ⊑ ml` catches `ml`, `ml/agents`, `ml/agents/multi-agent`).
+- Adding `narrower` doesn't affect existing pages (prefix match: `subject ⊑ ml` catches `ml` and `ml/agents`).
 - See `docs/ARCHITECTURE.md § 2.2` for theoretical basis (W3C SKOS) and `§ 4.3` for the full evolution table.
 
 아래 트리는 **중립 시작 예시**다. 본인의 학습·작업 도메인에 맞게 교체하거나 확장한다. 새 top-level domain 추가는 사용자 결정 (autonomy C), narrower 추가는 LLM candidate 제안 (autonomy B) 을 따른다 (`docs/CONVENTIONS.md § Schema evolution`).
@@ -63,7 +63,7 @@ Frontmatter 의 `domains:` field 는 **care-check 가 자동 갱신** — `subje
 
 | 시나리오 | 등급 | 액션 | 페이지 변경 |
 |---|---|---|---|
-| Subject narrower 추가 (예: `ml/agents/multi-agent` 신설) | **B** | LLM 이 candidate append + grow summary 에 surface, 사용자 confirm/revert | 없음 — 새 페이지부터 narrower path |
+| Subject narrower 추가 (예: `ml` 아래 `ml/agents` 신설) | **B** | LLM 이 candidate append + grow summary 에 surface, 사용자 confirm/revert | 없음 — 새 페이지부터 narrower path |
 | Subject rename (예: `ml` → `machine-learning`) | **B** | LLM 이 canonical 변경 + altLabel 후보 제안, 사용자 confirm | 없음 — care-check 가 alias 해석 |
 | Subject move/reparent | **B** | LLM 이 candidate 제안 + altLabels 양방향 | 없음 (점진 갱신 가능, 강제 X) |
 | Subject deprecation | **C** | 사용자 결정 → tree 에서 remove + LLM-driven script | **페이지 rewrite 필요** (유일 케이스, 마지막 수단) |

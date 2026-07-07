@@ -149,7 +149,12 @@ def main() -> None:
     final_idx = F.argmax(axis=1)
     final_tree = {nodes[i]: trees[final_idx[i]] for i in range(n)}
     sortedF = np.sort(F, axis=1)
-    margin = sortedF[:, -1] - sortedF[:, -2]
+    if T < 2:
+        # Single-tree vault (the common starting state): no runner-up column
+        # exists, every page is unambiguously assigned.
+        margin = np.ones(n, dtype=np.float64)
+    else:
+        margin = sortedF[:, -1] - sortedF[:, -2]
 
     # 결과 집계.
     final_sizes = Counter(final_tree[s] for s in nodes)
@@ -192,10 +197,10 @@ def main() -> None:
             for s in sorted(d_pages, key=lambda x: -F[idx[x]].max())[:5]:
                 print(f"    {final_tree[s]:14} ← {s}")
 
-    # 걸침 개념: low margin.
+    # 걸침 개념: low margin. (T<2 → no secondary tree, no bridges by definition.)
     bridges = sorted(
         [(s, final_tree[s], trees[int(np.argsort(F[idx[s]])[-2])], float(margin[idx[s]]))
-         for s in nodes if margin[idx[s]] < args.margin],
+         for s in nodes if T >= 2 and margin[idx[s]] < args.margin],
         key=lambda x: x[3],
     )
     print()
@@ -267,4 +272,9 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    import sys
+    try:  # keep non-ASCII report output from crashing a cp949/legacy Windows console
+        sys.stdout.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
     main()

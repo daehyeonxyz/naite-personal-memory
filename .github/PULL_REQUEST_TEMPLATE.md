@@ -17,8 +17,8 @@ Check all items before opening this PR.
 
 ### 로컬 검사 통과 (Local checks pass)
 
-- [ ] `python .naite/scripts/build-harness-lock.py --check` = 0
-- [ ] `python .naite/scripts/lint-ontology.py` = 0
+- [ ] `python3 .naite/scripts/build-harness-lock.py --check` = 0  <!-- Windows: `python` or `py -3` -->
+- [ ] `python3 .naite/scripts/lint-ontology.py` = 0
 
 ### 스키마 보호 (Schema protection)
 

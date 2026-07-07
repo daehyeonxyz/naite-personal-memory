@@ -60,7 +60,10 @@ Agents should load the smallest set that can safely decide the task, then expand
 
 For a first session, `/naite start` follows `.claude/skills/naite/start.md` and consults `docs/QUALITY.md` and `docs/migrate-prompt.md` to guide the memory export import and the first tree build.
 
-Do not use `tree/trunk.md` as an exhaustive search index. It is a curated human landing page. Use `.naite/ontology/tree-manifest.json` as the agent fast path, then read the specific tree pages it identifies.
+`tree/trunk.md` is the curated human landing page — the map of domains, hub pages, and one-line summaries. Grasp it for orientation, but it is not an exhaustive page index. `.naite/ontology/tree-manifest.json` is the exhaustive agent fast path (every page's coordinates, aliases, headings); consult it when you need subject structure, per-domain counts, or to locate candidate pages, then read the specific tree pages it identifies.
+
+> [!IMPORTANT]
+> The generated maps grow with the vault: `tree-manifest.json` passes ~1 MB around 3,000 pages and `tree-dependencies.json` passes 1 MB before 500 pages, both written as a single line. Do **not** `Read` the whole map at scale — a single-line multi-MB file truncates uselessly. **Query** it instead (`grep` for a slug/alias, or `jq` for a field), or read a filtered slice. "Read the manifest before searching" means consult it, not load it whole into context.
 
 ---
 
@@ -69,10 +72,10 @@ Do not use `tree/trunk.md` as an exhaustive search index. It is a curated human 
 | Workflow | Always load | Load when needed |
 |---|---|---|
 | `/naite start` | bootloader, `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, active `start.md`, `docs/QUALITY.md`, `docs/migrate-prompt.md`, `.naite/ontology/tree-manifest.json` | `.naite/ontology/subject-tree.md`, `.naite/ontology/topics.md`, pasted memory export in `roots/conversations/` (+ `roots/conversations/_transcripts/`) |
-| `/naite ask` | bootloader, `docs/CONTEXT.md`, `.naite/ontology/tree-manifest.json` | `.naite/ontology/tree-dependencies.json`, target pages, `tree/rings.md` for timeline questions |
+| `/naite ask` | bootloader, `docs/CONTEXT.md`, `tree/trunk.md` (the map: domains, hub pages, one-line summaries) | `.naite/ontology/tree-manifest.json` when you need subject structure or per-domain counts, `.naite/ontology/tree-dependencies.json`, target page bodies, `tree/rings.md` for timeline questions |
 | `/naite grow` (단발: conversation/file/stage-only) | bootloader, `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, active `grow.md` (+ internal `ingest.md`/`capture.md` as needed), `.naite/ontology/tree-manifest.json`, `tree/trunk.md`, `tree/seeds.md`, recent `tree/rings.md` | `.naite/ontology/subject-tree.md`, `.naite/ontology/topics.md`, `.naite/ontology/tree-dependencies.json`, source files |
 | `/naite grow` (branch 모드) | bootloader, `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, active `grow-branch.md`, `.naite/ontology/tree-manifest.json`, `tree/trunk.md`, recent `tree/rings.md` | `.naite/ontology/subject-tree.md`, `.naite/ontology/topics.md`, `.naite/ontology/tree-dependencies.json`, course source files, prior course pages |
-| `/naite fruit` | bootloader, `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, active `fruit.md`, `.naite/ontology/tree-manifest.json`, `.naite/ontology/tree-dependencies.json` | target decision pages, related concept pages, `docs/ARCHITECTURE.md` only for schema rationale |
+| `/naite fruit` | bootloader, `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, active `fruit.md`, `tree/trunk.md`, `.naite/ontology/subject-tree.md`, `.naite/ontology/topics.md`, recent `tree/rings.md` | `.naite/ontology/tree-dependencies.json` for cross-link and bidirectional-prose review, target decision pages, related concept pages, `docs/ARCHITECTURE.md` only for schema rationale |
 | `/naite care` / `care --check` | bootloader, `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, active `care.md` / `care-check.md`, generated maps | scripts, ontology files, target pages, inbound dependents, `tree/rings.md`, `tree/seeds.md`, producer workflow files when defects repeat |
 | `/naite upgrade` | bootloader, active `upgrade.md`, `.naite/harness-lock.json`, `.claude-plugin/plugin.json`, `docs/CONVENTIONS.md` when vault migration may touch tree or ontology files | upstream clone (latest + base tag), release notes, customized harness files for 3-way proposals, versioned migration scripts, generated maps, `tree/rings.md`, `SOUL.md` / `USER.md` / `MEMORY.md` when instruction surfaces changed |
 | Schema or workflow redesign | bootloader, `docs/CONTEXT.md`, `docs/CONVENTIONS.md`, `docs/ARCHITECTURE.md`, relevant workflow files | decision pages, validator scripts, mirror sync script |

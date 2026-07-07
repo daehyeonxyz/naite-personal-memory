@@ -131,7 +131,7 @@ updated: YYYY-MM-DD
 
 ### 4.2 care 의 두 모드 — 분리된 책임
 
-- **`care --check`** (`.naite/scripts/lint-ontology.py` deterministic + `.claude/skills/naite/care-check.md` LLM-driven) — schema/정책 compliance. report-only. 3a frontmatter completeness, 3b subject tree, 3c topic canonical, 3d domain cache, 3e kind/form/source-types distribution, 3f BOM, 3g legacy drift, 3h language-shape. § 14 autonomy garbage collector (LLM-driven, 30 일 윈도우).
+- **`care --check`** (`.naite/scripts/lint-ontology.py` deterministic + `.claude/skills/naite/care-check.md` LLM-driven) — schema/정책 compliance. report-only. 3a frontmatter completeness, 3b subject tree, 3c topic canonical, 3d domain cache, 3e kind/form/source-types distribution, 3f BOM, 3g legacy drift, 3h language-shape, 3i schema integrity, 3j output-quality, 3k leaf-depth, § 7 non-tree dirt. § 14 autonomy garbage collector (LLM-driven, 30 일 윈도우).
 - **`care`** (돌봄 모드) — qualitative review/repair. narrative prose verdict 도 이 모드로 흡수: 점수 없음, threshold 없음. page/branch review, 직접 content 수선, 대규모 sweep, recurring-rule 학습. 사용자 수동 호출.
 
 분리 이유: `care --check` 의 mechanical 검사와 `care` 의 *맥락 판단* 은 서로 다른 영역에 있다. 자세히: `.claude/skills/naite/{care-check,care}.md`.
@@ -182,9 +182,9 @@ updated: YYYY-MM-DD
 
 ### 5.1 Active scripts
 
-- `.naite/scripts/lint-ontology.py` — § 3 deterministic sub-check (3a-3h) + § 7 non-tree dirt detection. 매 care --check run 호출.
+- `.naite/scripts/lint-ontology.py` — § 3 deterministic sub-check (3a-3k) + § 7 non-tree dirt detection. 매 care --check run 호출.
 - `.naite/scripts/sync-agents.ps1` — `.claude/skills/naite/*` → `.agents/skills/naite/*` 자동 mirror (`Claude Code` → `Codex` 텍스트 치환). CLAUDE.md → AGENTS.md 동시 처리.
-- `.naite/scripts/sync-agents.py` — sync-agents.ps1 의 cross-platform 포팅 (PowerShell 없는 환경용). 동일 치환 규칙·CRLF 출력.
+- `.naite/scripts/sync-agents.py` — sync-agents.ps1 의 cross-platform 포팅 (PowerShell 없는 환경용). 동일 치환 규칙·LF 출력 (CI 미러 게이트가 LF 를 전제).
 - `.naite/scripts/build-harness-lock.py` — release/upgrade 가 의존하는 하네스 파일 hash lock 생성. 하네스 파일을 고친 뒤 재생성하고 `--check` 로 drift 를 검증한다.
 - `.naite/scripts/build-tree-manifest.py` — `tree/*.md` frontmatter, heading, alias 를 모아 agent fast-path map 을 만든다. ingest/care 가 page 후보를 찾기 전에 stale 하면 실행한다.
 - `.naite/scripts/build-tree-dependencies.py` — wikilink 와 soft relation idiom 을 스캔해 inbound/outbound dependency map 을 만든다. 기존 page 의미가 바뀌거나 link 구조가 바뀐 뒤 실행한다.
@@ -258,10 +258,10 @@ updated: 2026-05-04
 ---
 kind: concept
 form: prose
-topics: [human-in-the-loop, oversight, agentic-workflow]
-subject: [ai-fluency/human-in-the-loop, ml/agents]
+topics: [oversight, agentic-workflow]
+subject: [statistics/estimation, ml/agents]
 source-types: [conversation]
-domains: [ai-fluency, ml]
+domains: [statistics, ml]
 created: 2026-04-29
 updated: 2026-04-29
 ---
@@ -278,7 +278,7 @@ Cross-domain 은 `subject` multi-value 로 표현 (kind 와 무관). domains cac
 kind: source-record
 form: prose
 topics: [claude-api, prompt-caching]
-subject: [ml/runtime]
+subject: [ml/agents]
 source-types: [docs]
 domains: [ml]
 created: 2026-04-29

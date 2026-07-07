@@ -31,7 +31,7 @@ naite는 개인 지식 관리 하네스입니다. 외부 기여자는 하네스(
 5. Open a PR and fill in the PR template checklist fully.
 6. A maintainer reviews and squash-merges.
 
-No CI automation runs on PRs at this time (D1 decision: manual maintainer review). The checklist in the PR template is the enforcement surface.
+CI runs three consistency gates on every PR (`.github/workflows/ci.yml`): ontology lint (`lint-ontology.py`), harness-lock freshness (`build-harness-lock.py --check` — version + file-hash embed, plus `plugin.json`/`marketplace.json` version parity and the committed `PUBLIC_STARTER` sentinel), and the `.claude` → `.agents` mirror sync. Run the same checks locally before opening the PR (see "Pre-PR local checks" below) so the gates pass. A maintainer still reviews and squash-merges; the PR template checklist covers what CI cannot (schema-governance intent, scope). The CI job is guarded to run only on the starter repo (`if: github.repository == 'daehyeonxyz/naite-personal-memory'`), so a personal vault created by cloning this repo does not inherit a permanently red Actions tab.
 
 ---
 
@@ -41,21 +41,23 @@ Before opening a PR, install the script dependencies once, then run the local ch
 
 ```bash
 # 0. Install Python dependencies used by optional analysis scripts
-python -m pip install -r .naite/scripts/requirements.txt
+python3 -m pip install -r .naite/scripts/requirements.txt
 
 # 1. Regenerate the .agents/ mirror from the canonical .claude/ side
 # Windows PowerShell
 powershell -File .naite/scripts/sync-agents.ps1
 
 # macOS / Linux / CI without PowerShell
-python .naite/scripts/sync-agents.py
+python3 .naite/scripts/sync-agents.py
 
 # 2. Rebuild harness-lock (embed version + dependency snapshot)
-python .naite/scripts/build-harness-lock.py
+python3 .naite/scripts/build-harness-lock.py
 
 # 3. Lint ontology (must exit 0)
-python .naite/scripts/lint-ontology.py
+python3 .naite/scripts/lint-ontology.py
 ```
+
+> 명령은 `python3` 기준입니다 (최신 macOS 는 `python` 이 없고 `python3` 만 있습니다). Windows 에서는 `python3` 대신 `python` 을 쓰세요.
 
 - `.agents/` + `AGENTS.md`는 `sync-agents.ps1` 또는 `sync-agents.py`의 생성물입니다. 직접 수정하지 마세요.
 - `requirements.txt` 는 주로 `forest-*` 진단 스크립트용입니다. `build-*`, `lint-*`, `sync-agents.py` 는 표준 라이브러리만으로 동작하지만, 첫 기여자는 위 설치를 먼저 해 두면 script 실행 중 `ImportError` 로 막히지 않습니다.

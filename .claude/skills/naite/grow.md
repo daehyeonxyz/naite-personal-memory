@@ -75,8 +75,16 @@ conversation / file 모드로 가기 전에, 이 학습이 **하나의 큰 줄�
 
 Determine source type from the extension and location, then run a pre-step before delegating to `ingest`.
 
+**Secrets + PII pre-check (all file-mode sources).** Before moving or ingesting any file, scan its content with the `capture.md § 4` secrets + PII checklist. The guard hook only fires at commit time and only on token patterns, so file mode is the layer that catches a secret/PII in an article or PDF before it reaches `tree/`. On a hit, stop and offer to redact — do not proceed to ingest.
+
+**Path-aware routing (do not move files that already live in a managed roots subdir).** The "move to `roots/articles/`" rule below applies only to files a user dropped at the vault root, in Downloads, or a similar loose location:
+
+- A path already under `roots/conversations/` is a captured conversation, not an article. Route it to the conversation ingest path (the same primitive `§ 2` uses), which lets `ingest § 8` delete the ephemeral claim summary and keep the `_transcripts/` twin. Never move it to `roots/articles/` (that breaks the post-grow deletion contract and the twin pairing).
+- A path under `roots/legacy/` is a legacy import. Route it to `ingest --legacy <path>` (the wikilink-translation pass), which expects the file to stay in `roots/legacy/`. Never move it to `roots/articles/`.
+- A path already under `roots/articles/` or `roots/courses/` stays in place.
+
 #### 3a. `.md` or `.txt`
-- If already under `roots/articles/` → no move. Delegate to `ingest`.
+- If already under `roots/articles/`, `roots/conversations/`, `roots/legacy/`, or `roots/courses/` → **no move**; route per the path-aware rule above.
 - Elsewhere (e.g. the user dropped it at vault root or in Downloads) → move to `roots/articles/<slug>.md` using kebab-cased basename. Preserve original content byte-for-byte. Then delegate to `ingest roots/articles/<slug>.md`.
 
 #### 3b. `.pdf`

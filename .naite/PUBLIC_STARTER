@@ -1,0 +1,12 @@
+# Public-starter marker.
+#
+# This file exists ONLY in the naite-personal-memory public repo. Its presence
+# switches the .naite/hooks/pre-commit guard into "public starter" mode, which
+# blocks personal vault content (tree/ pages, roots/ sources) from being committed
+# here.
+#
+# An installed personal vault must NOT contain this file: the install flow deletes
+# it after copying, so your own tree/ and roots/ commit normally while the secret
+# and denylist scans in the same hook stay active. See .naite/hooks/README.md.
+#
+# Do not delete this file in the public repo.

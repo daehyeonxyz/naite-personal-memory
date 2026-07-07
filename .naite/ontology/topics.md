@@ -26,6 +26,7 @@ canonical_topics:
   - rag
   - agentic-workflow
   - context-window
+  - human-in-the-loop
 ```
 
 ## Aliases (canonical only)

@@ -1,6 +1,6 @@
 {
   "name": "naite",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "naite — a personal knowledge system maintained by an LLM. /naite dispatches to start, grow, ask, fruit, care, and upgrade against your naite vault.",
   "repository": "https://github.com/daehyeonxyz/naite-personal-memory",
   "license": "MIT",

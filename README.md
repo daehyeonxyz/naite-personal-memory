@@ -6,7 +6,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-7cc15a" alt="MIT" />
-  <img src="https://img.shields.io/badge/version-0.7.0-a9621f" alt="v0.7.0" />
+  <img src="https://img.shields.io/badge/version-0.8.0-a9621f" alt="v0.8.0" />
   <img src="https://img.shields.io/badge/Claude_Code-ready-a9621f" alt="Claude Code" />
   <img src="https://img.shields.io/badge/Codex-ready-7cc15a" alt="Codex" />
   <img src="https://img.shields.io/badge/Obsidian-compatible-a9621f" alt="Obsidian" />
@@ -62,13 +62,15 @@ Claude Code 에서 두 명령을 순서대로 실행합니다.
 /plugin install naite
 ```
 
-naite 하네스와 함께 `naite-mcp` 서버도 자동으로 등록됩니다. vault 는 에이전트가 연 프로젝트 폴더가 됩니다.
+naite 하네스와 함께 `naite-mcp` 서버도 자동으로 등록됩니다.
 
-설치하면 `/naite start` 로 첫 세션을 시작하세요. 이미 다른 AI 에 쌓아 둔 대화 기록을 가져와 첫 나무를 짓는 1회성 안내 세션입니다.
+설치하면 vault 로 쓸 폴더(빈 폴더면 됩니다)에서 `/naite start` 로 첫 세션을 시작하세요. 폴더에 아직 vault 가 없으면 start 가 먼저 starter 파일(문서·스키마·빈 나무)을 그 폴더에 복사해 vault 를 만들고, 이어서 다른 AI 에 쌓아 둔 대화 기록을 가져와 첫 나무를 짓는 안내를 시작합니다.
 
 ```text
 /naite start
 ```
+
+플러그인으로 설치된 스킬은 환경에 따라 `/naite:naite start` 처럼 플러그인 이름이 앞에 붙은 형태로 보일 수 있습니다. 명령 형태가 헷갈리면 그냥 자연어로 "naite 시작하자" 라고 해도 같은 흐름으로 이어집니다.
 
 ChatGPT·Gemini 같은 데서 대화 기록을 내보내 붙여넣으면, naite 가 그것을 가져와 잎과 맥과 열매로 짜서 첫 나무를 만듭니다. 데모용 예시가 아니라 내 기록이라, 첫 세션부터 바로 쓸모가 있습니다.
 
@@ -83,11 +85,13 @@ ChatGPT·Gemini 같은 데서 대화 기록을 내보내 붙여넣으면, naite 
 https://github.com/daehyeonxyz/naite-personal-memory 를 이 폴더에 설치해줘.
 
 1. 위 저장소를 임시 폴더에 클론한 다음, .git 을 제외한 모든 파일을 이 폴더 루트로 복사해.
-2. 복사가 끝나면 임시 폴더를 지우고, CLAUDE.md (Codex 라면 AGENTS.md) 를 읽어.
-3. `git config core.hooksPath .naite/hooks` 로 가드 훅을 켜(개인정보·비밀키·개인 vault 내용이 실수로 커밋되는 걸 막아).
+2. 복사가 끝나면 임시 폴더를 지우고, `.naite/PUBLIC_STARTER` 파일이 있으면 지워(공개 스타터 전용 표식이라 내 개인 vault 에는 없어야 해). 그다음 CLAUDE.md (Codex 라면 AGENTS.md) 를 읽어.
+3. `git config core.hooksPath .naite/hooks` 로 가드 훅을 켜(비밀키·개인정보가 실수로 커밋되는 걸 막아. 내 tree·roots 기록은 그대로 정상 커밋돼).
 4. "naite install" 메시지로 첫 커밋을 만들어줘.
 5. 끝나면 내가 지금 바로 해볼 수 있는 것을 한두 가지 알려줘.
 ```
+
+가드 훅은 공개 스타터(빈 나무를 배포하는 이 저장소)와 내 개인 vault 를 구분해서, 개인 vault 에서는 `tree/`·`roots/` 커밋을 막지 않습니다. 위 2번처럼 `.naite/PUBLIC_STARTER` 표식이 사라지면 개인 vault 로 인식하고, 표식을 지우지 않고 클론을 그대로 쓰고 싶으면 `NAITE_HOOK_MODE=vault` 환경변수로 같은 효과를 냅니다. 어느 쪽이든 비밀키·개인정보 스캔은 항상 돕니다.
 
 설치가 끝나면 `/naite start` 로 첫 세션을 시작하세요. 처음부터 모든 걸 정리할 필요는 없습니다. 나무는 자랄수록 쓸모가 커집니다.
 
@@ -131,7 +135,7 @@ naite/
   docs/    # 더 깊은 규칙이 궁금할 때 읽는 기술 문서
 ```
 
-나머지(`.naite/`, `.claude/`, `.agents/`)는 에이전트가 쓰는 내부 구현이라 몰라도 됩니다.
+나머지(`.naite/`, `.claude/`, `.agents/`)는 에이전트가 쓰는 내부 구현이라 몰라도 됩니다. (내부 스크립트를 직접 돌릴 일이 생기면, 명령의 `python` 은 macOS·Linux 에서 `python3`, Windows 에서 `python` 또는 `py -3` 입니다.)
 
 ## 에이전트를 나에게 맞추기
 
@@ -143,12 +147,21 @@ naite 는 셋으로 나를 압니다. 모두 평범한 Markdown 이라 직접 �
 
 `SOUL.md` 는 공개 기본값이라 함께 쓰지만, `USER.md` 와 `MEMORY.md` 는 개인 정보라 Git 에 올리지 않습니다.
 
+### vault 를 다른 기계로 옮길 때
+
+vault 는 Git 저장소라 clone 으로 그대로 옮겨집니다. 다만 Git 에 올라가지 않는 것들은 함께 따라오지 않으니, 새 기계에서 두 가지를 챙기면 됩니다.
+
+- **가드 훅 다시 켜기**: 훅 설정은 클론마다 새로 해야 합니다. 새 폴더에서 `git config core.hooksPath .naite/hooks` 를 한 번 실행하세요. 안 켜면 비밀키·개인정보 커밋을 막아 주지 못합니다.
+- **개인 파일 옮기기**: `USER.md`, `MEMORY.md`, `.naite/hooks/denylist.local`, 그리고 숲 설정 `.naite/forest/forest-config.json` 은 `.gitignore` 되어 clone 에 안 담깁니다. 계속 쓰려면 예전 폴더에서 직접 복사하세요.
+
 ## 더 알아보기
 
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — 왜 이런 구조인지, 스키마 설계 근거
 - [docs/CONVENTIONS.md](docs/CONVENTIONS.md) — 페이지가 지키는 규칙
 - [docs/CONTEXT.md](docs/CONTEXT.md) — 에이전트가 무엇을 어떤 순서로 읽는지
 - [docs/agent-runtimes.md](docs/agent-runtimes.md) — Claude Code, Codex, plugin, prompt caching 차이
+- [docs/connect-mcp.md](docs/connect-mcp.md) — 나무를 Claude Desktop·Codex 에 MCP 로 붙이기
+- [docs/VERSIONING.md](docs/VERSIONING.md) — 버전 규약과 앱 호환성
 
 ## 기여
 

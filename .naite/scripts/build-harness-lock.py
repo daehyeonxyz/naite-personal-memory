@@ -9,7 +9,7 @@ The lock records, at release time, the sha256 of every file the starter kit owns
 Harness set (tracked files only):
     CLAUDE.md, AGENTS.md, SOUL.md, README.md, LICENSE, .gitignore,
     .claude/**, .agents/**, .claude-plugin/**, docs/**, .naite/scripts/**,
-    .naite/templates/**
+    .naite/templates/**, .naite/hooks/**
 
 Excluded (user-owned or generated, never overwritten by upgrade):
     roots/**, tree/**, .naite/ontology/**, .naite/reports/**,
@@ -34,14 +34,15 @@ from pathlib import Path
 NAITE_ROOT = Path(__file__).resolve().parent.parent.parent
 LOCK_PATH = NAITE_ROOT / '.naite' / 'harness-lock.json'
 PLUGIN_PATH = NAITE_ROOT / '.claude-plugin' / 'plugin.json'
+MARKETPLACE_PATH = NAITE_ROOT / '.claude-plugin' / 'marketplace.json'
 
 HARNESS_FILES = ('CLAUDE.md', 'AGENTS.md', 'SOUL.md', 'README.md', 'LICENSE', '.gitignore')
-HARNESS_DIR_PREFIXES = ('.claude/', '.agents/', '.claude-plugin/', 'docs/', '.naite/scripts/', '.naite/templates/')
+HARNESS_DIR_PREFIXES = ('.claude/', '.agents/', '.claude-plugin/', 'docs/', '.naite/scripts/', '.naite/templates/', '.naite/hooks/')
 
 
 def list_harness_files() -> list[str]:
     out = subprocess.run(
-        ['git', '-C', str(NAITE_ROOT), 'ls-files'],
+        ['git', '-C', str(NAITE_ROOT), '-c', 'core.quotePath=false', 'ls-files'],
         capture_output=True, text=True, check=True,
     ).stdout.splitlines()
     selected = []
@@ -60,6 +61,12 @@ def sha256_of(path: Path) -> str:
 
 def build_lock() -> dict:
     version = json.loads(PLUGIN_PATH.read_text(encoding='utf-8'))['version']
+    # docs/VERSIONING.md declares plugin.json AND marketplace.json as the single
+    # version source; enforce that they agree (nothing else cross-checked this).
+    mkt_version = json.loads(MARKETPLACE_PATH.read_text(encoding='utf-8'))['plugins'][0]['version']
+    if mkt_version != version:
+        raise SystemExit(f'version mismatch: plugin.json={version} '
+                         f'marketplace.json={mkt_version} — make them equal.')
     files = {p: sha256_of(NAITE_ROOT / p) for p in list_harness_files()}
     return {
         'schema_version': 1,
@@ -99,7 +106,9 @@ def main() -> int:
         print(f"harness-lock: OK ({len(lock['files'])} files, v{lock['version']})")
         return 0
 
-    LOCK_PATH.write_text(json.dumps(lock, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    # write_bytes with explicit LF (not write_text, which emits CRLF on Windows) so
+    # the committed lock is byte-identical on every platform.
+    LOCK_PATH.write_bytes((json.dumps(lock, indent=2, ensure_ascii=False) + '\n').encode('utf-8'))
     print(f"wrote .naite/harness-lock.json ({len(lock['files'])} files, v{lock['version']})")
     return 0
 

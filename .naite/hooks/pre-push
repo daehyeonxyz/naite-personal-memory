@@ -1,0 +1,44 @@
+#!/bin/sh
+# naite-personal-memory — pre-push guard.
+#
+# Re-runs the pre-commit scans over the range being pushed, so commits created by
+# merge / rebase / cherry-pick / am / commit-tree (which all skip pre-commit) are
+# still caught before they reach a remote. Same activation as pre-commit
+# (git config core.hooksPath .naite/hooks). Override: git push --no-verify.
+
+. "$(git rev-parse --show-toplevel)/.naite/hooks/_naite_guard.sh"
+
+fail=0
+err() { printf '  - %s\n' "$1" >&2; fail=1; }
+
+starter=$(naite_starter_mode)
+
+# The empty tree, used as the base when pushing a brand-new ref (remote sha is all
+# zeros): the whole tip is then scanned (fail-closed).
+EMPTY_TREE=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+
+# git feeds "<local ref> <local sha> <remote ref> <remote sha>" lines on stdin.
+while read -r _lref lsha _rref rsha; do
+  # Deleting a remote ref (local sha all zeros): nothing to scan.
+  case "$lsha" in *[!0]*) : ;; *) continue ;; esac
+  # New ref (remote sha all zeros): scan against the empty tree.
+  case "$rsha" in *[!0]*) base=$rsha ;; *) base=$EMPTY_TREE ;; esac
+
+  # --no-textconv so a .gitattributes diff driver cannot hide a secret; quotePath
+  # off so non-ASCII paths stay literal; --diff-filter=d checks renames/copies at
+  # their destination.
+  diff=$(git diff --no-textconv -U0 "$base" "$lsha" 2>/dev/null)
+  paths=$(git -c core.quotePath=false diff --name-only --diff-filter=d "$base" "$lsha" 2>/dev/null)
+  deleted=$(git -c core.quotePath=false diff --name-only --diff-filter=D "$base" "$lsha" 2>/dev/null)
+
+  naite_scan_paths "$paths" "$deleted" "$starter"
+  naite_scan_content "$diff"
+done
+
+if [ "$fail" -eq 0 ]; then
+  exit 0
+fi
+
+printf '\nnaite guard: push blocked (a secret or personal content is in the range being pushed).\n' >&2
+printf 'Fix history (git rebase / filter) or override:  git push --no-verify\n' >&2
+exit 1

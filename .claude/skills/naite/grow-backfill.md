@@ -87,11 +87,13 @@ course 마다 source 구성이 다름. 본 skill 은 다음 variant 를 인식·
 backfill 은 chapter 단위 loop. 각 iteration 의 단일 truth source: `tmp/{slug}-run-log.md` (gitignore 영역, commit 대상 아님).
 
 State transitions:
-- `STARTED` — chapter 처리 시작. 같은 chapter 가 이미 STARTED 면 실행 중단 (concurrent run 방지).
+- `STARTED` — chapter 처리 시작. 같은 chapter 가 이미 STARTED 면 concurrent run 을 방지하기 위해 일단 멈춘다 (아래 crash-recovery 참조).
 - `DONE` — chapter 의 모든 subchapter page 작성 + 검증 완료. 다음 chapter 로 이동 가능.
 - `ABORTED` — 실패. 원인 1줄 기록. 다음 iteration 은 ABORTED chapter 부터 재진입.
 
-각 loop iteration 시작 시 `tmp/{slug}-run-log.md` 와 `git status --short` 만 먼저 읽는다. 진행 중인 STARTED 가 있으면 더 무거운 맥락 (PDF, source manifest) 을 읽지 않고 중단한다.
+각 loop iteration 시작 시 `tmp/{slug}-run-log.md` 와 `git status --short` 만 먼저 읽는다. 진행 중인 STARTED 가 있으면 더 무거운 맥락 (PDF, source manifest) 을 읽지 않고 멈춘다.
+
+**STARTED crash-recovery.** step 3/4 도중 프로세스 kill, PNG 렌더 OOM, Codex 연결 끊김 같은 일이 나면 `DONE`/`ABORTED` 로 전이하지 못한 `STARTED` 가 남는다. 이때 무한정 멈추면 backfill 이 데드락에 빠진다. 그래서 STARTED 를 만나면 **live 인지 stale 인지 판별한다**: 같은 세션에서 방금 찍은 게 아니고(직전 iteration 이 남긴 것이 아니고) 그 chapter 의 산출 페이지가 완결되지 않았으면 stale 로 간주한다. stale STARTED 는 사용자에게 "직전 ch{NN} 작업이 중간에 끊긴 것 같습니다. ABORTED 로 표시하고 그 chapter 부터 다시 진행할까요?" 라고 1줄 확인한 뒤, 동의 시 해당 STARTED 줄 다음에 `ABORTED | ... — stale STARTED recovered` 를 append 하고 그 chapter 부터 재진입한다. 진짜 동시 실행이 의심될 때만(다른 세션이 돌고 있을 근거가 있을 때만) 멈춘 채 사용자에게 보고한다.
 
 State entry 포맷:
 ```
@@ -122,8 +124,8 @@ State entry 포맷:
    - **c. Variant-specific cross-reference** (해당 시) — `§ Source variants` 의 B/C/F/H/I/J 처럼 별도 source (사용자 필기 단일 PDF / hwpx outline / 과제 PDF / Obsidian markdown / audio transcript / cheat sheet) 가 있으면 해당 subchapter 의 매칭 부분을 cross-reference. variant E (1학년 깊이) 는 추가 source 없음, 강의자료만.
    - **d. Subchapter 페이지 작성** — `§ Codex prompt template` 의 골격 + `.claude/skills/naite/grow-branch.md § Templates § 서브챕터 노트`. style anchor 참조. 0-to-1 신규 작성 시 frontmatter 5 facet 신규 생성, deepening pass 시 기존 frontmatter 보존 + 본문 *추가* (축소·삭제 금지).
    - **e. Content guard** — 작성/수정한 page 의 `## Source` 앞 body 를 `/naite care § Content Guard` 기준으로 스캔하고 즉시 수정. 특히 raw path, source-process voice, unnecessary English generic heading, mojibake 는 DONE 전에 남기지 않는다.
-   - **f. PNG 즉시 삭제** — 해당 subchapter 작성 끝나면 `Remove-Item` 으로 roots/assets/{slug}_ch{NN}_{SS}_p*.png 즉시 삭제. 누적 금지.
-   - **g. lint pass 확인** — `python .naite/scripts/lint-ontology.py` 3a-3g 통과. 3h candidates 는 manual review.
+   - **f. PNG 즉시 삭제** — 해당 subchapter 작성 끝나면 `grow-branch.md § PDF rendering pipeline` 의 삭제 스니펫으로 `tmp/render/ch{NN}_p*.png` 를 즉시 삭제. 누적 금지 (렌더 경로·파일명은 그 파이프라인과 동일하다).
+   - **g. lint pass 확인** — `python .naite/scripts/lint-ontology.py` 3a-3k + § 7 통과 (blocking: 3a·3b·3d·3g). 3c topic-canonical·3h language-shape·3j output-quality·3k leaf-depth 는 warn-only 라 manual review 로 넘긴다. 단 backfill 산출물은 3j output-quality 위반 0 을 목표로 삼는다 (핵심 품질 신호이지만 hard gate 는 아님).
    - **h. Temp log entry append** — `§ Temp run-log schema` 형식 따라 `tmp/{slug}-run-log.md` 에 append.
 5. Chapter 메타 페이지 작성 — `grow-branch.md § E chapter-finish` step 3 그대로. 단 commit 은 안 함.
 6. DONE 마킹.
@@ -154,7 +156,7 @@ State entry 포맷:
 - 1-line course summary
 ```
 
-finalizer 가 위 정보를 `tree/rings.md` 의 coarse migration / branch-start entry 로 변환 후 본 run-log 삭제. **페이지별 verdict 절대 tree/rings.md 에 노출 안 함** — rings.md 는 coarse summary 만.
+finalizer 가 위 정보를 `tree/rings.md` 의 coarse `branch-chapter` (chapter 단위) 또는 `branch-finish` (과목 종료 시) entry 로 변환 후 본 run-log 삭제. rings op 는 `docs/CONVENTIONS.md § rings.md discipline` 의 어휘를 따른다 — `migration` 은 schema/구조 변경 전용이라 backfill 콘텐츠 작업에는 쓰지 않는다. **페이지별 verdict 절대 tree/rings.md 에 노출 안 함** — rings.md 는 coarse summary 만.
 
 ### 2. Branch-finish
 

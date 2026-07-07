@@ -8,7 +8,7 @@ Upstream: `https://github.com/daehyeonxyz/naite-personal-memory`
 
 - **Source paths: never rewrite content**: `roots/**`. A migration may move or delete only the staging files that an existing naite workflow already owns, and only after explicit user confirmation.
 - **Vault paths: never auto-replace during harness upgrade**: `tree/**`, `.naite/ontology/**`, `.naite/reports/**`. These paths are user-vault state. They can be changed only in the separate Vault migration phase below, after a preview and explicit approval.
-- **Harness paths — the only upgrade targets**: exactly the file set defined in `.naite/scripts/build-harness-lock.py` (the root entrypoint and policy files, both skill surfaces, `.claude-plugin/**`, `docs/**`, `.naite/scripts/**`), plus `.naite/harness-lock.json` itself.
+- **Harness paths — the only upgrade targets**: exactly the file set defined in `.naite/scripts/build-harness-lock.py` (root entrypoint + policy files `AGENTS.md`/`AGENTS.md`/`SOUL.md`/`README.md`/`LICENSE`/`.gitignore`, both skill surfaces, `.claude-plugin/**`, `docs/**`, `.naite/scripts/**`, `.naite/templates/**`, `.naite/hooks/**`), plus `.naite/harness-lock.json` itself. The script is the single source of truth for this set.
 - User-created files inside harness directories (e.g. a custom skill the user added under `.agents/skills/`) are not in the lock and not in the new release: **leave them untouched**.
 - Destructive steps (deleting a file, moving a path) always require explicit user confirmation, even when a migration note asks for them.
 - Do not push. Committing is part of this skill; pushing follows whatever flow this vault already uses.
@@ -96,9 +96,11 @@ After applying migrations:
 ### 7. Finalize
 
 1. Run `.naite/scripts/sync-agents.ps1` on Windows or `python .naite/scripts/sync-agents.py` on macOS/Linux so `.agents/` + `AGENTS.md` match the upgraded canonical side.
-2. Update `.claude-plugin/plugin.json` version to `V_new` if not already replaced in step 4.
-3. Rebuild the lock: `python .naite/scripts/build-harness-lock.py`.
-4. Sanity check: `python .naite/scripts/lint-ontology.py` must still exit 0 (upgrade must not break the vault).
+2. Update the version to `V_new` in **both** `.claude-plugin/plugin.json` and `.claude-plugin/marketplace.json` (`plugins[0].version`) if not already replaced in step 4. `build-harness-lock.py --check` asserts the two agree.
+3. Rebuild the lock: `python3 .naite/scripts/build-harness-lock.py`.
+   > [!IMPORTANT]
+   > The rebuilt lock hashes the **current local** harness files, which now include any file you decided to **keep customized** in step 4 (the 3-way "keep local" outcome). That means the lock would record the customized hash as the new baseline, and the *next* upgrade would classify that file as "unmodified vs lock" and silently auto-replace it — erasing the customization the user chose to keep. To prevent this: for each file kept customized, record it in a persisted list (e.g. a `## kept-customized` block in `MEMORY.md`) so future upgrades treat it as customized regardless of the lock, and always re-confirm with the user before auto-replacing any harness file that appears in that list. The lock is an app-compat version stamp, not the customization baseline.
+4. Sanity check: `python3 .naite/scripts/lint-ontology.py` must still exit 0 (upgrade must not break the vault).
 5. Run `python .naite/scripts/build-harness-lock.py --check`.
 6. Clean up `<tmp>` clones.
 
@@ -114,7 +116,7 @@ After applying migrations:
 
 2. Single commit: `chore: upgrade naite harness v<V_old> -> v<V_new>`.
 
-### 9. Report (Korean, per AGENTS.md 응답 스타일)
+### 9. Report (Korean, per `SOUL.md § 응답 스타일`)
 
 - 결과: 버전 이동, 자동 교체/병합/추가/제거 제안 파일 수, 적용한 vault migration 단계.
 - 안 한 것: 사용자 커스텀이라 보존한 파일, 보류된 파괴적 단계.

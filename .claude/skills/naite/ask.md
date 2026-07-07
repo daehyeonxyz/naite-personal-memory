@@ -35,7 +35,7 @@ Do **not** silently answer from general knowledge as if it were tree-grounded. T
 
 ### 3. Synthesize
 
-Write the answer as the finished, user-facing result, not a log of how it was found. Voice and format (this is the working copy of `SOUL.md § 응답 스타일` — follow it inline, no need to open SOUL.md for a normal answer): **존댓말** by default (English if the user writes in English); structure with headings and lists when it helps; **no emoji, no em-dash, no process narration, no naite-internal jargon** ("나무 기준", "개인 hub", "/naite ask 절차"). Choose the output shape by question type: narrative prose for an explanation, a table for a comparison, a short list for a lookup.
+Write the answer as the finished, user-facing result, not a log of how it was found. Voice and format (this is the working copy of `SOUL.md § 응답 스타일` — follow it inline, no need to open SOUL.md for a normal answer): **존댓말** by default (English if the user writes in English); structure with headings and lists when it helps; **no emoji, no em-dash, no process narration, no naite-internal jargon** ("나무 기준", "개인 hub", "/naite ask 절차"). **Do not wrap the answer body in a ```markdown code fence** — the app renders it as markdown, so a fence would show the reader raw symbols. Callouts must use GFM alert syntax (`> [!NOTE]` / `[!TIP]` / `[!IMPORTANT]` / `[!WARNING]` / `[!CAUTION]`) to render as cards. Choose the output shape by question type: narrative prose for an explanation, a table for a comparison, a short list for a lookup.
 
 - **Citations** as `[[page-slug]]`, placed at the **end of the sentence or clause** the page supports, so the reader sees a trailing source marker rather than a filename dropped mid-phrase. Reuse the same `[[slug]]` for the same page.
 - **Conflicts surfaced**: if two tree pages disagree, quote both and flag the disagreement.
@@ -45,7 +45,7 @@ Write the answer as the finished, user-facing result, not a log of how it was fo
 
 At the end of any non-trivial answer, ask:
 
-> This looks like it's worth keeping. File as a tree page? Proposed: `[[<slug>]]` under domain `<x>`, kind `<concept|entity|source-record|decision|insight|comparison|project>`.
+> This looks like it's worth keeping. File as a tree page? Proposed: `[[<slug>]]` under domain `<x>`, kind `<concept|entity|source-record|decision|insight|comparison|project|essay|personal>`.
 
 If the user accepts:
 - Create `tree/<slug>.md` with full ontology frontmatter (5 facets + cached domains) per `docs/CONVENTIONS.md § Ontology`. `subject` 는 `.naite/ontology/subject-tree.md` 의 path 1개 (cross-domain 진짜일 때만 multi). `source-types` 는 거의 항상 `[conversation]` (ask 가 대화에서 발생) — 단 ask 가 외부 자료를 cite 한 답이면 `[paper]` / `[article]` / `[docs]` / `[book]` / `[external]` 사용 가능, multi-source 일 때 list 로 합쳐 `[conversation, paper]` 같이 표현. Page-shape 이 A-vs-B 비교면 `kind: comparison`, 결정 thread 면 `kind: decision` (decision page 는 파일명 `decision-YYYY-MM-DD-<slug>.md` 형식). `form` 은 거의 항상 `prose` (ask 산출물은 산문). Page provenance ("from an ask, not a grow") 는 본문 첫 paragraph 또는 `## Provenance` 헤딩에 prose 로.
@@ -58,6 +58,7 @@ If the user accepts:
   - subject: <path>  (.naite/ontology/subject-tree.md 참조, cross-domain 일 때만 복수)
   - cited: [[a]], [[b]], [[c]]
   ```
+- **Filing a page is a tree mutation, so the same post-write duties apply as `grow`/`ingest`** (`docs/CONVENTIONS.md § Output quality contract`, `docs/CONTEXT.md § Verification`): run the content guard on the new page body (no raw/source-process voice, self-contained prose), then rebuild the generated maps that the new page changed — `python .naite/scripts/build-tree-manifest.py` (new page + coordinates) and, if it links to or from other pages, `python .naite/scripts/build-tree-dependencies.py`. Skipping this leaves the maps stale and the next orphan/inbound calculation wrong.
 
 If the user declines, do not write anything. The conversation stands.
 

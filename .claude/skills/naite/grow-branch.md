@@ -50,7 +50,7 @@ If separate agents are not available, run the same three phases sequentially in 
 - **Raw 보존**: `roots/courses/{slug}/*.pdf`는 서브챕터 grow 시점에 `_archive/`로 옮기지 않는다. **과목 완료(`branch-finish`) 시점에 일괄 이동.** (이유: 여러 서브챕터에서 같은 pdf를 페이지 범위로 참조하므로 챕터 진행 중엔 원본이 살아있어야 함.)
 - **유일한 archive**: `roots/courses/_archive/` 는 이 프로젝트 전체에서 **유일하게 존재하는 `_archive/` 디렉토리**다. `roots/articles/` 와 `roots/conversations/` 에는 archive layer 가 없다 (파일은 제자리 상주, `conversations/` 의 claim summary 만 grow 후 삭제). `docs/CONVENTIONS.md § Post-grow handling` 참조.
 - **학술 정보만**: syllabus/about에서 수업 시간, 교수명, 시험 일정, 평가 기준 등 행정 정보는 tree에 담지 않는다. 내용·범위·선후수 관계만.
-- 기타 `CLAUDE.md § Secrets & privacy`, `§ Obsidian co-editing` (operational gotchas), `docs/CONVENTIONS.md § Schema evolution` 전부 그대로 적용.
+- 기타 `CLAUDE.md § Secrets & privacy`, `CLAUDE.md § Working-tree safety (Obsidian)` 와 `docs/CONVENTIONS.md § Obsidian co-editing` (operational gotchas), `docs/CONVENTIONS.md § Schema evolution` 전부 그대로 적용.
 
 ## Schema autonomy
 
@@ -70,7 +70,7 @@ If separate agents are not available, run the same three phases sequentially in 
 
 ## Sub-operations (auto-selected)
 
-스킬 호출 시 **사용자 의도 + 현재 tree 상태**를 보고 아래 중 하나로 자동 분기. 분기 직전 **1줄로 사용자에게 확인** ("지금 {op} 맞지?"). 혼동되면 선택지 제시.
+스킬 호출 시 **사용자 의도 + 현재 tree 상태**를 보고 아래 중 하나로 자동 분기. 분기 직전 **1줄로 사용자에게 확인** ("지금 {op} 진행할까요?"). 혼동되면 선택지 제시.
 
 | Op | 트리거 | Tree 변경 |
 |---|---|---|
@@ -126,7 +126,7 @@ If separate agents are not available, run the same three phases sequentially in 
    - subject: <path>  (.naite/ontology/subject-tree.md 참조)
    - staged: roots/courses/{slug}/<files>
    ```
-8. Checkpoint: "과목 셋업 완료. 첫 챕터 자료 주면 `chapter-start` 로 넘어갈게."
+8. Checkpoint: "과목 셋업을 마쳤습니다. 첫 챕터 자료를 주시면 `chapter-start` 로 넘어갑니다."
 
 ### B. `resume` — 기존 과목 재개
 
@@ -141,7 +141,7 @@ If separate agents are not available, run the same three phases sequentially in 
 
 1. 챕터 자료 업로드 확인. 기본 staging 이름: `roots/courses/{slug}/ch{NN}-lecture.pdf`. 기존 파일 있으면 덮어쓰기 전 사용자 확인.
 2. PDF Read 혹은 텍스트 추출. 추출 품질이 나쁘면(스캔본·OCR 필요 등) **중단**하고 사용자에게 보고. `rings.md`에 `aborted` 엔트리 append.
-3. 목차·서브챕터 리스트 파악. 사용자에게 "이 챕터 서브챕터는 {리스트} 맞지?" 확인.
+3. 목차·서브챕터 리스트 파악. 사용자에게 "이 챕터 서브챕터는 {리스트} 가 맞나요?" 확인.
 4. 파일 쓰지 않음. 이 단계는 맥락 세팅만 (리마인드·설명은 이제부터 진행). `rings.md`에도 쓰지 않음 — 챕터 메타는 `chapter-finish` 에서만 작성.
 5. 서브챕터 단위로 리마인드/설명. 사용자가 "정리해줘"류 신호를 보내면 `subchapter-note`로 전환.
 
@@ -153,7 +153,7 @@ If separate agents are not available, run the same three phases sequentially in 
 
 a. **기존 서브챕터 노트 1개 읽기**: 같은 과목(`course-{slug}-ch*-[^0]*.md`)의 기존 서브챕터 노트 중 가장 최근 것 1개를 Read한다. 없으면 같은 domain의 다른 과목 서브챕터 노트를 읽는다. **이 페이지의 깊이·서술 방식·수식 포맷이 현재 작성의 최저 기준이다.** 기존 페이지보다 얕으면 안 된다.
 
-b. **해당 섹션 PNG 전체 읽기**: `chapter-start`에서 PDF가 이미 스테이징된 경우라도, 서브챕터 노트 작성 시점에 **해당 섹션 슬라이드를 PNG로 렌더링해서 1장씩 Read한다.** 텍스트 추출만으로는 수식·필기·그래프가 누락된다. 렌더링 파이프라인은 `§ PDF rendering pipeline` 참조. 섹션 경계를 모를 때는 5장 먼저 렌더링 후 범위 확정.
+b. **해당 섹션 PNG 전체 읽기**: `chapter-start`에서 PDF가 이미 스테이징된 경우라도, 서브챕터 노트 작성 시점에 **해당 섹션 슬라이드를 PNG로 렌더링해서 1장씩 Read한다.** 텍스트 추출만으로는 수식·필기·그래프가 누락된다. 렌더링 파이프라인은 `§ PDF rendering pipeline` 참조. 섹션 경계를 모를 때는 `§ PDF rendering pipeline` 지침대로 5-10장 먼저 렌더링해 헤더를 확인한 뒤 범위를 확정한다.
 
 c. **학생 필기 인사이트 수집**: PNG를 읽는 과정에서 학생 필기(형광펜 강조, 여백 메모, 수식 옆 주석, 한국어 해설)를 모두 기록한다. 이것은 이 학생이 중요하다고 판단한 부분이므로 페이지 본문에 반드시 반영한다. 단 본문에서 "필기에는", "노트에서는"처럼 source 를 직접 말하지 말고, 강조점과 직관을 해당 개념 설명으로 흡수한다.
 
@@ -182,7 +182,7 @@ c. **학생 필기 인사이트 수집**: PNG를 읽는 과정에서 학생 필�
    python .naite/scripts/build-tree-dependencies.py
    ```
 10. Inspect `.naite/ontology/tree-dependencies.json` for inbound references to touched slugs. Surface semantic dependent candidates only; do not auto-rewrite them during `subchapter-note`.
-11. Checkpoint: "반영 완료. 다음 서브챕터?"
+11. Checkpoint: "반영을 마쳤습니다. 다음 서브챕터로 갈까요?"
 
 ### E. `chapter-finish` — 챕터 마무리
 
@@ -250,9 +250,9 @@ c. **학생 필기 인사이트 수집**: PNG를 읽는 과정에서 학생 필�
 
 세부 워크플로는 `.claude/skills/naite/grow-backfill.md` 가 담당. 본 op 는 분기만 책임진다.
 
-1. 트리거: 사용자가 `/naite grow backfill {slug}` 또는 `/naite grow start {slug} --mode=backfill` 호출. 자동 추론 안 함 — `§ 0 step 4` 의 op 결정 단계에서 사용자 입력으로 명시.
+1. 트리거: 사용자가 `/naite grow backfill {slug}` 호출 (라우터에 정의된 유일한 진입형). 자동 추론 안 함 — `§ 0 step 4` 의 op 결정 단계에서 사용자 입력으로 명시.
 2. `§ A start` 의 step 1-3 (slug 결정, staging) 그대로 진행.
-3. step 4-7 의 takeaways·dialogue 단계 **건너뛰기**. backfill 은 사용자 mental model 이 이미 안정된 콘텐츠 대상이므로 dialogue 가 페이지 가치에 기여하지 않는다. 다만 **`§ Schema autonomy` 의 autonomy A 는 그대로 적용** — 일반 개념 페이지 추출, canonical topic 추가, 명백한 alias 추가 모두 자율 진행 (입자도 가드 통과 시). autonomy B (narrower 제안) 는 candidate append + chapter-finish rings 의 surface 항목으로 기록, autonomy C 는 발견 시 rings 에 명시 후 사용자 결정 대기. backfill 의 "dialogue 생략" 은 *큐레이션 대화 생략*이지 *연결 생성 생략*이 아니다 — 일반 개념 페이지 추출이 빠지면 chapter silo 가 되어 graph 가 빈약해진다.
+3. `§ A start` 에서 **건너뛰는 것은 대화(dialogue) 단계뿐이다: step 4 (Takeaways 논의) 와 step 8 (대화형 checkpoint).** **파일 생성 단계 step 5 (`tree/course-{slug}-00-index.md` 과목 메타), step 6 (`tree/trunk.md` 업데이트), step 7 (`tree/rings.md` `branch-start` 엔트리) 은 `§ A` 그대로 수행한다.** 이 메타·trunk·rings 산출물이 없으면 이후 chapter loop 의 `§ E chapter-finish` (챕터 메타가 과목 메타를 참조) 와 `branch-finish` (`§ F` 가 과목 메타의 status 를 변경) 가 존재하지 않는 파일을 참조해 실패한다. backfill 은 사용자 mental model 이 이미 안정된 콘텐츠 대상이라 *큐레이션 대화*만 생략하는 것이지, *파일·연결 생성*을 생략하는 게 아니다. **`§ Schema autonomy` 의 autonomy A 는 그대로 적용** — 일반 개념 페이지 추출, canonical topic 추가, 명백한 alias 추가 모두 자율 진행 (입자도 가드 통과 시). autonomy B (narrower 제안) 는 candidate append + chapter-finish rings 의 surface 항목으로 기록, autonomy C 는 발견 시 rings 에 명시 후 사용자 결정 대기. 일반 개념 페이지 추출이 빠지면 chapter silo 가 되어 graph 가 빈약해진다.
 4. `grow-backfill.md § Workflow` 의 chapter loop 으로 위임.
 5. 모든 chapter 완료 후 `branch-finish` 는 본 파일의 `§ F` 그대로 사용자 명시 승인 후 수행 (자동 push 포함).
 
@@ -260,7 +260,7 @@ backfill 모드는 `active` 모드 (`§ A`) 와 동시에 사용하지 않는다
 
 ## Staging rules (`roots/courses/{slug}/`)
 
-**flat** 구조. 한 챕터에 자료 3개 넘어가면 `/naite care --check`가 flag → nested 재구성 검토.
+**flat** 구조. 한 챕터에 자료가 너무 많아지면(대략 3개 초과) 작성자가 nested 재구성을 검토한다 (이건 작성 시점 판단이지 `care --check` 의 자동 검사 항목은 아니다).
 
 | 자료 종류 | 파일명 |
 |---|---|
@@ -290,29 +290,29 @@ Copy-Item "{원본 폴더}\{원본파일명}.pdf" "<NAITE_ROOT>\roots\courses\{s
 
 환경에 따라 Read 도구가 PDF를 직접 읽지 못할 수 있다 (`pdftoppm` 미설치 등). 그 경우 PyMuPDF로 PNG 렌더링 후 Read하는 방식을 사용한다.
 
-**전체 페이지 수 확인 + 렌더링** (NAITE_ROOT에서 실행):
-```powershell
-cd "<NAITE_ROOT>"
-python -c "
-import fitz
-pdf = fitz.open(r'roots/courses/{slug}/ch{NN}-lecture.pdf')
+**전체 페이지 수 확인 + 렌더링** (NAITE_ROOT에서 실행). PyMuPDF(`pip install pymupdf`, import 명은 `fitz`)가 필요하다. PNG는 `tmp/render/` (gitignore 대상)에 쓰므로 커밋에 새지 않는다. 경로는 forward slash 만 쓴다 — backslash 는 POSIX에서 파일명 문자로 남아 엉뚱한 파일을 만든다:
+```python
+import fitz, os
+pdf = fitz.open('roots/courses/{slug}/ch{NN}-lecture.pdf')
 print('Total pages:', len(pdf))
 mat = fitz.Matrix(1.5, 1.5)   # 1.5x 배율 — 필기 판독 최적값
-d = r'roots\assets'
+d = 'tmp/render'
+os.makedirs(d, exist_ok=True)
 for i in range(START, END):   # 0-indexed; 페이지 X → index X-1
-    pdf[i].get_pixmap(matrix=mat).save(f'{d}\ch{NN}_p{i+1:02d}.png')
+    pdf[i].get_pixmap(matrix=mat).save(f'{d}/ch{NN}_p{i+1:02d}.png')
 pdf.close()
 print('done')
-"
 ```
 
-**Read 후 즉시 삭제**:
-```powershell
-Remove-Item "<NAITE_ROOT>\roots\assets\ch{NN}_p*.png" -Force
+**Read 후 즉시 삭제** (한 서브챕터 작업이 끝나면 그 챕터 PNG를 지운다). 파일명은 위 렌더링과 정확히 같은 `ch{NN}_p*.png` 패턴이다:
+```python
+import glob, os
+for p in glob.glob('tmp/render/ch{NN}_p*.png'):
+    os.remove(p)
 ```
 
 **운영 규칙**:
-- PNG는 `roots/assets/`에 임시 — 서브챕터 노트 작성 완료 직후 삭제. git에 들어가면 안 됨.
+- PNG는 `tmp/render/`에 임시로만 둔다 — 서브챕터 노트 작성 완료 직후 삭제. `tmp/`는 gitignore 대상이라 git에 들어가지 않지만, 누적을 막기 위해 즉시 지운다.
 - 한 번 렌더링 권장 범위: 5-15 페이지. 섹션 경계를 모를 때는 5-10장 먼저 렌더링해서 헤더 확인 후 범위 결정.
 - 한 세션 적정 분량: 챕터 1개 (서브챕터 7-10개 기준). 컨텍스트 한계로 챕터 단위로 세션 분리 권장.
 
@@ -486,7 +486,7 @@ $$
 
 ## What this command never does
 
-- 과목 시작 시점에 빈 챕터·서브챕터 stub을 미리 생성하지 않는다 (`.claude/skills/naite/grow.md` 규칙과 동일).
+- 과목 시작 시점에 빈 챕터·서브챕터 stub을 미리 생성하지 않는다 (naite 전반의 "얕은 stub 을 미리 만들지 않는다" 원칙과 같은 취지다. 페이지는 실제 내용이 생길 때 만든다).
 - 서브챕터 노트 없이 챕터 메타를 작성하지 않는다.
 - slug 충돌 허용하지 않는다 (`tree/trunk.md § Branches` + `ls roots/courses/` 중복 체크 필수).
 - 서브챕터 grow 시점에 원본 pdf를 `_archive/`로 옮기지 않는다 (챕터·과목 완료 시점까지 보존).

@@ -32,7 +32,7 @@ This file is the **entrypoint**. It pins the standing default-voice contract, th
 
 ## Layers
 
-- `roots/` — **source of truth**. Content-immutable; grow ingest tracked in `rings.md`. Subdirs: `articles/`, `conversations/` (+ permanent `_transcripts/`), `courses/{slug}/` (wholesale-archives to `_archive/{slug}/` at branch-finish), `assets/`.
+- `roots/` — **source of truth**. Content-immutable; grow ingest tracked in `rings.md`. Subdirs: `articles/` (+ `articles/_source/` for original PDFs behind extracted notes), `conversations/` (+ permanent `_transcripts/`), `courses/{slug}/` (wholesale-archives to `_archive/{slug}/` at branch-finish), `assets/`, and `legacy/` for `ingest --legacy` imports (wikilink-translation pass; files stay in place).
 - `tree/` — **LLM-owned**. Flat structure, no subdirs. Markdown pages that grow over time. Special files: `trunk.md`, `rings.md`, `seeds.md`. The user does not hand-edit; you do.
 - `SOUL.md` / `USER.md` / `MEMORY.md` — instruction surfaces (정체성 / 사용자 선호 / 운영 기억). Templates in `.naite/templates/`. See § Instruction surfaces.
 - `docs/` — technical docs: `CONTEXT.md` (context routing and Reader / Writer / Verifier split rules), `CONVENTIONS.md` (operating invariants applied to every tree mutation), `ARCHITECTURE.md` (schema rationale), `QUALITY.md` (user-facing output quality rubric: onboarding copy, migration export, import gate, leaf-depth), `VERSIONING.md` (harness version scheme and naite-app compatibility).
@@ -84,7 +84,7 @@ Even if this repo is private, operate as if it could leak.
 - **Never** write API keys, tokens, passwords, employer-confidential material, or personal identifiers (full addresses, ID numbers) into `tree/` or `roots/conversations/`.
 - If a source contains secrets, redact before ingest. Never let secrets reach `tree/`.
 - `USER.md` / `MEMORY.md` 는 `.gitignore` 되어 공개 repo 에 올라가지 않는다. `USER.md` 에 PII (주소·전화·식별번호) 를 적지 않는다. 깊은 신원 정보는 `tree/personal-profile.md` (`kind=personal`) 에 두고 `[[personal-profile]]` 로 가리킨다.
-- `/naite care --check` runs a secrets scan; on hit, **stop** and report to the user before any commit.
+- The deterministic secret gate is the `.naite/hooks/pre-commit` + `pre-push` guard (activate with `git config core.hooksPath .naite/hooks`). `/naite care --check § 6` additionally has the agent run a prose-guided secrets scan over `roots/` and `tree/`; it is an LLM pass, not a deterministic gate, so it only runs when you invoke care --check. On any hit from either layer, **stop** and report before committing.
 
 ---
 

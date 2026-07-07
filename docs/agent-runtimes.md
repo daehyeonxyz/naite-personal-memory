@@ -1,7 +1,7 @@
 # Agent runtimes and plugin surfaces
 
 **Status**: operational note for contributors.
-**Last checked**: 2026-06-20.
+**Last checked**: 2026-07-06.
 
 naite keeps one harness but exposes it through several agent runtimes. The command contract should stay stable (`/naite start`, `/naite grow`, `/naite ask`, `/naite fruit`, `/naite care`, `/naite upgrade`) even when each runtime loads context, skills, plugins, and prompt cache differently.
 
@@ -11,7 +11,6 @@ Official references checked for this note:
 - Claude Code Plugins: https://docs.anthropic.com/en/docs/claude-code/plugins
 - Anthropic prompt caching: https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching
 - Codex AGENTS.md: https://developers.openai.com/codex/guides/agents-md
-- Codex Plugins: https://developers.openai.com/codex/plugins
 - OpenAI prompt caching: https://platform.openai.com/docs/guides/prompt-caching
 
 ## Surface map
@@ -20,7 +19,7 @@ Official references checked for this note:
 |---|---|---|---|
 | Claude Code, project checkout | `CLAUDE.md` + `.claude/skills/naite/` | Project skills are available from `.claude/skills/`; skill bodies load when used. | Edit `.claude/` and `CLAUDE.md` as canonical. |
 | Claude Code plugin install | `.claude-plugin/plugin.json` + plugin skill paths | Plugins package skills, agents, hooks, MCP servers, and settings for sharing. Plugin skills are namespaced when installed as plugin skills. | Keep plugin metadata aligned with the same `/naite` dispatcher. |
-| Codex project checkout | `AGENTS.md` + `.agents/skills/naite/` | Codex reads `AGENTS.md` instruction chains at session start. Plugins can bundle skills, app integrations, and MCP servers. | Do not hand-edit `.agents/` or `AGENTS.md`; regenerate them from `.claude/`. |
+| Codex project checkout | `AGENTS.md` + `.agents/skills/naite/` | Codex reads `AGENTS.md` instruction chains at session start and routes `/naite …` in-context (there is no Codex plugin manifest — `.claude-plugin/` is Claude-only). Optional MCP is wired manually via `~/.codex/config.toml` (see `docs/connect-mcp.md`). | Do not hand-edit `.agents/` or `AGENTS.md`; regenerate them from `.claude/`. |
 | Manual clone / other agent | Markdown files in the repo | The agent must be told to read `CLAUDE.md` or `AGENTS.md` and the matching skill file. | The documented fallback prompt in `README.md` is the supported path. |
 
 ## Prompt caching implications

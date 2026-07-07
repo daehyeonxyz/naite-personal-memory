@@ -86,7 +86,7 @@ form: prose
 topics: [...]
 subject: [<path>]
 source-types: [conversation]   # fruit 는 대부분 conversation 산출물
-domains: [<one knowledge domain>]   # cross-domain 진짜일 때만 복수. dmu, decision, synapse, course-* 메타 태그 금지
+domains: []   # CACHED — care --check 가 subject 의 top-level 에서 자동 도출한다. grow/fruit 시점에 직접 쓰지 않는다 (빈 배열로 둠)
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
@@ -109,7 +109,7 @@ updated: YYYY-MM-DD
 ## [YYYY-MM-DD] fruit | <slug>
 - pages created: [[<slug>]]
 - pages updated (back-prose 박은 경우): [[...]]
-- domain: <ai-fluency | ml | engineering-math | statistics>
+- domain: <subject-tree 의 top-level, 예: ml | statistics | personal>
 - stubs added: N
 ```
 
@@ -120,7 +120,11 @@ updated: YYYY-MM-DD
 
 승인 시 그 페이지 Edit. 시냅스가 양방향으로 자라남.
 
-### 8. Checkpoint
+### 8. Post-write duties (tree mutation 공통)
+
+열매 페이지 작성도 tree mutation 이므로 grow/ingest 와 같은 사후 의무를 진다 (`docs/CONVENTIONS.md § Output quality contract`, `docs/CONTEXT.md § Verification`): 새 페이지 본문에 content guard 를 돌리고 (raw/source-process voice 없음, self-contained), 생성 맵을 재빌드한다 — `python .naite/scripts/build-tree-manifest.py` (새 페이지·좌표), 그리고 이 열매가 다른 페이지와 링크로 이어졌으면 `python .naite/scripts/build-tree-dependencies.py` (§ 7 의 bidirectional prose 를 반영하려면 특히 필요). 이 재빌드를 빼면 맵이 stale 해져 다음 orphan/inbound 계산이 어긋난다.
+
+### 9. Checkpoint
 
 사용자에게 한 단락 요약:
 - 작성된 페이지 경로
@@ -140,7 +144,7 @@ form: prose
 topics: [<canonical-topics>]
 subject: [<path>]
 source-types: [conversation]
-domains: [ml]
+domains: []   # CACHED — care --check 가 채운다. 직접 쓰지 않는다
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
@@ -233,6 +237,6 @@ DMU 가 별도 페이지가 될 만큼 무겁지 않으면, 기존 concept 페�
 - Career 관련 frontmatter / `[[fde-skill-*]]` 페이지 사전 생성 안 함 (docs/CONVENTIONS.md § Decision thread shape 의 grep-on-demand 원칙 준수).
 - 파일명 `DMU-YYYYMMDD-...` prefix 안 씀.
 - 빈 14 섹션을 강제로 채우지 않음 — 누락은 생략.
-- frontmatter `domains` 에 `course`, `course-{slug}`, `dmu`, `decision`, `synapse` 등 메타·컬렉션 태그 안 씀 — 콘텐츠 도메인 1개만.
+- frontmatter `domains` 는 `[]` 로 비워 둔다 (care --check 가 subject 에서 파생하는 CACHED 필드라 수기 금지). hub 후보면 대신 `trunk.md` 의 `## Knowledge domains § <domain>` 주요 라인에 한 줄 더한다.
 - 모든 열매 페이지를 자동으로 trunk.md 에 등재 안 함 — hub 후보일 때만.
 - `git commit` 안 함.

@@ -20,6 +20,22 @@ naite 를 처음 켠 사용자의 **첫 세션을 안내한다**. 빈 나무에�
 
 ## Workflow
 
+### 0. vault 스캐폴드 (플러그인 설치 등 vault 가 아직 없을 때만)
+
+현재 폴더가 vault 가 아니면 (`AGENTS.md` + `tree/` + `roots/` 가 함께 없음), 먼저 vault 를 만든다. 클론으로 설치한 사용자는 이 단계가 자동으로 건너뛰어진다.
+
+1. 사용자에게 한 줄로 확인한다: "이 폴더를 naite vault 로 만들까요? starter 파일(문서·스키마·빈 나무)을 여기에 복사합니다."
+2. 동의하면 `SKILL.md § Fixed paths` 의 `HARNESS_SRC` (이 스킬 파일 기준 `../../..`) 에서 starter 스캐폴드를 현재 폴더로 복사한다. 복사 방식은 `HARNESS_SRC` 가 git 체크아웃인지에 따라 갈린다.
+   - **git 저장소이면** git 이 추적하는 파일·폴더 전부에서 `.git/` 하나만 제외하고 복사한다 (`git -C <HARNESS_SRC> ls-files` 로 목록을 얻으면 정확하다).
+   - **git 저장소가 아니면** (플러그인 캐시는 git 체크아웃이 아닐 수 있다) `HARNESS_SRC` 아래의 모든 파일·폴더를 `.git/` 만 빼고 그대로 복사한다.
+
+   두 도구의 지시 표면과 플러그인 매니페스트가 모두 포함되므로, 어느 도구로 부트스트랩하든 나중에 다른 도구로도 vault 를 열 수 있다. **이미 존재하는 파일은 덮어쓰지 않는다** (부분 vault 위에 다시 실행해도 안전). 특히 대상 폴더에 이미 다른 프로젝트의 `AGENTS.md` 같은 부트로더 파일이 있으면 덮어쓰지 말고, 그 폴더가 이미 다른 용도임을 사용자에게 알린 뒤 계속할지 확인한다 (naite 부트로더가 설치되지 않은 채 남으면 이후 워크플로가 엉뚱한 파일을 vault 계약으로 읽는다).
+3. **복사가 끝나면 `git init` 하기 전에, 새 vault 의 `.naite/PUBLIC_STARTER` sentinel 을 지운다 (`rm -f`).** 이 sentinel 은 공개 starter 저장소를 표시해 가드 훅을 starter 모드(=`tree/`·`roots/` 콘텐츠 커밋 차단)로 강제하는 파일이고, starter 저장소에서는 추적된다. 그래서 위 copy-all 스캐폴드가 그대로 두면 새 개인 vault 에 sentinel 이 다시 심겨(replant) starter 모드가 잠겨 버린다. 복사 직후 지워 두면 스캐폴드된 vault 는 sentinel 을 추적하지 않으므로 기본값인 vault 모드로 동작한다. 삭제가 `git init`·첫 커밋보다 앞서야 하는 이유도 이것이다. 한 번도 추적된 적이 없어야 anti-tamper 삭제 가드에도 걸리지 않는다. 참고로 공개 저장소를 **클론**해서 설치한 사용자는 sentinel 이 이미 추적된 상태이므로, `NAITE_HOOK_MODE=vault` 를 설정하거나 `git rm .naite/PUBLIC_STARTER` 를 한 번 실행해 vault 모드로 넘어간다.
+4. git 저장소가 아니면 `git init` 을 실행하고, 가드 훅 활성화(`git config core.hooksPath .naite/hooks`)와 "개인 기록이 담기니 원격은 Private 저장소를 권장" 한 줄을 안내한다.
+5. 스캐폴드가 끝나면 새로 생긴 `AGENTS.md` 를 읽고 나서 1단계로 진행한다.
+
+이 단계는 파일 복사, sentinel 삭제, git init 외에 아무것도 하지 않는다. 첫 커밋은 사용자에게 제안만 한다 ("naite install" 메시지 권장).
+
 ### 1. 모델 설명
 
 아래 고정 문구를 **그대로** 보여준다. 매번 새로 쓰지 않는다. 기준은 `docs/QUALITY.md § Onboarding copy rubric` 이다.
@@ -105,15 +121,18 @@ export 에서 `[있음]` 으로 표시된 주제는, 그 원본 자료로 골격
 
 나무가 처음 생긴 뒤, 에이전트의 instruction surface 를 갖출지 **제안한다** (단정하지 않고 사용자 동의로 채운다).
 
-- **USER.md**: 응답 선호를 한두 가지 묻고 (톤·길이·피할 것 등), 동의하면 `.naite/templates/USER.md` 를 vault 루트 `USER.md` 로 복사해 채운다. PII 는 적지 않고, 신원은 `[[personal-profile]]` 로 가리킨다. 루트 `USER.md` 는 `.gitignore` 되어 공개되지 않는다.
-- **MEMORY.md**: 진행 중 작업·운영 사실을 모을 곳이 필요하면 `.naite/templates/MEMORY.md` 를 루트 `MEMORY.md` 로 복사한다. 비워 두고 시작해도 된다.
+> [!WARNING]
+> `/naite start` 는 재실행이 허용되므로, 이 단계는 **기존 `USER.md`/`MEMORY.md` 를 절대 덮어쓰지 않는다.** 두 파일은 `.gitignore` 되어 git 으로 복구할 수 없으니(사용자 선호·운영 기억의 영구 소실), 복사 전에 파일이 이미 있는지 확인하고, 있으면 템플릿 복사를 건너뛴 채 "이미 있어 유지했습니다" 라고만 알린다.
+
+- **USER.md**: 응답 선호를 한두 가지 묻고 (톤·길이·피할 것 등), **루트에 `USER.md` 가 아직 없을 때만** 동의를 받아 `.naite/templates/USER.md` 를 vault 루트 `USER.md` 로 복사해 채운다. PII 는 적지 않고, 신원은 `[[personal-profile]]` 로 가리킨다. 루트 `USER.md` 는 `.gitignore` 되어 공개되지 않는다.
+- **MEMORY.md**: 진행 중 작업·운영 사실을 모을 곳이 필요하고 **루트에 `MEMORY.md` 가 아직 없으면** `.naite/templates/MEMORY.md` 를 루트 `MEMORY.md` 로 복사한다. 비워 두고 시작해도 된다.
 - **SOUL.md**: 에이전트의 기본 정체성·응답 스타일이 담긴 파일임을 한 줄로 안내한다. 톤을 바꾸고 싶으면 이 파일을 함께 다듬는다.
 
 사용자가 원치 않으면 만들지 않는다. 표면이 없으면 bootloader 가 자동으로 건너뛴다. 이 단계는 `tree/` 를 건드리지 않는다.
 
 ## What this command never does
 
-- `roots/` 의 import 기록과 (동의 시) 루트 instruction surface (`USER.md`/`MEMORY.md`) 외에는 직접 쓰지 않는다. `tree/` 변환은 `ingest`/`grow` 에 위임한다.
+- `§ 0` vault 스캐폴드 복사, `roots/` 의 import 기록, (동의 시) 루트 instruction surface (`USER.md`/`MEMORY.md`) 외에는 직접 쓰지 않는다. `tree/` 변환은 `ingest`/`grow` 에 위임한다.
 - secrets pre-check 를 건너뛰지 않는다.
 - 게이트를 통과하지 못한 얕은 export 를 ingest 하지 않는다.
 - 새 rings op 를 만들지 않는다.

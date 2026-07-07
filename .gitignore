@@ -9,7 +9,21 @@ secrets.json
 *.key
 *_rsa
 *_dsa
+*_ecdsa
 *_ed25519
+# Standard credential / token files used by common tools (their contents rarely
+# match a fixed key regex, so ignore them by name).
+.netrc
+.pgpass
+.npmrc
+.pypirc
+**/.aws/credentials
+**/.aws/config
+kubeconfig
+kubeconfig.*
+*.kubeconfig
+cookies.txt
+*.bak
 
 # Per-clone instruction surfaces — the user's live USER.md / MEMORY.md hold
 # real preferences and working memory. Templates ship in .naite/templates/;
@@ -92,6 +106,7 @@ tmp/
 .naite/forest/forest-config.json
 .naite/forest/dashboard.md
 .naite/ontology/forest-manifest.json
+.naite/agents/naite-*.md
 
 # Pre-commit guard's local-only personal denylist (never committed).
 .naite/hooks/denylist.local
@@ -101,5 +116,14 @@ tmp/
 # product content. Keeping them untracked stops them shipping into user vaults
 # on install (the install copies all non-.git files) and out of harness-lock.
 docs/superpowers/
+
+# Audit / release-prep deliverables — local-only. Not harness content; keep them
+# out of the public repo and out of user vaults (install copies all non-.git files).
+# Root-anchored so a legit tree/ page of the same name is not shadowed.
+/AUDIT.md
+/AUDIT-LOG.md
+/VERIFY.md
+/RELEASE-DRAFT.md
+/MERGE-LOG.md
 
 .gstack/

@@ -248,4 +248,9 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+    import sys
+    try:  # keep non-ASCII report output from crashing a cp949/legacy Windows console
+        sys.stdout.reconfigure(encoding="utf-8")
+    except (AttributeError, ValueError):
+        pass
     main()

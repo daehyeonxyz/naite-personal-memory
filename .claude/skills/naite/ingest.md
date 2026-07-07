@@ -78,7 +78,7 @@ Follow `docs/CONVENTIONS.md § Output quality contract`. The body is a self-cont
 - If the page does **not** exist: create `tree/<slug>.md` with full ontology frontmatter:
   ```yaml
   ---
-  kind: concept | entity | source-record | project | decision | insight | comparison
+  kind: concept | entity | source-record | project | decision | insight | comparison | essay | personal
   form: prose | index              # grow 산물은 보통 prose
   topics: []                       # canonical from `.naite/ontology/topics.md`. 0-5개. 빈 배열 OK.
   subject: [<path>]                # SKOS-lite path from `.naite/ontology/subject-tree.md`
@@ -91,11 +91,13 @@ Follow `docs/CONVENTIONS.md § Output quality contract`. The body is a self-cont
   - **`kind` 선택 기준**:
     - `concept` — 재사용 가능한 일반 개념·방법·이론 (permanent note)
     - `entity` — 구체적 도구/사람/조직/제품 (Claude Code, Karpathy, OpenAI 등)
-    - `source-record` — 특정 source unit 을 tree 안에 정리한 기록 (course subchapter note, chapter index, paper note, book note, essay 등 = literature note)
+    - `source-record` — 특정 source unit 을 tree 안에 정리한 기록 (course subchapter note, chapter index, paper note, book note 등 = literature note)
     - `project` — 본인 프로젝트의 추적
     - `decision` — 결정/선택/실패 기록 (synapse). 파일명: `decision-YYYY-MM-DD-<slug>.md`
     - `insight` — 작업·학습에서 압축된 통찰
     - `comparison` — A vs B 비교가 페이지 본질
+    - `essay` — 사용자 본인이 직접 쓴 글 (voice 보존, 보통 `subject: [personal]` 계열). 남의 글 정리는 `source-record`
+    - `personal` — 자기-기록 메타 페이지 (프로필, 이력 등. 예: `personal-profile`)
   - **`form` 선택 기준**: 본문이 산문 흐름이면 `prose`, 다른 페이지 link list/navigation 허브면 `index`.
   - `subject` 는 `.naite/ontology/subject-tree.md` 의 path 1개. Cross-domain 진짜일 때만 multi (`[a/x, b/y]`).
   - `topics` 는 `.naite/ontology/topics.md` 의 canonical 우선. **미등록 topic 후보가 입자도 가드 (`.naite/ontology/topics.md § Topic granularity guidance` — 재사용 가능한 concept-level, broad domain 도 page-specific 도 아닐 것) 통과하면 LLM 이 직접 `.naite/ontology/topics.md § canonical_topics` 에 append 하고 페이지에 사용** (`docs/CONVENTIONS.md § Schema evolution` autonomy A). 가드 실패면 페이지에서 빼고 grow summary 에 "topic skipped (granularity): X" 로 surface 만. 명백한 alias (`cot ↔ chain-of-thought` 처럼 morphology 또는 well-known abbrev) 도 LLM 이 `.naite/ontology/topics.md § aliases` 에 직접 append (autonomy A); 동의어 의심이지만 모호하면 care --check cluster surface 로 미룸.

@@ -1,3 +1,10 @@
-# Shell hooks must stay LF so they run under /bin/sh on every platform
-# (otherwise autocrlf can turn them into CRLF on Windows checkout and break the shebang).
+# Shell hooks + the sourced guard lib must stay LF so they run under /bin/sh on
+# every platform (otherwise autocrlf can turn them into CRLF on Windows checkout and
+# break the shebang / sourcing).
 .naite/hooks/pre-commit text eol=lf
+.naite/hooks/pre-push text eol=lf
+.naite/hooks/_naite_guard.sh text eol=lf
+
+# Python scripts carry a `#!/usr/bin/env python3` shebang; keep them LF so a CRLF
+# checkout can't turn the shebang into `python3\r` on Unix.
+*.py text eol=lf

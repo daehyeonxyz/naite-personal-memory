@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "description": "Machine-readable facet definitions. Single source for the lint validator and naite-app filter UI. v2: kind values carry a core flag — core kinds are harness-known (workflows depend on their semantics) and fixed; user kinds are vault-declared and get default page behavior. Enum changes to core kinds remain C-level (user decision) per CLAUDE.md Schema discipline; user kinds are added by declaring them here.",
+  "description": "Machine-readable facet definitions. Single source of the enum VALUES for the lint validator and naite-app filter UI. Note: lint consumes only each facet's `values` list; which facets are REQUIRED is owned by lint-ontology.py (its common_required list), not by the `required` flags here. v2: kind values carry a core flag — core kinds are harness-known (workflows depend on their semantics) and fixed; user kinds are vault-declared and get default page behavior. Enum changes to core kinds remain C-level (user decision) per CLAUDE.md Schema discipline; user kinds are added by declaring them here.",
   "facets": {
     "kind": {
       "multiple": false,

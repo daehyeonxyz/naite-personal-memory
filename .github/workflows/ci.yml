@@ -2,7 +2,7 @@ name: CI
 
 # 하네스 정합성 게이트 — 지금까지 사람 손에만 의존하던 세 가지를 자동 검증한다:
 #  1) 온톨로지 lint (facets/subject/topics/leaf-depth 규칙)
-#  2) harness-lock 신선도 (버전·파일 해시 embed 가 최신인가 — 앱이 이걸 읽어 호환 판정)
+#  2) harness-lock 신선도 (버전·파일 해시 embed 가 최신인가 — 앱이 이걸 읽어 호환 판정; plugin==marketplace 버전 패리티 포함)
 #  3) .claude ↔ .agents 미러 동기 (CLAUDE.md/스킬을 고치고 sync-agents 를 안 돌린 드리프트 차단)
 # 핵심 스크립트는 표준 라이브러리만 쓰므로 pip 설치가 필요 없다(forest-* 진단만 numpy/networkx).
 
@@ -17,23 +17,41 @@ permissions:
 jobs:
   ontology:
     runs-on: ubuntu-latest
+    # This gate is for the public starter repo only. A personal vault created by
+    # cloning ships this workflow too (README's clone install copies all files);
+    # there, a user's own SOUL.md/skill edits would make harness-lock STALE and
+    # turn their Actions permanently red. Skip on any repo that is not the starter.
+    # (The PUBLIC_STARTER existence check below must stay under this guard: a
+    # personal vault deletes the sentinel, so an unguarded check would fail there.)
+    if: github.repository == 'daehyeonxyz/naite-personal-memory'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      - name: Lint ontology (facets / subject / topics / leaf-depth)
-        run: python .naite/scripts/lint-ontology.py
+      - name: PUBLIC_STARTER sentinel is committed (gates the pre-commit content guard)
+        run: test -f .naite/PUBLIC_STARTER
 
-      - name: harness-lock is fresh (version + file hashes embedded)
-        run: python .naite/scripts/build-harness-lock.py --check
+      - name: Lint ontology (facets / subject / topics / leaf-depth)
+        run: python3 .naite/scripts/lint-ontology.py
+
+      - name: harness-lock is fresh (version + file hashes embedded; plugin==marketplace version)
+        run: python3 .naite/scripts/build-harness-lock.py --check
 
       - name: .claude → .agents mirror is in sync
         run: |
-          python .naite/scripts/sync-agents.py
+          python3 .naite/scripts/sync-agents.py
           if ! git diff --exit-code -- AGENTS.md .agents/; then
             echo "::error::CLAUDE.md/.claude changed but the Codex mirror was not regenerated."
-            echo "::error::Run 'python .naite/scripts/sync-agents.py' and commit AGENTS.md + .agents/."
+            echo "::error::Run 'python3 .naite/scripts/sync-agents.py' and commit AGENTS.md + .agents/."
+            exit 1
+          fi
+          # git diff misses untracked files: a new canonical skill whose mirror
+          # was never committed, or an orphan mirror sync just deleted.
+          if [ -n "$(git status --porcelain -- AGENTS.md .agents/)" ]; then
+            echo "::error::Mirror drift: sync-agents produced files not in the commit (new or deleted skill mirror)."
+            echo "::error::Run 'python3 .naite/scripts/sync-agents.py' and commit AGENTS.md + .agents/."
+            git status --porcelain -- AGENTS.md .agents/
             exit 1
           fi

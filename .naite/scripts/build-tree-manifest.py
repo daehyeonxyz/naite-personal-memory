@@ -5,8 +5,15 @@ from __future__ import annotations
 
 import json
 import re
+import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
+
+
+def _nfc(s: str) -> str:
+    # macOS stores filenames as NFD; normalize slugs to NFC so downstream matching
+    # (ask, dependencies) is platform-independent for Korean slugs.
+    return unicodedata.normalize("NFC", s)
 
 
 NAITE_ROOT = Path(__file__).resolve().parent.parent.parent
@@ -51,15 +58,6 @@ def first_heading(body: str, fallback: str) -> str:
     return fallback
 
 
-def collect_headings(body: str) -> list[str]:
-    headings: list[str] = []
-    for line in body.splitlines():
-        match = re.match(r"^(#{1,3})\s+(.+?)\s*$", line)
-        if match:
-            headings.append(match.group(2).strip())
-    return headings[:6]
-
-
 def collect_aliases(body: str) -> list[str]:
     lines = body.splitlines()
     aliases: list[str] = []
@@ -80,7 +78,7 @@ def collect_aliases(body: str) -> list[str]:
 def page_record(path: Path) -> dict[str, object]:
     text = path.read_text(encoding="utf-8-sig", errors="replace")
     frontmatter, body = split_frontmatter(text)
-    slug = path.stem
+    slug = _nfc(path.stem)
     title = first_heading(body, slug)
     record: dict[str, object] = {
         "slug": slug,

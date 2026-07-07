@@ -122,7 +122,7 @@ Report: unresolved stubs + newly proposed stubs.
 
 ### 3. Ontology validation
 
-매 페이지의 frontmatter 5 facet (`kind`, `form`, `topics`, `subject`, `source-types`) + cached `domains` + dates 를 ontology spec (`docs/CONVENTIONS.md § Ontology`, `.naite/ontology/subject-tree.md`, `.naite/ontology/topics.md`) 에 비교한다. 자세한 capability spec: `docs/ARCHITECTURE.md § 4.2 / § 6.2`.
+매 페이지의 frontmatter 5 facet (`kind`, `form`, `topics`, `subject`, `source-types`) + cached `domains` + dates 를 ontology spec (`docs/CONVENTIONS.md § Ontology`, `.naite/ontology/subject-tree.md`, `.naite/ontology/topics.md`) 에 비교한다. 자세한 capability spec: `docs/ARCHITECTURE.md § 4.2 / § 5.2`.
 
 **Schema rule**:
 - 유효 schema: `kind` / `form` / `source-types`.
@@ -218,6 +218,7 @@ Flag:
 
 Do not flag:
 
+- `course-*-00-index.md` meta pages, except for mojibake: their templates (`grow-branch.md § Templates`) mandate the generic headings (`Also known as` / `Overview` / `Scope` / `Chapters` / `Related` / `Subchapters` / `Chapter summary` / `Maps to`) and a `Staging: roots/...` pointer, so heading/leakage rules do not apply there
 - paths inside the trailing `## Source` block
 - formulas, code fences, commands, model names, method names, technical English terms, or course-native English titles
 - the word `source` when it is a technical concept (for example source node, source distribution, source coding) rather than provenance/process voice
@@ -308,25 +309,31 @@ Report: flagged pairs. Do not auto-merge — ask user which is canonical.
 
 **Summary drift**: hub 페이지의 첫 paragraph 가 `trunk.md` 의 한 줄 요약과 본질적으로 어긋나면 surface (heuristic: trunk summary hasn't been updated since `updated:` in frontmatter).
 
-### 6. Secrets scan
+### 6. Secrets + PII scan
 
-Regex-scan everything under `roots/` and `tree/` for:
+This is an **LLM-performed** pass, not the deterministic gate — the deterministic gate is the `.naite/hooks` pre-commit/pre-push guard, whose shared scan logic lives in `.naite/hooks/_naite_guard.sh`. Regex-scan everything under `roots/` and `tree/` for at least the **same token families the guard blocks** (keep this list in step with `.naite/hooks/_naite_guard.sh`, the single source of truth):
 
-- `sk-[A-Za-z0-9]{20,}`
-- `ghp_[A-Za-z0-9]{36,}`
-- `xoxb-[A-Za-z0-9-]+`
-- `AKIA[0-9A-Z]{16}`
-- Lines matching `(?i)(password|api[_-]?key|secret|token)[:=]\s*\S{8,}` where the value isn't an obvious placeholder (`xxx`, `<redacted>`, `your-key-here`).
+- `sk-[A-Za-z0-9_-]{20,}` (OpenAI/Anthropic `sk-`, `sk-ant-`, `sk-proj-`, `sk-svcacct-`), Stripe `(sk|pk|rk)_(live|test)_...`
+- GitHub `ghp_`/`gho_`/`ghs_`/`ghr_`/`ghu_` classic + `github_pat_...` fine-grained, GitLab `glpat-...`
+- Slack `xox[baprs]-...` / `xapp-...` and Slack webhook URLs (`hooks.slack.com/services/...`)
+- AWS `AKIA[0-9A-Z]{16}`, Google `AIza[0-9A-Za-z_-]{35}` / `GOCSPX-...`
+- HuggingFace `hf_...`, Databricks `dapi...`, SendGrid `SG....`, DigitalOcean `dop_v1_...`, Linear `lin_api_...`
+- npm `npm_...`, PyPI `pypi-...`
+- JWT `eyJ...\.eyJ...\....`, PEM `-----BEGIN ... PRIVATE KEY-----`
+- Lines matching `(?i)(password|passwd|secret|api[_-]?key|access[_-]?token|authorization)[:=]\s*\S{8,}` where the value isn't an obvious placeholder (`xxx`, `<redacted>`, `your-key-here`, `changeme`, `example`).
 - High-entropy base64-ish strings of length ≥ 40 that aren't obviously URLs or hashes.
+- **PII**: Korean RRN (`\d{6}-\d{7}`), phone numbers, 16-digit card-shaped runs, full addresses, national ID numbers. (Deterministic layers do not catch PII; this scan is the durable PII check.)
 
-If **any** match: this becomes a blocker. Halt any in-flight git operation, report the file + line, and ask the user to redact before proceeding.
+Coverage note: this regex scan reads text (`.md`) under `roots/`/`tree/`. It **cannot see inside binaries** — a force-tracked PDF (`.gitignore` allows `git add -f` for small finished PDFs) with a secret/PII in its text layer is invisible here; surface tracked PDFs (§ 7) and ask the user to confirm they are clean.
+
+If **any** match: this becomes a blocker. Halt any in-flight git operation, report the file + line, and ask the user to redact before proceeding. If the match is in `roots/conversations/_transcripts/` (permanent) or already in a prior commit, redacting the working copy is not enough — advise the user to **rotate the exposed credential** and, if it is already committed, to rewrite history before any push.
 
 ### 7. Binary creep + non-tree dirt
 
 **Binary creep**:
 - List files under `roots/assets/` larger than 1 MB. Ask whether to introduce Git LFS (Phase 2 decision) or convert/resize.
 - Flag any non-markdown files under `tree/` (should be zero).
-- PDF 가 git tracked 인지 확인 — `*.pdf` 는 `.gitignore` 로 차단돼야 함 (AGENTS.md § Binary files). tracked PDF 발견 시 즉시 surface.
+- PDF 가 git tracked 인지 확인. `*.pdf` 는 기본적으로 `.gitignore` 로 차단되지만, `.gitignore` 는 작은 완성 PDF 의 `git add -f` 를 명시적으로 허용한다 (AGENTS.md § Binary files). 따라서 tracked PDF 는 **위반이 아니라 확인 대상**으로 surface 한다: 의도된 force-track 인지, 그리고 § 6 이 들여다볼 수 없는 텍스트 레이어에 secret/PII 가 없는지 사용자에게 확인한다.
 
 **Non-tree scratch dirt** (agent / IDE / 패키지 매니저 scratch 가 tree repo 에 누적되는 패턴):
 - 다음이 git tracked 면 surface:
@@ -347,7 +354,7 @@ Heuristics:
 - Repeated `ask` + file-back patterns on a specific topic (suggests a domain-specific ask skill).
 - User-reported "I keep doing X" in recent captures.
 
-Report: the candidate procedure, how many times it recurred, and a proposed skill file name. Do not write the skill — propose it for the user to greenlight. Follow `AGENTS.md` § Phase co-evolution.
+Report: the candidate procedure, how many times it recurred, and a proposed skill file name. Do not write the skill — propose it for the user to greenlight. Follow `AGENTS.md § Schema discipline` for anything that touches the schema; harness contributions go through `CONTRIBUTING.md`.
 
 ### 9. Failure patterns
 
@@ -367,7 +374,7 @@ When not skipped:
   - Concepts grown but never cross-referenced (possibly shallow interest).
   - Recurring judgment criteria visible in capture files (e.g. "user consistently prefers X over Y reasoning").
   - Gaps: topics frequently asked but never filed.
-- **Offer** to append the summary as a dated block to the project's user-profile memory (the `memory/user_profile.md` Codex maintains for this project). Do **not** overwrite existing content — append only, with a `## [YYYY-MM-DD] refresh` header. Never touch `tree/` or `roots/` during this check.
+- **Offer** to append the summary as a dated block to the vault's operating-memory surface, `MEMORY.md` (the instruction surface defined in `docs/CONVENTIONS.md § Instruction surfaces`; template at `.naite/templates/MEMORY.md`). Do **not** overwrite existing content — append only, with a `## [YYYY-MM-DD] refresh` header. If the user has no `MEMORY.md`, offer to create one from the template first. Never touch `tree/` or `roots/` during this check.
 
 If the user declines the memory append, still surface the summary in the care --check report.
 
@@ -420,7 +427,7 @@ This check has no auto-action; it exists to make the link graph's emergent struc
 
 ### 14. Autonomous addition garbage collector
 
-`docs/CONVENTIONS.md § Schema evolution` 의 autonomy A/B 추가물에 대한 사후 품질 검증. 자율 추가는 일관성 속도를 만드는 대신 *premature 추가* 위험을 안기 — care --check 가 30 일 윈도우로 garbage 후보 surface. 모든 항목 warn (not blocker). `git log --diff-filter=A -- .naite/ontology/topics.md .naite/ontology/subject-tree.md tree/<slug>.md | head -1` 로 추가 시점 확인.
+`docs/CONVENTIONS.md § Schema evolution` 의 autonomy A/B 추가물에 대한 사후 품질 검증. 자율 추가는 일관성 속도를 만드는 대신 *premature 추가* 위험을 안기 — care --check 가 30 일 윈도우로 garbage 후보 surface. 모든 항목 warn (not blocker). 추가 시점은 **파일 생성이 아니라 그 topic/narrower 줄이 들어온 커밋**으로 봐야 한다: `git log -1 --format=%cs -S'<정확한 topic 또는 narrower 문자열>' -- .naite/ontology/topics.md .naite/ontology/subject-tree.md` (해당 문자열이 도입된 마지막 커밋의 날짜). tree 페이지의 나이는 그 페이지의 `git log -1 --format=%cs -- tree/<slug>.md` 로 본다. `--diff-filter=A` 는 파일이 처음 추가된 커밋만 잡아 개별 append 시점을 놓치므로 쓰지 않는다.
 
 #### 14a. Canonical topic 저사용 (autonomy A garbage)
 

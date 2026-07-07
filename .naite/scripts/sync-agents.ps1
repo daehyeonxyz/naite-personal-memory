@@ -32,6 +32,9 @@ function Convert-ToCodex {
     $text = $text -creplace 'Claude(?![a-zA-Z])', 'Codex'
     $text = $text -creplace '\\\.claude\\', '\.agents\'
     $text = $text -creplace '\.claude/', '.agents/'
+    # Normalize to LF so the mirror matches the committed blobs on any platform
+    # (matches sync-agents.py; a CRLF mirror makes the CI gate diff every line).
+    $text = $text -replace "`r`n", "`n"
     [System.IO.File]::WriteAllText($Path, $text, $utf8)
 }
 
@@ -51,7 +54,11 @@ This file is the Codex-facing mirror of the Claude Code surface. Keep `.agents/`
 ---
 '@
     $pattern = '(?ms)^## Surface mirror discipline\r?\n\r?\n.*?^---'
-    $text = [regex]::Replace($text, $pattern, $surfaceSection, 1)
+    # Instance Replace(input, replacement, count) — the static 4-arg overload
+    # takes RegexOptions, so a literal 1 there silently meant IgnoreCase, not count.
+    $re = New-Object System.Text.RegularExpressions.Regex($pattern)
+    $text = $re.Replace($text, $surfaceSection, 1)
+    $text = $text -replace "`r`n", "`n"
     [System.IO.File]::WriteAllText($Path, $text, $utf8)
 }
 
@@ -60,11 +67,21 @@ $srcDir = Join-Path $repo ".claude\skills\naite"
 $dstDir = Join-Path $repo ".agents\skills\naite"
 New-Item -ItemType Directory -Force -Path $dstDir | Out-Null
 
+$srcNames = @{}
 Get-ChildItem -LiteralPath $srcDir -Filter "*.md" | ForEach-Object {
+    $srcNames[$_.Name] = $true
     $dst = Join-Path $dstDir $_.Name
     Copy-Item -LiteralPath $_.FullName -Destination $dst -Force
     Convert-ToCodex -Path $dst
     Write-Host "synced  $($_.Name)"
+}
+
+# Remove orphan mirrors (canonical skill deleted but mirror left behind).
+Get-ChildItem -LiteralPath $dstDir -Filter "*.md" | ForEach-Object {
+    if (-not $srcNames.ContainsKey($_.Name)) {
+        Remove-Item -LiteralPath $_.FullName -Force
+        Write-Host "removed orphan  $($_.Name)"
+    }
 }
 
 # 2) Mirror CLAUDE.md -> AGENTS.md

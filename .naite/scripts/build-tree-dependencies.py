@@ -5,14 +5,24 @@ from __future__ import annotations
 
 import json
 import re
+import unicodedata
 from datetime import datetime, timezone
 from pathlib import Path
+
+
+def _nfc(s: str) -> str:
+    # macOS stores filenames as NFD (decomposed); markdown wikilink targets are NFC.
+    # Normalize both sides to NFC so a Korean slug resolves on every platform.
+    return unicodedata.normalize("NFC", s)
 
 
 NAITE_ROOT = Path(__file__).resolve().parent.parent.parent
 TREE_DIR = NAITE_ROOT / "tree"
 OUT_PATH = NAITE_ROOT / ".naite" / "ontology" / "tree-dependencies.json"
-WIKILINK_RE = re.compile(r"\[\[([^\]|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]")
+# The leading char class also excludes '[' so a long run of unclosed "[[[[..."
+# cannot be consumed as link text and backtracked position-by-position (that made
+# finditer O(n^2) on a corrupt/pasted bracket dump; slugs never contain '[').
+WIKILINK_RE = re.compile(r"\[\[([^\][|#]+)(?:#[^\]|]+)?(?:\|([^\]]+))?\]\]")
 
 RELATION_PATTERNS = [
     ("builds-on", re.compile(r"\bbuilds on\b", re.IGNORECASE)),
@@ -21,7 +31,9 @@ RELATION_PATTERNS = [
     ("instance-of", re.compile(r"\binstance of\b", re.IGNORECASE)),
     ("applies-to", re.compile(r"\bapplies to\b|\bused in\b", re.IGNORECASE)),
     ("see-also", re.compile(r"\bsee also\b", re.IGNORECASE)),
-    ("decided-over", re.compile(r"\bdecided\b.*\bover\b", re.IGNORECASE)),
+    # Bounded gap: "decided ... over" is a short idiom. An unbounded `.*` backtracks
+    # O(n^2) on a line with many "decided" and no "over"; cap the span instead.
+    ("decided-over", re.compile(r"\bdecided\b.{0,120}?\bover\b", re.IGNORECASE)),
     ("failed-when", re.compile(r"\bfailed when\b", re.IGNORECASE)),
     ("trade-off", re.compile(r"\btrade-off\b", re.IGNORECASE)),
     ("validates", re.compile(r"\bvalidates\b", re.IGNORECASE)),
@@ -33,7 +45,7 @@ def normalize_target(target: str) -> str:
     target = target.strip().replace("\\", "/").split("/")[-1]
     if target.endswith(".md"):
         target = target[:-3]
-    return target.strip()
+    return _nfc(target.strip())
 
 
 def strip_frontmatter(text: str) -> str:
@@ -87,7 +99,7 @@ def scan_page(path: Path, existing_slugs: set[str]) -> dict[str, object]:
 
 def main() -> int:
     paths = sorted(TREE_DIR.glob("*.md"))
-    existing_slugs = {path.stem for path in paths}
+    existing_slugs = {_nfc(path.stem) for path in paths}
     pages: dict[str, dict[str, object]] = {}
     inbound_sets: dict[str, set[str]] = {slug: set() for slug in existing_slugs}
     missing_target_sets: dict[str, set[str]] = {}
