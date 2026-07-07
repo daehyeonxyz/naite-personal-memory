@@ -58,7 +58,7 @@ naite 는 결국 Markdown 파일이 담긴 폴더 하나입니다. 세 겹으로
 Claude Code 에서 두 명령을 순서대로 실행합니다.
 
 ```text
-/plugin marketplace add daehyeonxyz/naite-personal-memory
+/plugin marketplace add https://github.com/daehyeonxyz/naite-personal-memory
 /plugin install naite
 ```
 
