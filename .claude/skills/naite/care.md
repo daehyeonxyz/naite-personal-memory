@@ -89,6 +89,8 @@ Step E. Append a coarse `tree/rings.md` entry with `updated: 0 tree content page
 
 When the user asks to fix, edit pages directly. Preserve source substance, existing good links, and frontmatter unless the defect is there. After editing, run the touched-page content guard and the relevant deterministic checks (care --check).
 
+**Minimal-intrusion first.** 가장 작은 수정으로 결함을 고친다. 확실한 버그라도 이번 turn 의 scope 밖이면 고치지 말고 defer 로 표기한다 (scope 규율 > 완벽주의). 구조 수술(파일 재구성, 대량 재작성)은 최소침습으로 해결이 안 되는 게 확실할 때만, 그리고 Sweep 의 무손실 증명을 동반할 때만 한다.
+
 After editing pages, rebuild `.naite/ontology/tree-manifest.json` when page coordinates changed and rebuild `.naite/ontology/tree-dependencies.json` when body links or soft relation idioms changed. Include both generated maps in the change if they changed.
 
 ### Sweep
@@ -107,6 +109,8 @@ Then cluster by cause and fix in batches only when the user asked for repairs. S
 
 Use `.naite/ontology/tree-dependencies.json` to choose inbound dependents and high-degree pages. Use `.naite/ontology/tree-manifest.json` to avoid walking `tree/trunk.md` as if it were exhaustive.
 
+**Lossless bulk cleanup.** 대량 삭제·압축(large deletions, whitespace collapse, boilerplate 제거)은 두 층으로 분리한다: 기계적 정규화(중복 빈 줄·후행 공백·반복 boilerplate 제거)와 의미 편집(문장·내용 변경). 섞어서 한 번에 하지 않는다. 대량 정리를 무손실로 주장하려면 증명을 붙인다 — 비-빈 줄만 비교하는 diff(`diff <(grep -v '^[[:space:]]*$' old) <(grep -v '^[[:space:]]*$' new)`)로 실질 내용 라인이 보존됐음을 보이고 그 결과를 리포트에 남긴다. 증명 없는 대량 삭제는 커밋하지 않는다.
+
 ### System Learning
 
 Use this when the same defect appears across pages or workflows. The order of preference is:
@@ -117,6 +121,8 @@ Use this when the same defect appears across pages or workflows. The order of pr
 4. Leave user-facing mental model simple: care --check + care.
 
 Schema-level changes still follow `docs/CONVENTIONS.md § Schema evolution`; do not introduce new facet fields, enum values, or top-level domains without user decision.
+
+enum/schema 불일치를 고칠 때는 **전체 불일치(모든 페이지가 spec 과 어긋남 = 수선 대상)와 의도된 subset(일부만 다른 것이 설계상 정당 = 유지)을 구별**한다. 전자만 수선하고 후자는 건드리지 않는다. 판별이 애매하면 수정하지 말고 surface 한다.
 
 ## Branch Content Quality Criteria
 
