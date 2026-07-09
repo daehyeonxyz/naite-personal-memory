@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
   "version": "0.8.4",
-  "generated_at": "2026-07-09T17:52:12.509453+00:00",
+  "generated_at": "2026-07-09T18:00:58.423575+00:00",
   "files": {
     ".agents/skills/naite/SKILL.md": "sha256:5f8b4e52aff783cd26cc4d00649d12459eb9a8ead98af5e4195f75e680c5e1cd",
-    ".agents/skills/naite/ask.md": "sha256:b71e34728471bcfc4fc00d2a96205849505d698c85dc39cc1514c8dd1659d65b",
+    ".agents/skills/naite/ask.md": "sha256:e317233baddff6ba0452537b9682ced8ae6c879d4a3524977d326af02ac16c18",
     ".agents/skills/naite/capture.md": "sha256:5dfabb63abe0df4f6ce601cd2f471668a4730d7a49a6d2d99215e0051fcb9614",
     ".agents/skills/naite/care-check.md": "sha256:ed61c21319150923034b89313f0e116869907a8138ef578228ff9785f12b2efc",
     ".agents/skills/naite/care.md": "sha256:fe3df5fd717055c4215e6bb60265ba2bea0c1fb276d34d5e2b8e60ac61d09674",

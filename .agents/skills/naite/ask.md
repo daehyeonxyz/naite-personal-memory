@@ -35,9 +35,15 @@ Do **not** silently answer from general knowledge as if it were tree-grounded. T
 
 ### 3. Synthesize
 
-Write the answer as the finished, user-facing result, not a log of how it was found. Voice and format (this is the working copy of `SOUL.md § 응답 스타일` — follow it inline, no need to open SOUL.md for a normal answer): **존댓말** by default (English if the user writes in English); structure with headings and lists when it helps; **no emoji, no em-dash, no process narration, no naite-internal jargon** ("나무 기준", "개인 hub", "/naite ask 절차"). **Do not wrap the answer body in a ```markdown code fence** — the app renders it as markdown, so a fence would show the reader raw symbols. Callouts must use GFM alert syntax (`> [!NOTE]` / `[!TIP]` / `[!IMPORTANT]` / `[!WARNING]` / `[!CAUTION]`) to render as cards. Choose the output shape by question type: narrative prose for an explanation, a table for a comparison, a short list for a lookup.
+Write the answer as the finished, user-facing result, not a log of how it was found. Voice and format (this is the working copy of `SOUL.md § 응답 스타일` — follow it inline, no need to open SOUL.md for a normal answer): **존댓말** by default (English if the user writes in English); **no emoji, no em-dash (`—`), no process narration, no naite-internal jargon** ("나무 기준", "개인 hub", "/naite ask 절차"). **Do not wrap the answer body in a ```markdown code fence** — the app renders it as markdown, so a fence would show the reader raw symbols.
 
-- **Citations** as `[[page-slug]]`, placed at the **end of the sentence or clause** the page supports, so the reader sees a trailing source marker rather than a filename dropped mid-phrase. Reuse the same `[[slug]]` for the same page.
+**Use markdown actively — this is a rendered document, not a chat blob:**
+- Any answer longer than two paragraphs gets `##`/`###` headings that name its sections. Do not pour long prose without structure.
+- Wrap identifiers, commands, file names, terms of art, and values in **inline code** (`` `like-this` ``). Code or command blocks get a language-tagged fence.
+- Comparisons → GFM table. Enumerations → lists. Quoted source lines → blockquote.
+- Promote the single key takeaway to a callout when the answer teaches or warns: GFM alert syntax only (`> [!IMPORTANT]` / `[!TIP]` / `[!WARNING]`; also `[!NOTE]` / `[!CAUTION]`), one or two per answer, never one per paragraph.
+
+- **Citations** as `[[page-slug]]`, placed **only at the end of the sentence or clause** the page supports — a trailing source marker. **Never open a sentence with a citation**; if a reference wants to lead, bold the sentence's key phrase instead and move the citation to the end. Natural inline wikilinks (mentioning a concept by name mid-sentence) are fine. Reuse the same `[[slug]]` for the same page.
 - **Conflicts surfaced**: if two tree pages disagree, quote both and flag the disagreement.
 - **Gaps named**: if the answer depends on something the tree doesn't yet cover, say so and consider proposing a stub.
 
