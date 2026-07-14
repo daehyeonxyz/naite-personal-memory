@@ -41,7 +41,7 @@ If separate agents are not available, run the same three phases sequentially in 
   - 과목 메타: `course-{slug}-00-index.md` (`kind=source-record`, `form=index`)
   - 챕터 메타: `course-{slug}-ch{NN}-00-index.md` (`kind=source-record`, `form=index`)
   - 서브챕터 노트: `course-{slug}-ch{NN}-{SS}-{title-slug}.md` (`kind=source-record`, `form=prose`)
-- **Output quality contract**: `docs/CONVENTIONS.md § Output quality contract` 준수. 본문은 page 자체로 의미를 가져야 하며, raw/PDF/필기/source-processing 설명은 `## Source` 앞 본문에 쓰지 않는다. 필기·슬라이드 강조·예시는 본문 설명으로 흡수한다.
+- **Output quality contract**: `docs/CONVENTIONS.md § Output quality contract`, `§ Study-note quality dimensions`, `§ Page-kind quality contracts` 준수. 본문은 page 자체로 의미를 가져야 하며, raw/PDF/필기/source-processing 설명과 em dash (`—`)는 `## Source` 앞 본문에 쓰지 않는다. 필기·슬라이드 강조·worked example은 본문 설명과 학습 순서로 흡수한다. H 계층은 강의의 논리적 subdivision을 드러내고, 수식은 조건·기호·해석을 갖춘다. `kind=source-record`는 source의 질문·메커니즘·근거·조건을 보존하고, 자율 생성하는 `kind=concept`는 정의·메커니즘·경계·해석·load-bearing link를 갖춘다.
 - **Slug**: 영소문자·숫자 **단일 토큰** (하이픈 금지 — 레벨 구분자 `-`와 충돌). 공식 과목코드 있으면 소문자화(`MA101` → `ma101`), 없으면 prefix+NNN 임의(`aa101`, `aa102`, ...). 과목 내내 고정, 이후 절대 변경 금지.
 - **Subject**: branch 페이지는 그 과목·책·시리즈가 다루는 **콘텐츠 path 1개** (예: `[statistics]` 또는 더 narrow `[engineering-math/ode]`). 메타·챕터·서브챕터 모두 동일 단일 path 또는 narrower. Canonical tree: `.naite/ontology/subject-tree.md`. `course`, `course-{slug}` 같은 컬렉션 태그는 subject 에 절대 넣지 않는다 — `docs/CONVENTIONS.md § Ontology` 참조. Branch 멤버십은 파일명 prefix `course-{slug}-*` 로 보장. 새 페이지의 `domains` cache 는 선택한 `subject` 의 top-level 에서 기계적으로 도출한다.
 - **Trunk 분리**: trunk.md 에는 과목 메타 1줄만 등록 (`## Branches § <institution>` 섹션). 챕터/서브챕터 발견 경로는 `course-{slug}-00-index.md § Chapters` → `course-{slug}-ch{NN}-00-index.md § Subchapters` drill-down. **trunk.md 에 서브챕터/챕터 절대 나열하지 않는다.**
@@ -169,13 +169,13 @@ c. **학생 필기 인사이트 수집**: PNG를 읽는 과정에서 학생 필�
    - 경로: `tree/course-{slug}-ch{NN}-{SS}-{title-slug}.md`
    - Frontmatter: `kind=source-record`, `form=prose`, `domains: [<subject-top-level>]` (선택한 subject 에서 기계적으로 도출)
    - 본문: `§ Templates § 서브챕터 노트` 참조.
-5. **일반 개념 페이지 자율 생성** (`§ Schema autonomy` autonomy A): step 3 에서 식별된 추출 후보 — 사용자가 명시적으로 빼라고 한 것을 제외 — 를 이 시점에 별도 Write. frontmatter 5 facet 은 `ingest.md § 5` 규격. `topics` / `subject` 는 `.naite/ontology/` canonical 우선; 미등록 새 topic 이 입자도 가드 통과하면 `.naite/ontology/topics.md § canonical_topics` 에 직접 append (autonomy A); 새 narrower 가 자연스러우면 `.naite/ontology/subject-tree.md § narrower:` 에 candidate append + chapter-finish rings 의 surface 항목으로 기록 (autonomy B). 새 일반 페이지가 hub 후보면 (다른 페이지에서 자주 link 받을 만하면) `trunk.md § Knowledge domains § <domain>` 의 "주요" 라인에 추가 검토.
+5. **일반 개념 페이지 자율 생성** (`§ Schema autonomy` autonomy A): step 3 에서 식별된 추출 후보 — 사용자가 명시적으로 빼라고 한 것을 제외 — 를 이 시점에 별도 Write. frontmatter 5 facet 은 `ingest.md § 5` 규격. 본문은 `docs/QUALITY.md § 4` LEAF-1~6, `docs/CONVENTIONS.md § Study-note quality dimensions`, `§ Page-kind quality contracts`의 concept 계약을 self-check한다. source가 메커니즘·경계·해석을 뒷받침하지 못하면 얇은 concept를 만들지 말고 `seeds.md`에 보강 후보로 남긴다. `topics` / `subject` 는 `.naite/ontology/` canonical 우선; 미등록 새 topic 이 입자도 가드 통과하면 `.naite/ontology/topics.md § canonical_topics` 에 직접 append (autonomy A); 새 narrower 가 자연스러우면 `.naite/ontology/subject-tree.md § narrower:` 에 candidate append + chapter-finish rings 의 surface 항목으로 기록 (autonomy B). 새 일반 페이지가 hub 후보면 (다른 페이지에서 자주 link 받을 만하면) `trunk.md § Knowledge domains § <domain>` 의 "주요" 라인에 추가 검토.
 6. `tree/trunk.md` 업데이트:
    - **서브챕터 노트는 trunk 에 등록하지 않는다.**
    - 새 일반 개념 페이지가 hub 자격이 있다면 `## Knowledge domains § <domain>` 의 "주요" 리스트에 한 줄 추가 (4-7개 한도 내에서).
    - 기존 hub 페이지의 요약이 본질적으로 바뀌면 한 줄 revise.
 7. `tree/rings.md`: **작성 안 함.** frontmatter `created`/`updated` 가 정보 운반.
-8. Content guard: 방금 쓴/수정한 페이지의 `## Source` 앞 body 를 `/naite care § Content Guard` 기준으로 스캔하고, raw/source voice·불필요한 영어 generic heading·mojibake 를 즉시 고친다.
+8. Content guard: 방금 쓴/수정한 페이지의 `## Source` 앞 body 를 `/naite care § Content Guard` 기준으로 스캔하고, em dash·raw/source voice·불필요한 영어 generic heading·mojibake 를 즉시 고친다.
 9. Rebuild generated maps:
    ```powershell
    python .naite/scripts/build-tree-manifest.py

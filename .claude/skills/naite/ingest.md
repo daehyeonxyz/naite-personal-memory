@@ -73,7 +73,7 @@ Before writing any page, tell the user in 3–8 bullets what you extracted. Ask 
 
 For each affected page:
 
-Follow `docs/CONVENTIONS.md § Output quality contract`. The body is a self-contained tree page, not a processing note. Absorb source substance into prose; keep raw paths and source provenance in `## Source` or source-record links only. Do not leave raw/source-processing voice (`raw`, staging, extraction, PDF page, "원문에서는", "자료에서는", "이 페이지에서는") in the body before `## Source`. 원천 메커니즘(무엇이 아니라 어떻게·왜)을 본문에 보존한다. project/synthesis 페이지는 이름을 댄 구조(컴포넌트 목록, 프레임워크 축, 페르소나, 발견)마다 작동 방식을 설명한다. "원본 필요" 표시는 ingest 한 소스에 실제로 없는 자료에만 쓰고, 가진 자료를 설명하지 않는 핑계로 쓰지 않는다 (`docs/QUALITY.md § 4 LEAF-4`).
+Follow `docs/CONVENTIONS.md § Output quality contract`, `§ Study-note quality dimensions`, and `§ Page-kind quality contracts`. The body is a self-contained tree page, not a processing note. Absorb source substance into prose; keep raw paths and source provenance in `## Source` or source-record links only. Do not leave raw/source-processing voice (`raw`, staging, extraction, PDF page, "원문에서는", "자료에서는", "이 페이지에서는") or em dash (`—`) in the body before `## Source`. 원천 메커니즘(무엇이 아니라 어떻게·왜)을 본문에 보존한다. H 계층은 source의 논리적 subdivision을 드러내고, 수식은 조건·기호·해석과 함께 쓰며, 예시는 메커니즘을 실제로 재현한다. 선택한 `kind`의 claim spine을 지키고, observation·source claim·interpretation·hypothesis를 혼동하면 결론이 달라지는 곳에서는 명시적으로 구분한다. "원본 필요" 표시는 ingest 한 소스에 실제로 없는 자료에만 쓰고, 가진 자료를 설명하지 않는 핑계로 쓰지 않는다 (`docs/QUALITY.md § 4 LEAF-4`).
 
 - If the page does **not** exist: create `tree/<slug>.md` with full ontology frontmatter:
   ```yaml
@@ -106,7 +106,7 @@ Follow `docs/CONVENTIONS.md § Output quality contract`. The body is a self-cont
   - Body: summary first, then detail. Cite the source with `[[source-page-slug]]` (creating a `kind=source-record` page if the source merits one, e.g. a specific paper/article).
 - If the page **exists**: Edit it. Update `updated:` in frontmatter. Preserve existing structure; add or revise prose surgically. Flag contradictions explicitly in the text (e.g. "_2026-04-15 source [[foo]] disagrees: ..._").
 
-각 `form=prose` leaf 를 완성하기 직전, 본문을 `docs/QUALITY.md § 4` (LEAF-1~4) 로 self-check 한다. 미달이면 thin leaf 를 `tree/` 에 내보내지 않고, `tree/seeds.md` 에 깊이 보강 후보 stub 으로 정직하게 강등한다 (seeds.md stub 형식: `- [[slug]]: LEAF-N 미달 (<사유>), 필요한 것 <부족 자료>`). 강등한 leaf 는 grow summary 에 surface 한다. 이것은 작성 시점 게이트다. 게이트를 빠져나간 얇음은 care --check 의 § 3 lint 가 3k(leaf-depth warn)로 사후에 surface 한다. `form=index` 페이지는 비적용.
+각 `form=prose` leaf 를 완성하기 직전, 본문을 `docs/QUALITY.md § 4` (LEAF-1~6), `docs/CONVENTIONS.md § Study-note quality dimensions`, `§ Page-kind quality contracts`로 self-check 한다. 미달인데 source에 필요한 내용이 있으면 그 내용을 먼저 펼쳐 쓴다. source가 실제로 부족하면 thin leaf 를 `tree/` 에 내보내지 않고, `tree/seeds.md` 에 깊이 보강 후보 stub 으로 정직하게 강등한다 (seeds.md stub 형식: `- [[slug]]: LEAF-N 미달 (<사유>), 필요한 것 <부족 자료>`). 강등한 leaf 는 grow summary 에 surface 한다. 이것은 작성 시점 게이트다. 게이트를 빠져나간 얇음은 care --check 의 § 3 lint 가 3k(leaf-depth warn)로 사후에 surface 한다. `form=index` 페이지는 `docs/CONVENTIONS.md § Page-kind quality contracts`의 index 계약으로 별도 self-check 한다.
 
 After writing or editing affected pages, run the `/naite care § Content Guard` on the touched bodies before `## Source` and fix violations immediately. This is part of production, not a later audit cleanup.
 

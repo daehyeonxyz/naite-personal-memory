@@ -46,7 +46,7 @@ conversation / file 모드로 가기 전에, 이 학습이 **하나의 큰 줄�
 - `tree/` is LLM-owned; every material change is confirmed with the user before writing.
 - Secrets pre-check from `capture.md` § 4 runs before any write to `roots/conversations/`.
 - This skill writes **no** rings entry of its own. The underlying `capture` and `ingest` runs are what get logged (`capture` does not log; `ingest` does).
-- Writer invariant: ingest 가 원천 메커니즘을 보존하고 "원본 필요" 는 진짜 없는 자료에만 쓴다. 각 `form=prose` leaf 깊이는 작성 시점에 `docs/QUALITY.md § 4` (LEAF-1~4) 로 gating 된다 (`ingest.md § 5` 참조).
+- Writer invariant: ingest 가 원천 메커니즘을 보존하고 "원본 필요" 는 진짜 없는 자료에만 쓴다. 각 `form=prose` leaf는 작성 시점에 `docs/QUALITY.md § 4` (LEAF-1~6), `docs/CONVENTIONS.md § Study-note quality dimensions`, `§ Page-kind quality contracts`로 gating 된다. `## Source` 앞 본문에는 em dash (`—`)를 쓰지 않는다 (`ingest.md § 5` 참조).
 
 ## Workflow
 

@@ -90,7 +90,7 @@ def main() -> None:
         tree = t["tree"]
         w(f"## 🌳 {tree}")
         w("")
-        w(f"{desc.get(tree,'')}  ")
+        w(desc.get(tree, ""))
         w(f"페이지 {t['page_count']} · 자족도 {t.get('self_containment',0):.0%} · "
           f"내부링크 {t.get('internal_edges',0)} · 외부링크 {t.get('external_edges',0)}")
         w("")

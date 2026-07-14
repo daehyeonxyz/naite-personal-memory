@@ -17,7 +17,7 @@ active 학습과 동시에 사용하지 않는다 — 학습 중 콘텐츠에 ba
 
 - **PNG render mandatory (when visual layer present)**: **텍스트 추출 단독 시작 금지.** PDF → PyMuPDF PNG render + image-read 가 *mandatory pre-write step* (`grow-branch.md § D step b`). 강의 본체 + 사용자 손필기 + 도형·도식 모두 PNG 로 image-read 한 뒤에야 본문 작성. 텍스트 추출은 시각 강조·손글씨·다이어그램·수식 일부를 누락. 0-to-1 backfill 든 deepening pass 든 동일 적용 — 깊이 보강도 PNG 재로드부터. **단 source 가 시각 레이어 없는 순수 텍스트 (variant G) 면 적용 대상이 부재하므로 룰이 자동 무력화 — 그 경우 `.txt` 자체가 authoritative source 다.**
 - **Subchapter shape**: `.claude/skills/naite/grow-branch.md § Templates § 서브챕터 노트` 그대로. Lecture-natural H-tag, `## Source` trailing provenance (file path only), 본문에 원본 PDF page anchor·이미지 임베드 안 함.
-- **Output quality contract**: `docs/CONVENTIONS.md § Output quality contract` 준수. 본문은 self-contained Korean prose 로 작성하고, `roots/`, PDF page, staging, render, backfill, "필기에는", "자료에서는" 같은 source/process voice 를 `## Source` 앞에 남기지 않는다. 손필기·시각 강조·보조자료 관점은 개념 설명으로 흡수한다.
+- **Output quality contract**: `docs/CONVENTIONS.md § Output quality contract`, `§ Study-note quality dimensions`, `§ Page-kind quality contracts` 준수. 본문은 self-contained Korean prose 로 작성하고, `roots/`, PDF page, staging, render, backfill, "필기에는", "자료에서는" 같은 source/process voice와 em dash (`—`)를 `## Source` 앞에 남기지 않는다. 손필기·시각 강조·worked example의 판단 순서는 개념 설명으로 흡수한다. H 계층은 강의의 논리적 subdivision을 보여 주고, 수식은 조건·기호·해석과 함께 쓴다. `kind=source-record`의 질문·메커니즘·근거·조건을 source가 제공하는 범위 안에서 보존한다.
 - **Style reference**: `tmp/style-reference/{course-or-domain}/manifest.md` 가 있으면 manifest 의 `Included files` + `Fallback path` 그대로 사용. 없으면 manifest 의 fallback path 의 노트 1-7장을 read-only 로 직접 참고. 어느 경우에도 tree 에 ingest 안 함.
 - **자동화 권한 분리**: 본 sub-op 는 tree 페이지 작성·검증, raw staging 까지만 자동 수행. **VCS mutation (`git add` / `git commit` / `git push`) 은 사용자 또는 chapter-finish 의 명시 승인 후에만**. Codex 환경에서 `.git/index.lock` 같은 권한 실패 검출 시 즉시 중단하고 보고.
 - **Failure-mode 룰**: 같은 시스템 경계에서 동일 에러가 반복되면 transient 로 보지 말고 architecture 의심으로 전환. 횟수 임계 안 박음 — 사용자·운영자의 판단.
@@ -123,9 +123,9 @@ State entry 포맷:
    - **b. 모든 PNG image-read** — 한 장씩 Read 도구로 image 흡수. 도형·화살표·손글씨·여백 메모·시각 강조·worked example 의 숫자 step 모두.
    - **c. Variant-specific cross-reference** (해당 시) — `§ Source variants` 의 B/C/F/H/I/J 처럼 별도 source (사용자 필기 단일 PDF / hwpx outline / 과제 PDF / Obsidian markdown / audio transcript / cheat sheet) 가 있으면 해당 subchapter 의 매칭 부분을 cross-reference. variant E (1학년 깊이) 는 추가 source 없음, 강의자료만.
    - **d. Subchapter 페이지 작성** — `§ Codex prompt template` 의 골격 + `.claude/skills/naite/grow-branch.md § Templates § 서브챕터 노트`. style anchor 참조. 0-to-1 신규 작성 시 frontmatter 5 facet 신규 생성, deepening pass 시 기존 frontmatter 보존 + 본문 *추가* (축소·삭제 금지).
-   - **e. Content guard** — 작성/수정한 page 의 `## Source` 앞 body 를 `/naite care § Content Guard` 기준으로 스캔하고 즉시 수정. 특히 raw path, source-process voice, unnecessary English generic heading, mojibake 는 DONE 전에 남기지 않는다.
+   - **e. Content guard** — 작성/수정한 page 의 `## Source` 앞 body 를 `/naite care § Content Guard` 기준으로 스캔하고 즉시 수정. 특히 em dash, raw path, source-process voice, unnecessary English generic heading, mojibake 는 DONE 전에 남기지 않는다.
    - **f. PNG 즉시 삭제** — 해당 subchapter 작성 끝나면 `grow-branch.md § PDF rendering pipeline` 의 삭제 스니펫으로 `tmp/render/ch{NN}_p*.png` 를 즉시 삭제. 누적 금지 (렌더 경로·파일명은 그 파이프라인과 동일하다).
-   - **g. lint pass 확인** — `python .naite/scripts/lint-ontology.py` 3a-3k + § 7 통과 (blocking: 3a·3b·3d·3g). 3c topic-canonical·3h language-shape·3j output-quality·3k leaf-depth 는 warn-only 라 manual review 로 넘긴다. 단 backfill 산출물은 3j output-quality 위반 0 을 목표로 삼는다 (핵심 품질 신호이지만 hard gate 는 아님).
+   - **g. lint pass 확인** — `python .naite/scripts/lint-ontology.py` 3a-3k + § 7 통과 (blocking: 3a·3b·3d·3g 및 3j의 em dash). 3c topic-canonical·3h language-shape·3j의 나머지 output-quality pattern·3k leaf-depth 는 warn-only 라 manual review 로 넘긴다. Backfill 산출물은 모든 3j output-quality 위반을 완료 전에 0으로 만든다.
    - **h. Temp log entry append** — `§ Temp run-log schema` 형식 따라 `tmp/{slug}-run-log.md` 에 append.
 5. Chapter 메타 페이지 작성 — `grow-branch.md § E chapter-finish` step 3 그대로. 단 commit 은 안 함.
 6. DONE 마킹.

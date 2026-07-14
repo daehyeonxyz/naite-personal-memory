@@ -57,7 +57,7 @@ At the end of any non-trivial answer, ask:
 
 If the user accepts:
 - Create `tree/<slug>.md` with full ontology frontmatter (5 facets + cached domains) per `docs/CONVENTIONS.md § Ontology`. `subject` 는 `.naite/ontology/subject-tree.md` 의 path 1개 (cross-domain 진짜일 때만 multi). `source-types` 는 거의 항상 `[conversation]` (ask 가 대화에서 발생) — 단 ask 가 외부 자료를 cite 한 답이면 `[paper]` / `[article]` / `[docs]` / `[book]` / `[external]` 사용 가능, multi-source 일 때 list 로 합쳐 `[conversation, paper]` 같이 표현. Page-shape 이 A-vs-B 비교면 `kind: comparison`, 결정 thread 면 `kind: decision` (decision page 는 파일명 `decision-YYYY-MM-DD-<slug>.md` 형식). `form` 은 거의 항상 `prose` (ask 산출물은 산문). Page provenance ("from an ask, not a grow") 는 본문 첫 paragraph 또는 `## Provenance` 헤딩에 prose 로.
-- Paste the answer as the page body (clean up citations — they become `[[...]]` to internal pages, not to this conversation).
+- Rewrite the answer as a page body that passes `docs/CONVENTIONS.md § Study-note quality dimensions` and `§ Page-kind quality contracts`; do not paste a conversational answer unchanged. Make the H hierarchy expose the reasoning sequence, keep examples and formulas interpretable, clean up citations so they become load-bearing `[[...]]` links or source-record provenance, and preserve uncertainty from the answer.
 - **Update `tree/trunk.md` only if the new page is a hub candidate** (likely to receive multiple inbound links). hub 자격 없으면 trunk 미등재 (`docs/CONVENTIONS.md § trunk.md discipline` 참조).
 - Append to `tree/rings.md`:
   ```
@@ -66,7 +66,7 @@ If the user accepts:
   - subject: <path>  (.naite/ontology/subject-tree.md 참조, cross-domain 일 때만 복수)
   - cited: [[a]], [[b]], [[c]]
   ```
-- **Filing a page is a tree mutation, so the same post-write duties apply as `grow`/`ingest`** (`docs/CONVENTIONS.md § Output quality contract`, `docs/CONTEXT.md § Verification checklist`): run the content guard on the new page body (no raw/source-process voice, self-contained prose), then rebuild the generated maps that the new page changed — `python .naite/scripts/build-tree-manifest.py` (new page + coordinates) and, if it links to or from other pages, `python .naite/scripts/build-tree-dependencies.py`. Skipping this leaves the maps stale and the next orphan/inbound calculation wrong.
+- **Filing a page is a tree mutation, so the same post-write duties apply as `grow`/`ingest`** (`docs/CONVENTIONS.md § Output quality contract`, `§ Study-note quality dimensions`, `§ Page-kind quality contracts`, `docs/CONTEXT.md § Verification checklist`): self-check the selected kind's claim spine and the four study-note axes, run the content guard on the new page body (no raw/source-process voice, self-contained prose), then rebuild the generated maps that the new page changed — `python .naite/scripts/build-tree-manifest.py` (new page + coordinates) and, if it links to or from other pages, `python .naite/scripts/build-tree-dependencies.py`. Skipping this leaves the maps stale and the next orphan/inbound calculation wrong.
 
 If the user declines, do not write anything. The conversation stands.
 

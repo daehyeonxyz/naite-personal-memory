@@ -4,7 +4,8 @@
     "domain_to_tree": "map of subject top-level domain -> tree name. Domains not listed fall back to identity (the domain becomes its own tree).",
     "tree_descriptions": "map of tree name -> one-line description, shown in the forest dashboard.",
     "tree_labels": "map of tree name -> human display name (e.g. 'ai' -> 'Artificial Intelligence'). naite-app shows this instead of the prettified id; omit a tree to fall back to its prettified id. Abbreviation expansion lives here, never hardcoded in the app.",
-    "neutral_domains": "list of domains seeded with NO tree, so link-neighbor label propagation decides their tree. Use for source labels that span lineages."
+    "neutral_domains": "list of domains seeded with NO tree, so link-neighbor label propagation decides their tree. Use for source labels that span lineages.",
+    "tree_overrides": "map of page slug -> tree name. An override takes priority over neutral_domains, adds an override-only tree to the candidate set, and stays pinned to that tree during propagation."
   },
   "domain_to_tree": {
     "ml": "ai",
@@ -19,5 +20,8 @@
     "ai": "Artificial Intelligence",
     "statistics": "Statistics"
   },
-  "neutral_domains": []
+  "neutral_domains": [],
+  "tree_overrides": {
+    "decision-2026-01-15-example": "naite"
+  }
 }

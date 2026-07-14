@@ -64,6 +64,7 @@ def main() -> None:
 
     config = load_config()
     config_domain_to_tree = config.get("domain_to_tree", {})
+    tree_overrides = config.get("tree_overrides", {})
     tree_desc = config.get("tree_descriptions", {})
     tree_labels = config.get("tree_labels", {})  # tree -> 사람용 표시 이름 (naite-app 이 manifest.label 로 읽는다)
     # --neutral 가 주어지면 그것을 쓰고, 아니면 config 의 neutral_domains.
@@ -100,11 +101,15 @@ def main() -> None:
     for d in domains_seen:
         domain_to_tree.setdefault(d, d)
 
-    trees = sorted(set(domain_to_tree.values()))
+    override_trees = {tree_overrides[s] for s in nodes if s in tree_overrides}
+    trees = sorted(set(domain_to_tree.values()) | override_trees)
     tidx = {t: i for i, t in enumerate(trees)}
     T = len(trees)
 
-    seed_tree = {s: domain_to_tree[first_domain(meta[s])] for s in nodes}
+    seed_tree = {
+        s: tree_overrides.get(s, domain_to_tree[first_domain(meta[s])])
+        for s in nodes
+    }
 
     # 가중 인접행렬(시냅스 제외).
     edge_rel = defaultdict(set)
@@ -134,10 +139,14 @@ def main() -> None:
     # seed one-hot. neutral 도메인 페이지는 uniform(이웃이 결정).
     S = np.zeros((n, T), dtype=np.float64)
     for s in nodes:
-        if first_domain(meta[s]) in neutral_domains:
+        if s not in tree_overrides and first_domain(meta[s]) in neutral_domains:
             S[idx[s], :] = 1.0 / T
         else:
             S[idx[s], tidx[seed_tree[s]]] = 1.0
+
+    anchored = [
+        (idx[s], tidx[tree_overrides[s]]) for s in nodes if s in tree_overrides
+    ]
 
     F = S.copy()
     for _ in range(args.iters):
@@ -145,6 +154,9 @@ def main() -> None:
         rs = F.sum(axis=1, keepdims=True)
         rs[rs == 0] = 1.0
         F = F / rs
+        for page_i, tree_i in anchored:
+            F[page_i, :] = 0.0
+            F[page_i, tree_i] = 1.0
 
     final_idx = F.argmax(axis=1)
     final_tree = {nodes[i]: trees[final_idx[i]] for i in range(n)}

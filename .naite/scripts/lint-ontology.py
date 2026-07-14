@@ -27,7 +27,7 @@ Usage:
 
 Exit codes:
     0 — clean
-    1 — at least one blocking issue (incomplete / invalid subject / cache stale / legacy drift)
+    1 — at least one blocking issue (incomplete / invalid subject / cache stale / legacy drift / body em dash)
 """
 
 import argparse
@@ -45,6 +45,7 @@ NAITE_ROOT = Path(__file__).resolve().parent.parent.parent
 TREE_DIR = NAITE_ROOT / 'tree'
 ONTOLOGY_DIR = NAITE_ROOT / '.naite' / 'ontology'
 SPECIALS = {'trunk.md', 'rings.md', 'seeds.md'}
+OUTPUT_QUALITY_SPECIALS = {'trunk.md', 'rings.md', 'seeds.md'}
 BOM = b'\xef\xbb\xbf'
 
 # Schema enums (current facet schema).
@@ -95,6 +96,7 @@ LEGACY_TAGS = {
 }
 
 OUTPUT_QUALITY_PATTERNS = [
+    ('em-dash', re.compile('\u2014')),
     ('roots-path', re.compile(r'`?roots[\\/][^`\s)]*', re.IGNORECASE)),
     ('source-process', re.compile(
         r'\b(?:Staging|Source Staging|Archived source bundle|PDF page|raw PDF|source PDF|source page|lecture notes|page range|render|image-read|backfill|run-log|extraction)\b',
@@ -397,12 +399,86 @@ def body_line_bounds_before_source(text):
                 start = idx + 1
                 break
 
-    end = len(lines)
+    last_h2 = None
+    in_code_block = False
+    in_math_block = False
     for idx in range(start, len(lines)):
-        if re.match(r'^##\s+Source\s*$', lines[idx].strip(), re.IGNORECASE):
-            end = idx
-            break
+        stripped = lines[idx].strip()
+        if stripped.startswith('```'):
+            in_code_block = not in_code_block
+            continue
+        if in_code_block:
+            continue
+        if stripped == '$$':
+            in_math_block = not in_math_block
+            continue
+        if in_math_block:
+            continue
+        match = re.match(r'^##\s+(.+?)\s*$', stripped)
+        if match:
+            last_h2 = (idx, match.group(1))
+
+    end = len(lines)
+    if last_h2 and last_h2[1].lower() == 'source':
+        end = last_h2[0]
     return lines, start, end
+
+
+def strip_inline_code_literals(line):
+    return re.sub(r'(`+)(.*?)\1', '', line)
+
+
+def git_added_line_numbers(path):
+    try:
+        relative = path.resolve().relative_to(NAITE_ROOT.resolve()).as_posix()
+    except ValueError:
+        return None
+
+    tracked = subprocess.run(
+        ['git', '-C', str(NAITE_ROOT), 'ls-files', '--error-unmatch', '--', relative],
+        capture_output=True, text=True, encoding='utf-8', errors='replace',
+    )
+    if tracked.returncode != 0:
+        return None
+
+    diff = subprocess.run(
+        ['git', '-C', str(NAITE_ROOT), 'diff', 'HEAD', '--unified=0', '--no-color', '--', relative],
+        capture_output=True, text=True, encoding='utf-8', errors='replace', check=True,
+    ).stdout
+    added = set()
+    new_line = None
+    for raw in diff.splitlines():
+        if raw.startswith('@@'):
+            match = re.search(r'\+(\d+)(?:,\d+)?', raw)
+            new_line = int(match.group(1)) if match else None
+            continue
+        if new_line is None or raw.startswith(('+++', '---')):
+            continue
+        if raw.startswith('+'):
+            added.add(new_line)
+            new_line += 1
+        elif raw.startswith('-'):
+            continue
+        elif raw.startswith(' '):
+            new_line += 1
+    return added
+
+
+def find_rings_output_quality_findings(path):
+    findings = find_output_quality_findings(path)
+    added = git_added_line_numbers(path)
+    if added is None:
+        return findings
+    return [finding for finding in findings if finding[0] in added]
+
+
+def count_historical_rings_em_dash(path):
+    lines = path.read_text(encoding='utf-8-sig', errors='replace').splitlines()
+    added = git_added_line_numbers(path)
+    if added is None:
+        return 0
+    return sum(line.count('—') for line_no, line in enumerate(lines, start=1)
+               if line_no not in added)
 
 
 def normalize_heading_text(line):
@@ -413,19 +489,13 @@ def normalize_heading_text(line):
 
 
 def find_output_quality_findings(path):
-    """Return deterministic output-quality guard findings for course pages.
-
-    Findings are intentionally warn-only: they catch source/process voice and
-    raw leakage before `## Source`, not nuanced prose quality.
-    """
-    if not path.name.startswith('course-'):
-        return []
+    is_course_page = path.name.startswith('course-')
 
     # Course/chapter meta index pages (course-*-00-index.md) are template-driven:
     # grow-branch.md § Templates mandates the generic headings and a
     # `Staging: roots/...` pointer there. Only mojibake applies to them; the
     # heading/leakage guard targets prose pages (subchapter notes, leaves).
-    is_meta_index = path.name.endswith('-00-index.md')
+    is_meta_index = is_course_page and path.name.endswith('-00-index.md')
 
     text = path.read_text(encoding='utf-8-sig', errors='replace')
     lines, start, end = body_line_bounds_before_source(text)
@@ -449,12 +519,21 @@ def find_output_quality_findings(path):
         if in_math_block or not stripped:
             continue
 
-        if not is_meta_index and stripped.startswith('#'):
+        if is_course_page and not is_meta_index and stripped.startswith('#'):
             heading = normalize_heading_text(stripped).lower()
             if heading in GENERIC_EN_COURSE_HEADINGS:
                 findings.append((line_no, 'generic-heading', normalize_heading_text(stripped)))
 
         for kind, pattern in OUTPUT_QUALITY_PATTERNS:
+            if kind == 'em-dash':
+                if re.match(r'^#\s+', stripped):
+                    continue
+                match = pattern.search(strip_inline_code_literals(line))
+                if match:
+                    findings.append((line_no, kind, match.group(0)))
+                continue
+            if not is_course_page:
+                continue
             if is_meta_index and kind != 'mojibake':
                 continue
             match = pattern.search(line)
@@ -516,7 +595,7 @@ def find_non_tree_dirt(repo_root):
     try:
         out = subprocess.run(
             ['git', '-C', str(repo_root), '-c', 'core.quotePath=false', 'ls-files'],
-            capture_output=True, text=True, check=True,
+            capture_output=True, text=True, encoding='utf-8', errors='replace', check=True,
         ).stdout.splitlines()
     except (FileNotFoundError, subprocess.CalledProcessError):
         return []
@@ -662,13 +741,24 @@ def lint(args):
         for line_no, kind in find_language_shape_candidates(p):
             language_candidates.append((p.name, line_no, kind))
 
-        # 3j output quality contract guard (warn-only deterministic subset)
         for line_no, kind, match in find_output_quality_findings(p):
             output_quality_findings.append((p.name, line_no, kind, match))
 
         # 3k leaf-depth guard (warn-only)
         for line_no, kind, match in find_leaf_depth_findings(p, fm['form']):
             leaf_depth_findings.append((p.name, line_no, kind, match))
+
+    rings_em_dash_debt = 0
+    for p in sorted(TREE_DIR / name for name in OUTPUT_QUALITY_SPECIALS):
+        if not p.exists():
+            continue
+        if p.name == 'rings.md':
+            rings_em_dash_debt = count_historical_rings_em_dash(p)
+            findings = find_rings_output_quality_findings(p)
+        else:
+            findings = find_output_quality_findings(p)
+        for line_no, kind, match in findings:
+            output_quality_findings.append((p.name, line_no, kind, match))
 
     # ---------------------------------------------------------------------
     # Report
@@ -787,7 +877,9 @@ def lint(args):
     print()
 
     print(f'### 3j Output quality contract guard: {len(output_quality_findings)} lines')
-    print('  (warn — deterministic body hygiene before ## Source; false positive possible)')
+    print('  (mixed severity: em dash blocking; other deterministic body findings warn-only)')
+    if (TREE_DIR / 'rings.md').exists():
+        print(f'  rings.md historical intentional debt: {rings_em_dash_debt} U+2014 occurrences')
     by_page_quality = {}
     for name, line_no, kind, match in output_quality_findings:
         by_page_quality.setdefault(name, []).append((line_no, kind, match))
@@ -866,7 +958,8 @@ def lint(args):
             print(f'  {name}: domains -> {new_domains}')
         cache_stale.clear()
 
-    blocking = bool(incomplete or invalid_subject or cache_stale or legacy_drift)
+    body_em_dash = any(kind == 'em-dash' for _, _, kind, _ in output_quality_findings)
+    blocking = bool(incomplete or invalid_subject or cache_stale or legacy_drift or body_em_dash)
     return 1 if blocking else 0
 
 

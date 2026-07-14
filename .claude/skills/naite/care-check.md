@@ -29,7 +29,9 @@ Default output is a single markdown report printed to the conversation (not writ
 - stale archive dirs: N
 - branch archive coherence: N
 - output quality guard: N
-- fruit coverage issues: N
+- body em dash: N
+- study-note quality issues: N (markdown form: a, study effectiveness: b, content composition: c, writing manner: d)
+- decision/insight quality issues: N (decision: a, insight: b)
 - high-degree neurons: top-N listed
 - autonomy garbage: N (low-use canonical: a, trivial narrower: b, orphan spawn: c)
 - context maps: refreshed | stale | missing
@@ -45,8 +47,8 @@ care --check already has broad mechanical coverage. Quality comes from spending 
 Always spend extra reading budget on these four areas when findings exist:
 
 1. **Missing targets / stubs**: for each meaningful missing target, open at least one source page that links to it. Classify whether it is a historical `rings.md` link, a placeholder/template artifact, an intentional plain-text/external reference candidate, a real broken wikilink, or a new concept-page candidate.
-2. **Output quality guard**: for each hit, read nearby context before and after the line, not just the matched phrase. Decide whether it is a real source/process-voice problem or a false positive caused by technical usage.
-3. **Fruit coverage**: separate standalone `kind=decision` pages from embedded decision-shape prose in concept/entity/source-record/project pages. Apply the decision-page standard most strictly to standalone decision pages.
+2. **Output and study-note quality**: for each deterministic hit, read nearby context before and after the line, not just the matched phrase. Then judge Markdown form, study effectiveness, content composition, and writing manner independently. A clean guard result is not evidence that the page teaches well.
+3. **Decision and insight quality**: separate standalone `kind=decision` and `kind=insight` pages from embedded reasoning in other kinds. Read enough body context to distinguish absent evidence from a weak template. Unknown or untested state is valid when explicit; guessed completeness is a defect.
 4. **Autonomy garbage**: verify the 30-day window, usage count, and inbound count before surfacing a cleanup candidate. Do not report a topic, narrower, or spawned concept as garbage from count alone.
 
 ### Tier 2 - conditional deep review
@@ -205,11 +207,14 @@ alias phase 가 종료됐고 tree 가 모두 새 schema. 다음 metric 은 0 이
 
 Scan target:
 
-- 모든 `tree/course-*.md` 의 body before trailing `## Source`
-- 최근 변경된 일반 tree pages when a workflow just wrote them
+- 모든 content page와 `tree/trunk.md`, `tree/seeds.md`의 body before trailing `## Source`: em dash (`—`, U+2014)
+- append-only `tree/rings.md`: 기존 이력의 em dash는 소급 수정하지 않고 별도 intentional debt로 계수한다. 새로 쓰는 항목은 em dash 0건이어야 한다.
+- 모든 `tree/course-*.md` 의 body before trailing `## Source`: 기존 raw/source-process voice, mojibake, generic English course heading 규칙
+- 최근 변경된 일반 tree pages when a workflow just wrote them: 기존 output-quality pattern도 함께 확인
 
 Flag:
 
+- em dash (`—`, U+2014): 모든 page kind의 body와 수정 가능한 special page에서 금지. 쉼표, 마침표, 콜론, 괄호, 줄바꿈 중 논리 관계에 맞는 표현으로 고치며 하이픈 일괄 치환은 금지
 - roots/source path leakage before `## Source`: `roots/`, `` `raw` ``, `Staging`, `Source Staging`, `Archived source bundle`
 - source/process voice: `PDF page`, `raw PDF`, `source PDF`, `source page`, `lecture notes`, `page range`, `render`, `image-read`, `backfill`, `run-log`, `extraction`
 - Korean source voice: `필기에는`, `필기에서`, `강의 노트`, `노트에서는`, `원문에서는`, `원자료`, `자료에서는`, `페이지에서는`, `이 페이지에서는`, `이 자료`
@@ -223,7 +228,7 @@ Do not flag:
 - formulas, code fences, commands, model names, method names, technical English terms, or course-native English titles
 - the word `source` when it is a technical concept (for example source node, source distribution, source coding) rather than provenance/process voice
 
-Report file, line, matched phrase, and whether it is before `## Source`. For touched producer output, treat as must-fix-before-completion. For a full care-check run, report as findings and let the user decide the repair scope.
+Report file, line, matched phrase, and whether it is before `## Source`. For touched producer output, treat as must-fix-before-completion. Em dash findings are blocking because the rule is universal and deterministic. Other findings remain report-only in a full care-check run unless the active workflow is already repairing them.
 
 For `--daily`, include classification for each distinct output-quality cluster: `false-positive`, `intentional-debt`, or `repair-candidate`.
 
@@ -234,7 +239,7 @@ warn-only proxy check. `form=prose` 잎 페이지에 대해 두 가지를 감지
 - 본문 (frontmatter 제외, `## Source` 이전) 에 `[[wikilink]]` 가 0 개인 경우
 - 본문 산문 글자 수가 대략 400 자 미만인 경우 (thin body)
 
-두 항목 모두 정밀 판정이 아니라 coarse proxy 다. 실제 깊이 판정 기준은 작성 시점 self-check (`docs/QUALITY.md § 4` LEAF-1~4) 이며 care-check 는 report-only 로만 surface 한다. blocker 가 아니고 자동 수정도 없다.
+두 항목 모두 정밀 판정이 아니라 coarse proxy 다. 실제 깊이 판정 기준은 작성 시점 self-check (`docs/QUALITY.md § 4` LEAF-1~6) 이며 care-check 는 report-only 로만 surface 한다. blocker 가 아니고 자동 수정도 없다.
 
 #### 3f. BOM detection
 
@@ -394,23 +399,41 @@ Check two things:
 
 Report: list flagged paths + reason. Recommend either removing the stale dir / completing the cleanup, or re-running the op. Do not auto-resolve — user picks. For residue pre-dating the "no generic archive" decision, a one-shot migration clean-up may be warranted; log that as a `migration` candidate.
 
-### 12. Fruit coverage
+### 12. Study-note, decision, and insight quality
 
-Health-check for **decision-shape pages** (docs/CONVENTIONS.md § Decision thread shape). A page is detected as decision-shape if the body contains ≥ 2 of:
+Apply `docs/CONVENTIONS.md § Study-note quality dimensions` to every page in the requested review scope. In a whole-tree review, do not substitute a sample or a thin-body proxy for page-by-page judgement. Record the page verdict and the failing axis so that a later Writer knows whether the defect is structural, pedagogical, substantive, or stylistic.
 
-- Headers `## Decision`, `## Trade-off`, `## Failure mode`, `## Invariant`, `## Rationale`, `## Mechanism`, `## Reusability`
-- Prose idioms: `decided ... over`, `failed when`, `trade-off:`, `validates`, `falsifies`
+- **Markdown form**: one H1; natural H2/H3/H4 nesting with no skipped level; headings name the content rather than a generic rubric; no empty or one-line decorative leaf section; a parent heading may directly group meaningful child headings; `## Source` is trailing. Tables compare the same axes, bullets contain parallel items rather than fragmented argument, code fences preserve code or literal structure and carry a language tag when one exists, blockquotes preserve actual quoted speech, GFM alerts carry notes or warnings, and formulas and emphasis serve their semantic job.
+- **Study effectiveness**: the reader can recover definition, problem, mechanism, formal terms, a worked interpretation or application, limits, likely confusion, and conceptual connections without reopening the source. Not every item requires its own heading, but absent reasoning is a defect.
+- **Content composition**: definition, intuition, formalism, example, and boundary each add a distinct unit; prerequisites are linked while the page's own mechanism is explained locally; source claim, observation, interpretation, and hypothesis stay distinguishable.
+- **Writing manner**: Korean lecture-note prose explains why and therefore, not only what; transitions expose causal, conditional, comparative, or extension relations; the page avoids dictionary stubs, marketing voice, repetitive importance claims, translationese, and rubric-shaped bullet dumps.
 
-For each detected page, verify:
+For a concept page, compare the learning sequence to the strongest course-note pages in the same tree, not merely to the shortest acceptable leaf. The target is reconstructible understanding, not uniform length or a copied heading template.
 
-- **Outbound wikilinks ≥ 3.** Decision pages with too few cross-links are orphaned synapses — they fail at the core purpose (connecting concepts).
-- **Failure condition stated explicitly.** A page with Decision + Rationale but no Failure mode is a too-clean DMU — flag for follow-up. Real decisions have known failure conditions.
-- **Trade-off prose present.** A `decided X over Y when ...` or equivalent must appear in body. Decision without articulated trade-off = surface rationale.
-- **Mechanism articulated.** The body has prose explaining *why* the decision works structurally, not just *what* was done.
+In addition, use frontmatter `kind` as the primary selector for decision and insight pages. Embedded decision-shape or insight-shape prose in other kinds can still be reviewed when it affects a high-value project or hub, but it must not displace standalone pages from the queue. Apply `docs/CONVENTIONS.md § Page-kind quality contracts`; do not infer quality from section count, word count, or required English idioms.
 
-Report: per-page list of missing items. Do not auto-fix. Users can re-run `/naite fruit <slug>` on the page to fill gaps.
+For each `kind=decision` page, verify the decision kernel:
 
-For `--daily`, prioritize standalone `kind=decision` pages first. Embedded decision-shape prose is still useful, but it should not crowd out formal decision pages unless it affects a high-value project or hub.
+- **Choice and current state** are explicit: chosen, rejected, deferred, reversed, or provisional.
+- **Context and binding constraint** explain what made the decision necessary and what actually separated the options.
+- **Credible alternatives** are recorded, or the page explicitly says why no meaningful alternative was considered. Never require invented alternatives.
+- **Expected mechanism** explains why the choice should produce the intended effect.
+- **Validation state** distinguishes observed outcome, interpretation, and untested expectation.
+- **Failure, rollback, or revisit condition** gives an observable signal or context change that would reopen the decision.
+- **Links are load-bearing**: they connect the actual project, constraint, mechanism, option, or affected concept. There is no outbound-link count threshold.
+
+For each `kind=insight` page, verify:
+
+- **Claim**: one clear statement that can be examined, not only a slogan.
+- **Evidence anchor**: the observation, source, repeated case, or decision that produced the claim.
+- **Mechanism or interpretation**: why the pattern may hold.
+- **Scope and uncertainty**: boundary, counterexample, alternative explanation, or explicit hypothesis status.
+- **Consequence**: how the insight changes future action, interpretation, or a related project.
+- **Links are load-bearing**: they connect the evidence, mechanism, application, or concept being revised.
+
+Report a per-page list of missing information units and classify each as `repair-candidate`, `source-risk`, or `intentional-debt`. Do not auto-fix. Route decision gaps to `/naite fruit <slug>` and broader prose repair to `/naite care <slug>`.
+
+For `--daily`, prioritize pages where missing validation or scope could change an active decision. A sparse but honest provisional record is lower priority than a polished page that presents inference as observed fact.
 
 ### 13. High-degree neurons (emergent priority)
 
@@ -423,7 +446,7 @@ Use `.naite/ontology/tree-dependencies.json` as the primary source for inbound c
 
 Report format: simple ranked list. Inbound count is the only signal — don't editorialize.
 
-This check has no auto-action; it exists to make the link graph's emergent structure visible. Pair it with § 12 to see "what concepts your decisions lean on" and "are those decision pages well-connected?"
+This check has no auto-action; it exists to make the link graph's emergent structure visible. Pair it with § 12 to see which concepts support decisions and insights, then judge the prose relation rather than the raw count.
 
 ### 14. Autonomous addition garbage collector
 
@@ -539,9 +562,13 @@ surface 할 압력:
 - tree/course-ma101-ch02-03-foo.md:42 — `필기에는` before `## Source`; absorb the note insight into prose.
 - tree/course-ma101-ch03-00-index.md:18 — generic English heading `Overview`; use a Korean heading unless course-native.
 
-## Fruit coverage (N issues across M decision pages)
-- [[rag-reranker-2026q2-decision]]: missing Failure mode, only 2 outbound wikilinks (need ≥3).
-- [[chose-postgres-over-mysql]]: trade-off prose absent (no `decided X over Y when ...`).
+## Study-note quality (N issues)
+- [[foo]] (`repair-candidate`, Markdown form): H2에서 H4로 건너뛰고 한 문장짜리 heading이 반복되어 논리 계층이 보이지 않는다.
+- [[bar]] (`repair-candidate`, study effectiveness): 정의와 수식은 있으나 변수 해석, worked application, 성립 경계가 없어 다시 공부할 수 없다.
+
+## Decision and insight quality (N issues)
+- [[decision-2026-04-12-rag-reranker]] (`repair-candidate`): expected mechanism is present, but outcome is written as observed without evidence and no revisit signal is named.
+- [[compounding-learning-context]] (`source-risk`): claim and implication are clear, but the evidence anchor and scope are not recoverable without the original conversation.
 
 ## High-degree neurons (top 10)
 | rank | page | inbound count |

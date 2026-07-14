@@ -45,7 +45,7 @@ naite_read_deny() {
 
 # Alternation of known secret token shapes.
 naite_secret_re() {
-  re='sk-[A-Za-z0-9_-]{20,}'                                       # OpenAI/Anthropic (sk-, sk-ant-, sk-proj-, sk-svcacct-)
+  re='(^|[^A-Za-z0-9])sk-[A-Za-z0-9_-]{20,}'                      # OpenAI/Anthropic (sk-, sk-ant-, sk-proj-, sk-svcacct-)
   re="$re|(sk|pk|rk)_(live|test)_[A-Za-z0-9]{20,}"                 # Stripe
   re="$re|gh[posru]_[A-Za-z0-9]{36,}"                              # GitHub classic
   re="$re|github_pat_[A-Za-z0-9_]{40,}"                            # GitHub fine-grained PAT

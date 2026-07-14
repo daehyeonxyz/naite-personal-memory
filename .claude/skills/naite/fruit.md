@@ -1,6 +1,6 @@
 # /naite fruit
 
-결정 thread 를 나무의 **열매** 로 맺는 dialogue scaffold. tree 의 노드(concept/entity/source) 들이 뉴런이라면, 시냅스 layer 는 그 위를 가로지르며 의사결정 흐름을 형성하는 별도 차원의 결합. 한 page 가 14 섹션을 다 담는 form 으로 나올 수도 있고, 짧은 prose 단락이 다른 concept 페이지에 박혀 그 자체가 시냅스 한 가닥이 될 수도 있다 — 둘 다 정당.
+결정 thread 를 나무의 **열매** 로 맺는 dialogue scaffold. tree 의 노드(concept/entity/source) 들이 뉴런이라면, 시냅스 layer 는 그 위를 가로지르며 의사결정 흐름을 형성하는 별도 차원의 결합이다. 별도 decision page와 다른 concept 페이지에 박힌 짧은 decision prose는 둘 다 정당하다. 품질은 섹션 수가 아니라 선택, 제약, 작동 가설, 검증 상태, 재검토 조건이 얼마나 정직하게 보존됐는지로 판단한다.
 
 All data paths below resolve against **NAITE_ROOT** (the root of the naite repo). Sub-skill references resolve against **SKILL_DIR** (`<NAITE_ROOT>\.claude\skills\naite`). See `SKILL.md` for context.
 
@@ -16,21 +16,23 @@ All data paths below resolve against **NAITE_ROOT** (the root of the naite repo)
 
 - **출력은 `kind: decision` 페이지** (적합 시 `kind: concept`/`entity`/`source-record` 페이지에 decision-shape content 인라인 embed 도 가능). `form: prose`. `subject` 는 `.naite/ontology/subject-tree.md` 의 path 1개; 진짜 cross-domain 일 때만 multi (`[a/x, b/y]`). `dmu/`, `failure-*/`, `career-*/`, `synapse/` 같은 메타 subject path 또는 별도 kind enum 추가는 **금지** — 시냅스의 본질은 카테고리화 거부 (`docs/CONVENTIONS.md § Decision thread shape` 참조). Decision-shape thread 자체는 page-level enum 으로 좁히지 않고 cross-page 시냅스 layer 로 흐른다.
 - **파일명**: `decision-YYYY-MM-DD-<slug>.md` 형식. `YYYY-MM-DD` 는 페이지 `created` 날짜 (frontmatter 와 일치). `<slug>` 부분은 `lowercase-kebab-case`. `DMU-` prefix 금지. 예: `decision-2026-01-15-vector-db-selection`, `decision-2026-02-03-retrieval-strategy`.
-- **본문은 DMU 14 섹션을 참조 구조** 로 사용. 사용자 답변에 따라 일부 섹션은 통째로 생략. 빈 헤더 작성 금지.
-- **최소 3개 outbound wikilink** (mechanism / related concept / project / failure mode 중 어느 조합이든). 부족하면 사용자에게 "어떤 개념 페이지에 연결되나요?" 푸시.
-- **누락 개념 발견 시** `tree/seeds.md` 에 stub 제안 — DMU 가 graph 의 빈 공간을 채우는 압력으로 작동.
-- **prose idiom 박힘 강제**: 본문에 `decided X over Y when ...`, `failed when ...`, `trade-off: A vs B`, `validates`, `falsifies` 중 적어도 1~2개 등장. docs/CONVENTIONS.md § Soft ontology 의 어휘를 반드시 재사용.
+- **본문은 decision kernel을 보존**한다 (`docs/CONVENTIONS.md § Decision thread shape`, `§ Page-kind quality contracts`). 선택과 현재 상태, 맥락과 binding constraint, 실제 대안, 예상 메커니즘, 검증 상태, 실패·재검토 조건이 핵심이다. 고정 헤더나 섹션 수를 강제하지 않고 빈 헤더를 쓰지 않는다.
+- **관찰·해석·기대 결과를 분리**한다. 아직 검증하지 않은 기대는 outcome으로 쓰지 않고, 무엇을 보면 검증되는지 적는다. 대안이 없었다면 가상의 대안을 만들지 않는다.
+- **링크 수를 품질 목표로 쓰지 않는다.** 프로젝트, 제약, 메커니즘, 영향을 받는 개념처럼 실제 reasoning을 지탱하는 wikilink만 산문으로 연결한다. 장식용 `Related` 목록으로 개수를 채우지 않는다.
+- **누락 개념 발견 시** `tree/seeds.md` 에 stub 제안한다. 없는 페이지를 대신해 decorative link를 만들지 않는다.
+- **Soft ontology idiom은 의미가 맞을 때 사용**한다. `decided ... over`, `failed when`, `trade-off:`, `validates`, `falsifies`를 문장에 억지로 넣지 않는다. 자연스러운 한국어 산문이 같은 관계를 더 정확히 표현하면 그 산문을 우선한다.
 - 기타 `CLAUDE.md § Secrets & privacy`, `docs/CONVENTIONS.md § Schema evolution` 전부 그대로 적용.
 
 ## Dialogue scaffold (template filler 가 아니라 사고 캐묻기)
 
 skill 의 핵심 가치는 빈 헤더를 채우게 하는 게 아니라 **누락된 thinking 을 끌어내는 것**.
 
-- DMU 14 섹션을 **차례 질문** 으로 던짐. 한꺼번에 보내지 말고 한 번에 1~2개씩.
-- **표면 답변 거부**: "좋아 보여서 / 유명해서 / 사람들이 많이 써서 / 그냥 해보고 싶어서" 류는 받지 않고 다시 push — "그 선택의 trade-off 는 무엇이었나요? latency? maintenance cost? data quality? rollback 가능성?"
-- **실패 조건은 조건문 형태로 강제**: "잘 안 됐다" 거부 → "어떤 입력일 때 깨졌나요? / 어떤 사용자 행동 패턴에서 무너졌나요?"
-- **Invariant 는 형식 강요**: `[조건/상황]에서는 [구조/전략]이 [효과]를 만들지만, [제약/실패 조건]에서는 [보완책]이 필요하다`. 이 형식 안 맞으면 다시 적게 함.
-- **Cross-link 부족 시**: 사용자에게 "이 결정이 tree 의 어떤 개념과 닿아 있나요? `[[laplace-transform]]`, `[[chain-of-thought]]` 같은 기존 페이지 중에" 같이 candidate 제시.
+- 이미 확보된 decision kernel은 다시 묻지 않고 **빠진 증거만** 질문한다. 한 번에 1~2개씩 묻는다.
+- **표면 답변은 binding constraint로 구체화**한다. "좋아 보여서 / 유명해서"라고 답하면 "다른 선택을 탈락시킨 실제 제약이 비용, 시간, 유지보수, 데이터 품질, 되돌리기 가능성 중 무엇이었나요?"처럼 좁혀 묻는다.
+- **검증 상태를 먼저 분리**한다. 실제 관찰, 그 관찰에 대한 해석, 아직 확인하지 않은 기대를 한 문장에 섞지 않는다.
+- **실패·재검토 조건은 관찰 가능한 신호로 묻는다.** "잘 안 됐다"가 아니라 어떤 입력, 사용자 행동, 비용, 품질 저하 또는 맥락 변화가 결정을 다시 열게 하는지 묻는다.
+- **Invariant와 재사용 규칙은 선택 사항**이다. 한 사례에서 일반 규칙을 억지로 만들지 않고, 반복 관찰이나 충분한 메커니즘 근거가 있을 때만 끌어낸다.
+- **Cross-link는 후보를 제시하되 padding하지 않는다.** 기존 tree에서 프로젝트, 제약, 메커니즘 페이지를 찾고, 관계를 설명할 수 있는 것만 연결한다.
 
 ## Workflow
 
@@ -41,32 +43,26 @@ skill 의 핵심 가치는 빈 헤더를 채우게 하는 게 아니라 **누락
 3. Last ~20 lines of `<NAITE_ROOT>/tree/rings.md` — 최근 맥락.
 4. Trigger 모드 판별. 자연 감지·작업 종료 모드면 사용자에게 한 줄 확인 후 진행.
 
-### 1. Question pass (14 sections)
+### 1. Decision-kernel pass
 
-각 섹션을 dialogue 로 끌어냄. 사용자 응답 부족하면 push, 형식 이탈하면 재요청.
+대화와 기존 페이지에서 이미 확인된 내용을 먼저 채운 뒤, 빠진 항목만 질문한다.
 
-1. **Context** — 어떤 프로젝트·학습·맥락에서 이 결정이 발생했나? 자원·시간·데이터·시스템 제약은?
-2. **Problem** — 한 문장으로: `[대상]에서 [조건] 때문에 [원하는 결과]가 달성되지 않았다`.
-3. **Decision** — 실제로 무엇을 선택·보류·기각했나?
-4. **Alternatives** — 비교한 대안과 각 대안의 장단점 / 기각 이유.
-5. **Rationale** — 왜 그 선택? **Trade-off 형태로 강제** (latency / maintenance / data quality / rollback / 목표가 benchmark vs 실사용성 등).
-6. **Mechanism** — 이 선택이 작동한다고 예상한 구조적 이유. 입력→처리→중간 표현→병목 흡수→trade-off 수용 흐름.
-7. **Outcome** — 실제 결과 (정량 + 정성). 결과 미검증이면 명시: "Outcome 미검증. 검증하려면 `[필요 실험]`."
-8. **Failure mode** — 조건문 형태 ≥ 1. 단순 "잘 안 됐다" 거부.
-9. **Iteration** — 결과 보고 무엇을 바꿨나? 변경 전/후 + 이유. 없으면 "아직 iteration 없음. 다음 관찰 기준은 `[기준]`."
-10. **Invariant** — 일반화 가능 규칙. 위 강요 형식 사용. 도구 이름 대신 구조 우선.
-11. **Reusability — Use when**: 조건들 (≥ 2).
-12. **Reusability — Avoid when**: 조건들 (≥ 1).
-13. **Related** — 관련 개념·프로젝트·실험·실패 기록 wikilinks.
-14. **Next action** — 이 결정에서 이어지는 다음 행동 1개 (선택 사항, 없으면 생략).
+1. **Choice and state** — 무엇을 선택·기각·보류·되돌렸으며, 지금도 유효한가?
+2. **Context and binding constraint** — 어떤 문제와 제약이 결정을 필요하게 했고, 실제로 어느 제약이 선택을 갈랐는가?
+3. **Alternatives** — 현실적으로 고려한 대안과 기각 이유는 무엇인가? 실제 대안이 없었다면 그 사실과 이유를 적는다.
+4. **Expected mechanism** — 이 선택이 입력, 처리, 병목, 결과를 어떻게 바꿀 것으로 보았는가?
+5. **Validation state** — 무엇을 실제로 관찰했고, 무엇은 해석이며, 무엇은 아직 검증하지 않은 기대인가? 미검증이면 필요한 관찰이나 실험을 적는다.
+6. **Failure and revisit condition** — 어떤 신호, 맥락 변화, 비용 또는 결과가 이 결정을 무효화하거나 다시 열게 하는가?
 
-빈 섹션은 본문에 헤더 자체를 쓰지 않음. 14개 다 채우려고 억지 부리지 않음.
+Outcome, iteration, rollback cost, reuse condition, invariant, related pages, next action은 실제 근거가 있을 때만 더한다. 빈 섹션은 쓰지 않는다.
 
 ### 2. Cross-link 검수
 
-본문의 outbound wikilink 개수 셈. < 3 이면:
-- 사용자에게 "이 결정이 닿는 기존 tree 페이지 더 없나요? 후보: `[[...]]` `[[...]]`" 제시.
-- 응답 받아 본문에 prose idiom 으로 박음 (`builds on`, `applies to`, `trade-off: A vs B` 등).
+본문의 wikilink마다 주변 산문이 실제 관계를 설명하는지 확인한다.
+
+- 프로젝트, binding constraint, 작동 메커니즘, 대안, 영향을 받는 개념 중 tree에 존재하는 페이지를 후보로 제시한다.
+- 관계를 설명할 수 없는 링크는 추가하지 않는다. 이미 있는 decorative link는 수선 범위에서 제거하거나 관계를 설명한다.
+- 필요한 개념이 tree에 없으면 § 3의 stub 제안으로 넘긴다.
 
 ### 3. 누락 개념 → stub 제안
 
@@ -92,8 +88,13 @@ updated: YYYY-MM-DD
 ---
 ```
 
-본문에 prose idiom 박혔는지 self-check:
-- `decided ... over` / `failed when` / `trade-off:` / `validates` / `falsifies` / `builds on` / `instance of` / `applies to` 중 ≥ 1.
+본문을 `docs/CONVENTIONS.md § Study-note quality dimensions`와 `§ Page-kind quality contracts`의 decision 계약으로 self-check한다. H 계층은 실제 결정 흐름을 드러내고, 짧은 decision에 빈 형식용 heading을 만들지 않으며, `## Source` 앞 본문에는 em dash (`—`)를 쓰지 않는다. 특히 다음을 확인한다.
+
+- 선택의 현재 상태와 binding constraint가 드러나는가?
+- 실제 대안과 예상 메커니즘이 있는가, 또는 없는 이유를 정직하게 적었는가?
+- 관찰한 결과, 해석, 미검증 기대를 구분했는가?
+- 실패·rollback·재검토 조건 중 해당하는 신호가 있는가?
+- wikilink가 개수 채우기가 아니라 reasoning을 지탱하는가?
 
 ### 5. `tree/trunk.md` 업데이트 (hub 자격 있을 때만)
 
@@ -130,12 +131,12 @@ updated: YYYY-MM-DD
 - 작성된 페이지 경로
 - 추가된 stub 목록
 - bi-directional prose 박은 페이지 목록
-- 14 섹션 중 채워진 것 / 빠진 것
+- decision kernel에서 확인된 것 / 아직 미검증인 것
 - 다음 행동 (있으면)
 
 ## Templates
 
-### Synapse page (DMU 14 sections, 모두 채운 예시)
+### Standalone decision page (adaptive composition example)
 
 ```markdown
 ---
@@ -149,83 +150,39 @@ created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
 
-# {Decision title in plain words}
+# {무엇을 어떻게 결정했는지 드러나는 제목}
 
-## Context
+{YYYY-MM-DD 현재 무엇을 선택·기각·보류했는지, 그리고 결정이 잠정적인지 확정적인지를 첫 문단에서 바로 적는다.}
 
-{프로젝트·학습·맥락. 자원·제약. 결정이 필요했던 이유.}
+## 무엇이 선택을 갈랐나
 
-## Problem
+{결정이 필요했던 문제와 실제 binding constraint를 설명한다. 현실적으로 검토한 대안은 같은 비교 축으로 서술한다. 대안이 없었다면 만들지 말고, 비교하지 못한 이유를 남긴다.}
 
-> `[대상/시스템]에서 [조건] 때문에 [원하는 결과]가 달성되지 않았다.`
+## 이 선택이 작동할 것으로 본 이유
 
-## Decision
+{입력, 처리, 병목, 결과가 어떻게 달라질 것으로 보았는지 설명한다. 관련 메커니즘이나 프로젝트는 관계가 드러나는 문장으로 연결한다.}
 
-> `[선택한 방법]을 적용했다.` 또는 `현재 보류, 추가 검증 기준 먼저 세우기로.`
+## 현재 확인한 것과 아직 모르는 것
 
-## Alternatives
+{실제로 관찰한 결과와 그 해석을 분리한다. 기대에 머무는 결과는 아직 확인하지 않았다고 밝히고, 어떤 관찰이나 실험이 필요한지 적는다.}
 
-- **Alt A**: 장점 / 단점 / 기각 이유
-- **Alt B**: 장점 / 단점 / 기각 이유
+## 다시 결정을 열 조건
 
-## Rationale
+{어떤 신호, 비용, 품질 저하, 사용자 행동 또는 맥락 변화가 결정을 무효화하거나 재검토하게 하는지 적는다. 되돌리기 비용이 중요하면 함께 적는다.}
 
-`decided [[A]] over [[B]] when [[constraint]]`. 
-
-{trade-off 형태 prose. 표면 표현 금지.}
-
-## Mechanism
-
-{입력·처리·병목·흡수 메커니즘. `builds on [[concept]]`.}
-
-## Outcome
-
-- 정량: latency / cost / accuracy / precision / recall
-- 정성: 좋아진 점 / 나빠진 점 / 예상과 달랐던 점
-
-## Failure mode
-
-`failed when [[condition]]`.
-- 조건 1
-- 조건 2
-
-## Iteration
-
-- 변경 전 / 후 / 이유 / 다음 실험
-
-## Invariant
-
-`[조건]에서는 [구조]가 [효과]를 만들지만, [제약]에서는 [보완책]이 필요하다.`
-
-## Reusability
-
-### Use when
-- 조건 1
-- 조건 2
-
-### Avoid when
-- 조건 1
-
-## Related
-
-- builds on [[...]]
-- applies to [[project-...]]
-- trade-off: [[a]] vs [[b]]
-- see also [[...]]
-
-## Next action
-
-- [ ] 다음 행동 1개
+{결정 변경 이력, 다음 증거, 다른 페이지와의 연결은 실제 내용이 있을 때만 자연스러운 heading 또는 마무리 문단으로 더한다. 단순 링크 목록은 쓰지 않는다.}
 ```
+
+이 예시는 decision kernel의 배열 한 가지일 뿐이다. 실제 페이지의 H2 이름과 개수는 결정의 논리 흐름에 맞춰 바꾸며, 짧은 결정은 두세 절이나 몇 문단만으로도 충분할 수 있다. 위 heading을 고정 양식처럼 복사하지 않는다.
 
 ### Synapse 짧은 형태 (다른 concept 페이지에 박는 prose)
 
-DMU 가 별도 페이지가 될 만큼 무겁지 않으면, 기존 concept 페이지의 본문에 짧은 단락으로 박음:
+별도 페이지가 필요할 만큼 무겁지 않으면, 기존 concept 페이지의 본문에 decision kernel을 짧은 단락으로 남긴다.
 
 ```markdown
-## In my projects
+## 프로젝트에서의 판단
 
-2026-04 [[project-portfolio-site]] 에서 retrieval precision 부족 문제로 도입을 고려했으나 latency budget 때문에 보류. `decided [[lightweight-similarity-filter]] over [[2-stage-reranking]] when [[interactive-latency-budget]]`. failed when [[corpus-noisy-and-abstract-queries-coexist]] — 이때는 lightweight 도 무너짐. invariant: noisy corpus 에서 recall-first → rerank 패턴은 precision 회복에 유리하지만 latency budget 엄격하면 caching/router 선행 필요.
+2026-04 [[project-portfolio-site]]에서 retrieval precision을 높이기 위해 [[2-stage-reranking]]을 검토했지만, [[interactive-latency-budget]]을 넘을 가능성 때문에 보류했다. 현재 관찰한 것은 latency 예산뿐이며 precision 개선 효과는 아직 검증하지 않았다. 캐시를 적용한 실험에서 예산 안에 들어오면 결정을 다시 연다.
 ```
 
 이런 prose 가 여러 페이지에 박혀 있으면 grep 으로 의사결정 thread 가 즉시 surface.
@@ -233,10 +190,11 @@ DMU 가 별도 페이지가 될 만큼 무겁지 않으면, 기존 concept 페�
 ## What this command never does
 
 - 새 type / 새 frontmatter 필드 / 새 메타 도메인 태그 신설 안 함.
-- DMU shape 페이지를 별도 인덱스 (`## Domain: dmu`) 로 분리 안 함 (애초 그 섹션은 폐기됨).
+- Decision-shape 페이지를 별도 메타 인덱스로 분리하지 않음.
 - Career 관련 frontmatter / `[[fde-skill-*]]` 페이지 사전 생성 안 함 (docs/CONVENTIONS.md § Decision thread shape 의 grep-on-demand 원칙 준수).
 - 파일명 `DMU-YYYYMMDD-...` prefix 안 씀.
-- 빈 14 섹션을 강제로 채우지 않음 — 누락은 생략.
+- 고정 섹션을 강제로 채우지 않음. 미검증과 누락을 추측으로 메우지 않음.
+- outbound wikilink 개수를 맞추려고 decorative link를 추가하지 않음.
 - frontmatter `domains` 는 선택한 `subject` path 의 top-level 에서 기계적으로 도출해 함께 쓴다. 임의 값을 선택하지 않는다. `care --check` 는 stale cache 를 보고만 한다. hub 후보면 별도로 `trunk.md` 의 `## Knowledge domains § <domain>` 주요 라인에 한 줄 더한다.
 - 모든 열매 페이지를 자동으로 trunk.md 에 등재 안 함 — hub 후보일 때만.
 - `git commit` 안 함.

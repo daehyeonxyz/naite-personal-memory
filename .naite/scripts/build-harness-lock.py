@@ -6,7 +6,7 @@ The lock records, at release time, the sha256 of every file the starter kit owns
 `/naite upgrade` compares local file hashes against this lock to tell
 "unmodified, safe to auto-replace" apart from "user-customized, propose 3-way".
 
-Harness set (tracked files only):
+Harness set (tracked and nonignored files):
     CLAUDE.md, AGENTS.md, SOUL.md, README.md, LICENSE, .gitignore,
     .claude/**, .agents/**, .claude-plugin/**, docs/**, .naite/scripts/**,
     .naite/templates/**, .naite/hooks/**
@@ -42,8 +42,9 @@ HARNESS_DIR_PREFIXES = ('.claude/', '.agents/', '.claude-plugin/', 'docs/', '.na
 
 def list_harness_files() -> list[str]:
     out = subprocess.run(
-        ['git', '-C', str(NAITE_ROOT), '-c', 'core.quotePath=false', 'ls-files'],
-        capture_output=True, text=True, check=True,
+        ['git', '-C', str(NAITE_ROOT), '-c', 'core.quotePath=false',
+         'ls-files', '--cached', '--others', '--exclude-standard'],
+        capture_output=True, text=True, encoding='utf-8', check=True,
     ).stdout.splitlines()
     selected = []
     for path in out:

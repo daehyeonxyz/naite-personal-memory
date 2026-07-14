@@ -67,7 +67,9 @@
 - **LEAF-2 한 문장 stub 금지:** leaf 는 한두 문장 요약이 아니라, 하위 개념과 개념 사이의 관계를 담은 문단으로 구성한다 (§ 2 PROMPT-2 가 입력에 요구한 깊이와 대칭).
 - **LEAF-3 연결:** 최소 한 개의 load-bearing wikilink(설명 산문이 붙은 link)로 나무의 다른 페이지에 잇는다. orphan 페이지는 실패다.
 - **LEAF-4 "원본 필요" 의 정직한 사용:** "원본 필요 / 원본 자료 필요" 표시는 ingest 한 소스에 **실제로 없던** 자료에만 쓴다. **소스에 있던 자료를 설명하지 않고 건너뛰는 대체물로 쓰면 실패다.** project/synthesis 페이지가 transcript 에 있던 메커니즘을 "원본 필요" 로 미루는 것이 대표적 실패 클래스다 (dogfood 에서 zipzoom, fde-domain-framework 가 이 경우였다).
+- **LEAF-5 kind별 claim spine:** `docs/CONVENTIONS.md § Page-kind quality contracts`에서 해당 `kind`가 요구하는 정보 단위를 확인한다. 고정 헤더를 채우는 것이 아니라, concept의 메커니즘·경계, decision의 검증 상태·재검토 조건, insight의 근거·적용 경계처럼 그 페이지가 맡은 추론을 본문에 보존해야 한다. source가 뒷받침하지 않는 빈칸은 추측으로 채우지 않는다.
+- **LEAF-6 학습 노트 품질:** `docs/CONVENTIONS.md § Study-note quality dimensions`의 네 축을 함께 확인한다. H 계층과 Markdown 요소가 추론 구조를 드러내고, 정의·메커니즘·수식 해석·예시·경계가 나중의 재학습을 가능하게 하며, 서술이 사전식 정의나 rubric-shaped bullet dump로 무너지지 않아야 한다. 본문에는 em dash (`—`)를 쓰지 않고 문장 관계에 맞는 한국어 문장부호로 풀어 쓴다. 길이나 heading 수는 대리 지표일 뿐이다.
 
 미달 시: 그 항목을 stub 으로 정직하게 두되 `seeds.md` 에 깊이 보강 후보로 적고, **소스에 있던 자료라면 미루지 말고 펼쳐 쓴다.**
 
-작성 시점 게이트는 이미 shipped 다: `ingest.md § 5` 가 각 `form=prose` leaf 를 완성하기 직전 이 루브릭(LEAF-1~4)으로 self-check 하고 미달 leaf 를 `tree/` 에 내보내지 않는다. `lint-ontology.py § 3k` 도 warn-only 로 얕은 leaf 를 계측한다. 남은 Phase 2 는 그 § 3k 계측을 blocking 으로 승격할지 결정하는 것뿐이다(현재는 non-blocking).
+작성 시점 게이트는 이미 shipped 다: `ingest.md § 5` 가 각 `form=prose` leaf 를 완성하기 직전 이 루브릭(LEAF-1~6)으로 self-check 하고 미달 leaf 를 `tree/` 에 내보내지 않는다. `lint-ontology.py § 3k` 도 warn-only 로 얕은 leaf 를 계측한다. 기계 검사는 LEAF-1~6의 의미적 완결성을 대신하지 않으며, blocking으로 승격하더라도 thin-body와 link 부재 같은 proxy만 다룬다.

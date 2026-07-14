@@ -57,6 +57,8 @@ For one-page repair, inspect inbound entries for the touched slug before editing
 
 Read the requested pages, their frontmatter, and the directly relevant links. Produce a prose verdict with concrete page examples. Avoid scores, grades, thresholds, and rubric language.
 
+Judge semantic completeness against `docs/CONVENTIONS.md § Page-kind quality contracts` and separately inspect the four axes in `§ Study-note quality dimensions`: Markdown form, study effectiveness, content composition, and writing manner. Do not reward length by itself: a page is healthy when its kind-specific claim spine is usable and source-grounded, its H hierarchy exposes the reasoning structure, and a later reader can reconstruct the subject without reopening the source. Distinguish missing evidence from weak writing; the former is `source-risk` or an explicit gap, not permission to invent content.
+
 Verdicts use plain labels, not scores: `healthy` / `thin-but-acceptable` / `repair-candidate` / `source-risk` / `system-rule-candidate`. `source-risk` means the page reads well but its formulas, definitions, theorems, conditions, or numbers must not be rewritten without source review (`docs/CONVENTIONS.md § Output quality contract`, source-fidelity ceiling); defer the repair rather than risk distorting the source.
 
 Review answers should say:
@@ -72,7 +74,7 @@ Use this mode for `/naite care --daily`, usually immediately after `/naite care 
 
 Step A. Read the latest `.naite/reports/daily/YYYY-MM-DD-care-check.md` if present; otherwise use the current care --check report in the conversation. Also read `.naite/ontology/tree-manifest.json` and `.naite/ontology/tree-dependencies.json`.
 
-Step B. Take the care --check report's **우선 검토 후보 3개** as the starting queue. If that section is missing, derive a queue from Tier 1 findings in this order: missing targets/stubs, output quality guard, fruit coverage, autonomy garbage.
+Step B. Take the care --check report's **우선 검토 후보 3개** as the starting queue. If that section is missing, derive a queue from Tier 1 findings in this order: missing targets/stubs, output quality guard, decision/insight quality, autonomy garbage.
 
 Step C. For each candidate, open the relevant source page or dependency-map source. Decide whether the finding is `false-positive`, `intentional-debt`, `repair-candidate`, or `schema-pressure`. Preserve the care --check label if it still fits.
 
@@ -109,10 +111,17 @@ For large scopes, first gather repeatable signals:
 - source/process voice in body,
 - unnecessary English sentence spine,
 - generic rubric headings,
+- invalid or decorative H hierarchy: multiple H1s, skipped levels, empty/thin leaf headings, repeated headings, or `## Source` before the end. A parent heading followed by meaningful child headings is valid,
 - raw path leaks before `## Source`,
 - mojibake,
 - shallow link lists that do not explain the relation,
 - pages whose body depends on raw notes or PDFs to be understood.
+- missing kind-specific claim spine: concept without mechanism or boundary, decision without validation/revisit state, insight without evidence or scope, project without dated evidence.
+- formulas without conditions, variable meaning, or interpretation; name-only examples that do not replay the mechanism.
+- causal prose fragmented into bullets, mixed-granularity lists, untagged code fences where a language exists, prose or formulas wrapped as code, decorative blockquotes, or non-GFM callouts.
+- dictionary-style definitions, rubric-shaped bullet dumps, and paragraphs that assert importance without explaining why.
+- observation, source claim, interpretation, and hypothesis blended as if they had the same certainty.
+- em dash (`—`) used in the body before `## Source`; rewrite the relation with Korean punctuation and sentence structure instead of blind hyphen replacement.
 
 Then cluster by cause and fix in batches only when the user asked for repairs. Store a durable report if the sweep result matters beyond the current turn.
 
@@ -140,6 +149,7 @@ Branch pages must read as lecture-native, self-contained tree pages. The body sh
 Required:
 
 - Body prose is Korean by default. English technical terms, formulas, model names, course-native headings, and established abbreviations are allowed when they carry precision.
+- Body before `## Source` contains no em dash (`—`). Use commas, periods, colons, parentheses, or line breaks according to the relation.
 - Generic headings use Korean unless the lecture itself uses the English term as the conceptual unit.
 - Handwriting, slide emphasis, examples, and diagrams are absorbed into explanatory prose. Do not describe them as "the note says" or "the PDF shows".
 - Raw paths appear only in trailing `## Source` blocks.
@@ -158,6 +168,7 @@ For touched pages, inspect only the body before `## Source` unless a rule says o
 
 Flag and fix:
 
+- em dash (`—`, U+2014) anywhere in the body before `## Source`
 - `roots/`, `` `raw` ``, `Staging`, `Source Staging`, `Archived source bundle`
 - `PDF page`, `raw PDF`, `source PDF`, `source page`, `lecture notes`, `page range`, `render`, `image-read`, `backfill`, `run-log`, `extraction`
 - `필기에는`, `필기에서`, `강의 노트`, `노트에서는`, `원문에서는`, `원자료`, `자료에서는`, `페이지에서는`, `이 페이지에서는`, `이 자료`

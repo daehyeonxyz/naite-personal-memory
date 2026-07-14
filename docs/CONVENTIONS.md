@@ -42,7 +42,7 @@ Tree maintenance has two user-facing modes, both under `/naite care`:
 - Files: `lowercase-kebab-case.md`. No spaces, no capitals. One concept per file.
 - Avoid Windows reserved device names as a slug (`con`, `prn`, `aux`, `nul`, `com1`–`com9`, `lpt1`–`lpt9`, any case, with or without extension). A `tree/con.md` commits fine on macOS/Linux but fails to check out on Windows (`Invalid path`), breaking the cross-platform Git-shared vault. The pre-commit guard blocks these; if a concept collides, disambiguate the slug (e.g. `con-argument.md`).
 - Wikilinks: `[[page-slug]]` or `[[page-slug|Display Text]]`. Plain `[[...]]` only — no typed relations (relations live in prose; see § Soft ontology).
-- Aliases: list at top of page under `## Also known as` heading. `trunk.md` lists only the canonical slug.
+- Aliases: `form=prose` leaf에서 한두 개의 단순 별칭은 opening 문장에 자연스럽게 병기한다. 별칭이 셋 이상이거나 서로 다른 범위·용법을 구분해야 할 때만 `## 다른 이름과 구분`을 두고, bare list가 아니라 무엇이 동의어이고 무엇이 더 좁거나 넓은지 설명한다. 별칭만 담은 장식성 H2는 만들지 않는다. Course index와 template-owned page는 해당 template의 alias heading을 따른다. `trunk.md` lists only the canonical slug.
 - **Migration 보존본 예외:** `/naite start` 가 가져온 메모리 export 의 영구 보존본은 `roots/conversations/_transcripts/migration-<service>.md` 로 **날짜 prefix 없이 서비스별 stable 이름**을 쓴다. 재import 시 같은 파일을 갱신하기 위한 의도된 예외다 (`<service>` = `chatgpt`/`gemini`/`claude`). 일반 transcript 의 `YYYY-MM-DD-<slug>.md` 규칙과 다르다.
 
 ---
@@ -132,23 +132,18 @@ A decision page has **`kind=decision`** (occasionally embedded as decision-shape
 
 **File naming**: standalone decision pages use `decision-YYYY-MM-DD-<slug>.md` format, where `YYYY-MM-DD` matches frontmatter `created`. This prevents slug collision as decisions accumulate and provides session-cluster grouping in file listings.
 
-Body shape — used as needed, empty sections dropped:
+Decision pages preserve a **decision kernel**, not a fixed form:
 
-- **Context** — what circumstance forced the choice
-- **Problem** — what was at stake
-- **Decision** — what was chosen
-- **Alternatives** — what was considered but rejected
-- **Rationale** — *why* (the binding constraint)
-- **Mechanism** — how the decision plays out
-- **Outcome** — what happened (after-the-fact)
-- **Failure mode** — when it would break
-- **Iteration** — what changed since
-- **Invariant** — what must remain true
-- **Reusability** — does this recur?
-- **Related** — `[[wikilinks]]`
-- **Next action** — open thread (if any)
+- **Choice and state** — what was chosen, rejected, deferred, reversed, or remains provisional.
+- **Context and binding constraint** — what made a decision necessary and which constraint actually decided it.
+- **Alternatives** — what credible options were considered. If there was no meaningful alternative, say so instead of inventing one.
+- **Expected mechanism** — why the choice should produce the intended effect.
+- **Validation state** — distinguish observed outcome, interpretation, and untested expectation. Never write an expected result as an outcome.
+- **Failure and revisit condition** — what evidence, context change, or cost would invalidate or reopen the decision.
 
-This is a **reference structure, not a strict template**. `/naite fruit` walks the user through it as dialogue, not a form.
+Outcome, iteration, invariant, reuse conditions, related pages, and next action deepen the record when evidence exists. They are not mandatory headers. Decision depth follows consequence and uncertainty: a reversible local choice can be short, while an expensive or hard-to-reverse choice should preserve alternatives, evidence, rollback cost, and monitoring signals in more detail.
+
+This is a **reference structure, not a strict template**. `/naite fruit` asks only for missing decision-kernel evidence. Empty sections, fabricated alternatives, generic invariants, and guessed outcomes are worse than an explicitly incomplete record.
 
 A decision thread can also live as a short prose paragraph **embedded in another concept page** ("In my projects" or similar section). Both forms are equally valid synapses. A standalone page is just a paragraph that grew large enough to deserve its own slug.
 
@@ -262,6 +257,7 @@ This is a producer contract first and a validator rule second. Page-writing skil
 Required:
 
 - Body prose is Korean by default. English technical terms, formulas, model names, course-native headings, quoted titles, and established abbreviations are allowed when they carry precision.
+- 본문에서는 em dash (`—`, U+2014)를 사용하지 않는다. 문장 관계에 맞춰 쉼표, 마침표, 콜론, 괄호, 또는 줄바꿈으로 풀어 쓴다. 기계적으로 하이픈으로 치환해 의미를 흐리지 않는다. append-only인 `tree/rings.md`의 기존 이력은 소급 수정하지 않지만, 새로 쓰는 rings 항목은 이 규칙을 따른다.
 - Generic headings are Korean unless the lecture/source itself uses the English phrase as the conceptual unit.
 - Handwriting, slide emphasis, examples, diagrams, and source-specific structure are absorbed into explanatory prose. Do not say that the handwriting, PDF, page, note, or raw source "says" something.
 - Raw paths appear only in the trailing `## Source` block. No `roots/` path should appear in the body before `## Source`.
@@ -272,6 +268,7 @@ Required:
 
 Forbidden in body prose before `## Source`:
 
+- em dash (`—`, U+2014). 인용하거나 보존해야 하는 원제에 포함돼 있으면 trailing `## Source`에만 둔다.
 - raw/process voice such as `raw`, `staging`, `source bundle`, `PDF page`, `page range`, `render`, `image-read`, `backfill`, `run-log`, `extraction`.
 - Korean source-voice phrasing such as "필기에는", "필기에서", "강의 노트에는", "노트에서는", "원문에서는", "원자료", "자료에서는", "페이지에서는", "이 페이지에서는", "이 자료".
 - generic course-page rubric headings such as `Core idea`, `Details`, `Overview`, `Related`, `Maps to`, `Source Staging`, `Practice & Assignments`, unless an explicit template allows them. `course-*-00-index.md` meta pages are the standing exception: their templates (`grow-branch.md § Templates`) mandate these headings and a `Staging: roots/...` pointer, so the heading/leakage rules do not apply there (mojibake check still does).
@@ -281,6 +278,84 @@ Forbidden in body prose before `## Source`:
 After writing or rewriting pages, run the content guard described in `/naite care` and fix touched pages immediately. `/naite care --check` can surface deterministic violations later, but producer skills should prevent them first.
 
 Leaf-page depth rules (thin-leaf demotion, lint thresholds) live in `docs/QUALITY.md § Leaf-page depth rubric`.
+
+---
+
+## Study-note quality dimensions
+
+페이지 품질은 정보량 하나로 판정하지 않는다. 금융공학 필기에서 유효한 기준은 긴 글이 아니라, 나중에 다시 읽을 때 의미와 판단을 재구성할 수 있게 만드는 **형식, 내용 구성, 학습성, 서술 방식**이다. Markdown form은 모든 `form=prose` 페이지에 적용한다. Study effectiveness의 일곱 질문은 `concept`, `source-record`처럼 설명과 학습이 목적일 때 전부 적용하고, decision·insight·project·essay·personal에는 아래 kind 계약이 요구하는 판단을 독자가 복원할 수 있는지로 적용한다. Content composition과 writing manner는 모든 kind에 적용하되 essay·personal의 사용자 voice 보존 상한을 넘지 않는다.
+
+### Markdown form
+
+- H1은 페이지 제목 하나만 둔다. H2는 페이지의 주요 추론 단계나 자연스러운 큰 골자를, H3는 한 H2 아래의 병렬 하위 개념을 나타낸다. H4는 kind와 내용 유형에 관계없이 실제로 네 단계 의미 계층이 필요할 때만 쓴다.
+- H 단계를 건너뛰거나, 같은 말을 다른 깊이에서 반복하거나, 한두 문장을 꾸미기 위해 빈약한 heading을 만들지 않는다. Leaf heading 다음에는 해당 단위를 이해시키는 산문, 식, 표, 예시가 와야 한다. 상위 heading은 바로 아래의 병렬 child headings을 묶는 용도로 내용 없이 둘 수 있다.
+- Heading은 `개요`, `세부`, `관련` 같은 범용 분류표가 아니라 그 절에서 배우는 질문이나 개념을 이름 붙인다. `## Source`만 trailing provenance block으로 예외이며 항상 마지막에 둔다.
+- 수식은 등장 전에 무엇을 계산하는지와 성립 조건을 밝히고, 등장 후에는 기호와 결과를 해석한다. 변수 정의나 해석 없이 식만 놓지 않는다.
+- 표는 같은 축으로 비교할 때, 목록은 순서, 조건, 병렬 항목을 보여 줄 때 사용한다. Bullet끼리는 같은 문법적 역할과 입자도를 가져야 하며, 산문으로 설명해야 할 인과관계나 논증을 목록으로 잘게 쪼개지 않는다.
+- 코드블록은 실행 가능한 코드, 명령, 구조화된 literal, 의사코드처럼 원형 보존이 필요한 내용에만 쓴다. 문법이 있는 코드는 language tag를 붙이고, 일반 설명이나 수식은 코드블록으로 감싸지 않는다.
+- `>` 인용은 실제 인용문이나 그대로 보존해야 하는 발화를 표시할 때만 쓴다. 일반 주장을 강조하려고 blockquote로 꾸미지 않는다. Note, tip, warning은 GFM alert 문법을 사용한다.
+- Callout과 굵은 글씨는 오해, 핵심 구분, 적용 조건처럼 재학습 때 회수할 가치가 있는 지점에만 쓴다. 문단마다 강조를 반복해 중요도의 위계를 없애지 않는다.
+
+### Study effectiveness
+
+페이지를 다시 읽은 사람은 원 source를 열지 않고도 다음 질문에 답할 수 있어야 한다. 모든 질문을 heading으로 만들라는 뜻은 아니다.
+
+1. 이것은 무엇이며 어떤 문제를 푸는가?
+2. 어떤 입력, 구조, 과정, 원인으로 결과가 나오는가?
+3. 공식이나 절차가 있다면 각 항과 단계는 무엇을 뜻하는가?
+4. 구체적인 사례에서는 어떻게 읽거나 계산하거나 적용하는가?
+5. 어떤 가정과 범위에서 성립하고 언제 실패하는가?
+6. 무엇과 혼동하기 쉽고 차이는 어디서 생기는가?
+7. 어떤 선행 개념과 응용으로 이어지는가?
+
+예시는 이름만 드는 장식이 아니라 개념의 작동을 한 번 재현해야 한다. Source에 그림, 손필기 강조, worked example이 있었다면 시각물을 언급하는 대신 그 자료가 가르치던 관계와 판단 단계를 산문과 식으로 흡수한다.
+
+### Content composition
+
+- 정의, 직관, 형식화, 예시, 경계가 서로 다른 일을 하도록 배열한다. 같은 정의를 여러 절에서 바꾸어 반복하지 않는다.
+- 독자가 이미 알아야 하는 전제는 load-bearing wikilink와 한 문장 설명으로 연결하고, 현재 페이지가 책임져야 할 핵심 메커니즘은 다른 페이지로 미루지 않는다.
+- 공식과 수치의 정확성, 사용자의 직접 관찰, source claim, 해석, 아직 검증하지 않은 가설을 구분한다. 불확실성을 지우면서 매끈하게 만드는 것은 품질 향상이 아니다.
+- 페이지의 길이는 개념의 reasoning burden이 결정한다. 짧아도 재구성이 가능하면 충분하고, 길어도 목차식 나열이나 중복 설명이면 미달이다.
+
+### Writing manner
+
+- 한국어 강의 필기처럼 정의를 제시한 뒤 `왜 그런가`, `그래서 무엇이 달라지는가`, `어디까지 성립하는가`를 이어 설명한다. 사전식 정의, 제품 소개문, AI가 만든 rubric 문구, 서로 끊긴 bullet dump로 쓰지 않는다.
+- em dash (`—`)로 문장을 영어식 삽입구처럼 이어 붙이지 않는다. 인과, 대비, 부연, 조건 관계를 한국어 문장과 문장부호로 명시한다.
+- 문단 사이의 전환은 인과, 대비, 조건, 확장 관계를 드러낸다. `핵심이다`, `중요하다` 같은 평가어만 반복하지 말고 무엇 때문에 중요한지 적는다.
+- 전문용어는 정확성을 위해 쓰되 처음 등장할 때 한국어 의미나 역할을 함께 준다. 번역투와 불필요한 영어 sentence spine은 피한다.
+- 사용자가 직접 쓴 essay와 personal voice는 보존한다. 다른 kind에서도 source의 강조와 문제 풀이 순서는 살리되, source를 가리키는 메타 문장은 제거한다.
+
+이 네 축은 `kind`별 claim spine을 대체하지 않는다. Markdown이 단정해도 decision의 검증 상태가 없거나, 내용이 풍부해도 insight의 근거와 범위가 섞여 있으면 그 페이지는 미달이다.
+
+---
+
+## Page-kind quality contracts
+
+Every `form=prose` leaf needs a **claim spine**: the opening states what the page is about and why it matters, the body explains how the claim works or what supports it, and the ending makes its scope, consequence, or connections usable. Depth is determined by the page's reasoning burden, not by a word count or a fixed heading template.
+
+The contracts below define information that must be present when it applies. They do not require matching section names. If the source does not support a required unit, mark the gap or keep the item in `seeds.md`; do not fill it from generic model knowledge.
+
+| `kind` | The page must make usable | Common failure |
+|---|---|---|
+| `concept` | Precise definition and problem/use; mechanism or causal structure; assumptions, boundary, or common confusion; an interpretation, worked example, or source-backed formalism when it improves understanding; load-bearing links that explain prerequisites, contrasts, or applications. The sequence must let a reader reconstruct and apply the concept later. | Dictionary definition followed by a bare `Related` list; equations without term meaning or conditions; name-only examples; scope so broad that no reusable mechanism remains. |
+| `entity` | What the person, organization, tool, model, or product is; why it belongs in this tree; relevant capabilities or role; important limitations and relationship to the user's work. Capabilities, availability, version, or pricing that may change need available evidence and an explicit as-of boundary. | Product brochure, changelog dump, identity-only stub with no relevance, or current-looking product claims with no date or provenance. |
+| `source-record` | The source unit's question or claim spine; mechanisms, evidence, examples, and conditions the source actually provides; links to reusable concepts; a trailing provenance block. Source-fidelity ceiling always applies. | Table of contents or summary bullets that require reopening the source; rewritten formulas, numbers, or conclusions without source review. |
+| `project` | Problem and intended outcome; system or work mechanism; dated evidence and load-bearing decisions. An active project states current state, risks, and next evidence. A closed or historical project preserves its 당시 범위, final result, unverified remainder, and reusable lesson without inventing a roadmap. | Timeless status page, component inventory with no interaction, aspirational plan presented as shipped evidence, or a closed project forced into a fake current plan. |
+| `decision` | Choice and current state; context and binding constraint; credible alternatives; expected mechanism; validation state; failure, rollback, or revisit condition. Links should connect the actual constraint, mechanism, project, or affected concept. | Fourteen-section form filled with guesses; outcome written before observation; arbitrary link-count padding; rationale that only says the option felt better. |
+| `insight` | One clear claim; the observation or evidence that produced it; an explanation of why the pattern may hold; scope, boundary, counterexample, or uncertainty; a consequence for future action or interpretation. Mark a still-untested claim as a hypothesis in prose. | Aphorism with no evidence, universal claim from one case, or observation and interpretation blended so the reader cannot tell which is which. |
+| `comparison` | The decision question; comparable dimensions; mechanisms behind important differences; conditions for choosing each side; a conditional conclusion rather than a context-free winner. | Feature checklist with unequal dimensions or an unconditional verdict. |
+| `essay` | The user's thesis and voice; an argument chain; evidence or examples; implication. Preserve meaningful tension or counterargument when it exists in the original or the user explicitly approves it; do not manufacture one to complete a rubric. External claims still need provenance. | Style-normalized synopsis that erases the user's voice, ingest analysis presented as the user's original argument, or opinion without an argument. |
+| `personal` | For a self-record: the stable or explicitly time-bounded fact, why it matters, available evidence, and privacy boundary. For a personal plan or index: objective, inclusion boundary, sequencing rationale, current state, and revisit trigger. External course content does not become `personal` merely because the study path is personalized. Public tree pages never store direct contact details, full birth dates, detailed locations, government identifiers, or equivalent PII. | Biography inflation, stale status presented as permanent identity, study notes misclassified as identity, or direct identifiers copied into the public tree. |
+
+`form=index` follows a separate contract regardless of `kind`: state the index's scope and inclusion boundary, provide navigation order or grouping proportional to its actual branching degree, and annotate links enough for the reader to choose a path. A one-child index may need only a short scope statement and one annotated link; a broad hub needs stronger grouping. A link dump with no orientation is not a usable index.
+
+Across all kinds:
+
+- Do not force headings for absent information or repeat the same claim under several headings.
+- Distinguish observation, available evidence, interpretation, and hypothesis whenever confusing them would change the conclusion. `source-record` pages additionally obey the source-fidelity ceiling.
+- Prefer one explained wikilink over several decorative links. Link count is a graph signal, not a writing-quality target.
+- Preserve uncertainty. `unknown`, `not yet observed`, and a concrete verification need are valid; invented completeness is not.
+- On update, preserve still-valid reasoning and record what changed. Do not silently rewrite a past decision or insight as if the new view had always been true.
 
 ---
 
