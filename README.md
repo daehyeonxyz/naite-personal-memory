@@ -6,7 +6,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-7cc15a" alt="MIT" />
-  <img src="https://img.shields.io/badge/version-0.8.5-a9621f" alt="v0.8.5" />
+  <img src="https://img.shields.io/badge/version-0.8.6-a9621f" alt="v0.8.6" />
   <img src="https://img.shields.io/badge/Claude_Code-ready-a9621f" alt="Claude Code" />
   <img src="https://img.shields.io/badge/Codex-ready-7cc15a" alt="Codex" />
   <img src="https://img.shields.io/badge/Obsidian-compatible-a9621f" alt="Obsidian" />
@@ -97,7 +97,7 @@ https://github.com/daehyeonxyz/naite-personal-memory 를 이 폴더에 설치해
 
 ### 데스크톱 앱 (보기 전용)
 
-나무를 보고·찾고·에이전트에게 일을 맡기는 GUI 입니다. 쓰는 도구가 아니라 뷰어라, 잎과 맥과 열매를 한눈에 펼쳐 보여 줍니다. 하네스와 같은 버전으로 함께 움직입니다.
+나무를 보고·찾고·에이전트에게 일을 맡기는 GUI 입니다. 쓰는 도구가 아니라 뷰어라, 잎과 맥과 열매를 한눈에 펼쳐 보여 줍니다. 앱과 하네스는 버전을 따로 관리하며, 호환성은 `min-harness-version` 계약으로 판단합니다.
 
 [최신 릴리스](https://github.com/daehyeonxyz/naite-app-releases/releases/latest)에서 내려받습니다.
 

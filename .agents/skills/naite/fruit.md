@@ -86,7 +86,7 @@ form: prose
 topics: [...]
 subject: [<path>]
 source-types: [conversation]   # fruit 는 대부분 conversation 산출물
-domains: []   # CACHED — care --check 가 subject 의 top-level 에서 자동 도출한다. grow/fruit 시점에 직접 쓰지 않는다 (빈 배열로 둠)
+domains: [<subject-top-level>]   # CACHED — 위 subject path 에서 기계적으로 도출
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
@@ -144,7 +144,7 @@ form: prose
 topics: [<canonical-topics>]
 subject: [<path>]
 source-types: [conversation]
-domains: []   # CACHED — care --check 가 채운다. 직접 쓰지 않는다
+domains: [<subject-top-level>]   # CACHED — 위 subject path 에서 기계적으로 도출
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
@@ -237,6 +237,6 @@ DMU 가 별도 페이지가 될 만큼 무겁지 않으면, 기존 concept 페�
 - Career 관련 frontmatter / `[[fde-skill-*]]` 페이지 사전 생성 안 함 (docs/CONVENTIONS.md § Decision thread shape 의 grep-on-demand 원칙 준수).
 - 파일명 `DMU-YYYYMMDD-...` prefix 안 씀.
 - 빈 14 섹션을 강제로 채우지 않음 — 누락은 생략.
-- frontmatter `domains` 는 `[]` 로 비워 둔다 (care --check 가 subject 에서 파생하는 CACHED 필드라 수기 금지). hub 후보면 대신 `trunk.md` 의 `## Knowledge domains § <domain>` 주요 라인에 한 줄 더한다.
+- frontmatter `domains` 는 선택한 `subject` path 의 top-level 에서 기계적으로 도출해 함께 쓴다. 임의 값을 선택하지 않는다. `care --check` 는 stale cache 를 보고만 한다. hub 후보면 별도로 `trunk.md` 의 `## Knowledge domains § <domain>` 주요 라인에 한 줄 더한다.
 - 모든 열매 페이지를 자동으로 trunk.md 에 등재 안 함 — hub 후보일 때만.
 - `git commit` 안 함.

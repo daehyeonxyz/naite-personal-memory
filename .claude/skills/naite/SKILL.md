@@ -11,7 +11,7 @@ You maintain a **naite** vault: one vault = one tree. The user adds sources and 
 
 - **`NAITE_ROOT`**: the root of the naite vault — the nearest directory (CWD, then upward) containing `CLAUDE.md`, `tree/`, and `roots/` together. All data paths resolve against this.
 - **`SKILL_DIR`**: `<NAITE_ROOT>/.claude/skills/naite` — this skill and its sub-files. Optionally junction/symlink this into your user-level skills directory (e.g. `~/.claude/skills/naite`) so `/naite` resolves from any working directory.
-- **`HARNESS_SRC`**: the directory three levels above **this file's own location** (`../../..` from the folder containing this SKILL.md). In a cloned vault that is `NAITE_ROOT` itself; when running as an installed Claude Code plugin it is the plugin cache copy of the starter repo, which ships the full scaffold (`CLAUDE.md`, `SOUL.md`, `docs/`, `.naite/`, `tree/`, `roots/`, `.claude/`, `.agents/`).
+- **`HARNESS_SRC`**: the directory three levels above **this file's own location** (`../../..` from the folder containing this SKILL.md). In a cloned vault that is `NAITE_ROOT` itself; when running as an installed Claude Code plugin it is the plugin cache copy of the starter repo, which ships the full scaffold (`CLAUDE.md`, `SOUL.md`, `docs/`, `.naite/`, `tree/`, `roots/`, and both skill surfaces).
 
 **If no `NAITE_ROOT` is found** (typical right after a plugin-only install: the open folder has no vault yet), do not fail. For `start`, proceed — its § 0 bootstraps the vault into the CWD by copying the scaffold from `HARNESS_SRC`. For every other subcommand, tell the user this folder has no vault yet and offer to run `/naite start` first.
 

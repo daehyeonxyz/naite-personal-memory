@@ -79,7 +79,7 @@ Apply only migrations the user has approved. An invocation such as "upgrade and 
 Allowed vault migration targets:
 
 - `tree/**` schema rewrites, frontmatter rewrites, link rewrites, and one `tree/rings.md` `migration` entry.
-- `.naite/ontology/facets.json`, `.naite/ontology/subject-tree.md`, and `.naite/ontology/topics.md` only when the release explicitly introduces a schema or vocabulary migration.
+- `.naite/ontology/facets.json`, `.naite/ontology/subject-tree.md`, and `.naite/ontology/topics.md` only when the release explicitly introduces a schema, vocabulary, or ontology operating-contract migration.
 - generated maps `.naite/ontology/tree-manifest.json` and `.naite/ontology/tree-dependencies.json` after tree or ontology changes.
 - root `SOUL.md`, gitignored `USER.md`, and gitignored `MEMORY.md` when the release introduces or changes instruction surfaces.
 - `.naite/reports/**` for optional upgrade reports.

@@ -43,7 +43,7 @@ If separate agents are not available, run the same three phases sequentially in 
   - 서브챕터 노트: `course-{slug}-ch{NN}-{SS}-{title-slug}.md` (`kind=source-record`, `form=prose`)
 - **Output quality contract**: `docs/CONVENTIONS.md § Output quality contract` 준수. 본문은 page 자체로 의미를 가져야 하며, raw/PDF/필기/source-processing 설명은 `## Source` 앞 본문에 쓰지 않는다. 필기·슬라이드 강조·예시는 본문 설명으로 흡수한다.
 - **Slug**: 영소문자·숫자 **단일 토큰** (하이픈 금지 — 레벨 구분자 `-`와 충돌). 공식 과목코드 있으면 소문자화(`MA101` → `ma101`), 없으면 prefix+NNN 임의(`aa101`, `aa102`, ...). 과목 내내 고정, 이후 절대 변경 금지.
-- **Subject**: branch 페이지는 그 과목·책·시리즈가 다루는 **콘텐츠 path 1개** (예: `[statistics]` 또는 더 narrow `[engineering-math/ode]`). 메타·챕터·서브챕터 모두 동일 단일 path 또는 narrower. Canonical tree: `.naite/ontology/subject-tree.md`. `course`, `course-{slug}` 같은 컬렉션 태그는 subject 에 절대 넣지 않는다 — `docs/CONVENTIONS.md § Ontology` 참조. Branch 멤버십은 파일명 prefix `course-{slug}-*` 로 보장. `domains` 는 care --check 가 subject 의 top-level 을 cache.
+- **Subject**: branch 페이지는 그 과목·책·시리즈가 다루는 **콘텐츠 path 1개** (예: `[statistics]` 또는 더 narrow `[engineering-math/ode]`). 메타·챕터·서브챕터 모두 동일 단일 path 또는 narrower. Canonical tree: `.naite/ontology/subject-tree.md`. `course`, `course-{slug}` 같은 컬렉션 태그는 subject 에 절대 넣지 않는다 — `docs/CONVENTIONS.md § Ontology` 참조. Branch 멤버십은 파일명 prefix `course-{slug}-*` 로 보장. 새 페이지의 `domains` cache 는 선택한 `subject` 의 top-level 에서 기계적으로 도출한다.
 - **Trunk 분리**: trunk.md 에는 과목 메타 1줄만 등록 (`## Branches § <institution>` 섹션). 챕터/서브챕터 발견 경로는 `course-{slug}-00-index.md § Chapters` → `course-{slug}-ch{NN}-00-index.md § Subchapters` drill-down. **trunk.md 에 서브챕터/챕터 절대 나열하지 않는다.**
 - **Grow 단위**: **서브챕터 단위 즉시 페이지 작성**. 챕터 메타는 챕터 완료 시점에 일괄. **단 rings.md 에는 서브챕터마다 쓰지 않는다** — frontmatter `created`/`updated` 가 정보 운반. rings entry 는 `branch-chapter` 마무리 시점에 1줄 (subchapter 수만 명시), `branch-start`/`branch-finish` 도 1줄씩.
 - **`ingest` 모듈 직접 호출 금지**: `ingest.md`는 "raw 파일 하나 → 여러 페이지"용 워크플로. branch 모드는 "대화 맥락 → 페이지 1개"라 구조 불일치. 단 **결과물 규격**(frontmatter, `trunk.md`·`rings.md` 업데이트 포맷)은 `ingest.md` 와 정합되게 맞춘다.
@@ -115,7 +115,7 @@ If separate agents are not available, run the same three phases sequentially in 
    - 기존 tree 개념 페이지와의 접점 (`[[probability]]` 있으면 메타 페이지에서 링크)
    - 유사 과목/선후수 관계
    사용자 확인 후 진행.
-5. `tree/course-{slug}-00-index.md` 작성 (`kind=source-record`, `form=index`). 템플릿 `§ Templates § 과목 메타` 사용. frontmatter `subject` 는 단일 path; `domains` 는 빈 배열로 두면 care --check 가 cache 채움.
+5. `tree/course-{slug}-00-index.md` 작성 (`kind=source-record`, `form=index`). 템플릿 `§ Templates § 과목 메타` 사용. frontmatter `subject` 는 단일 path; `domains` 는 그 path 의 top-level 로 함께 작성.
 6. `tree/trunk.md` 업데이트:
    - `## Branches § <institution>` 섹션에 한 줄: `- [[course-{slug}-00-index]] — {과목명, 짧은 설명}`. institution 섹션이 없으면 신설.
    - **챕터/서브챕터는 절대 trunk 에 나열하지 않는다.** drill-down 으로 발견.
@@ -167,7 +167,7 @@ c. **학생 필기 인사이트 수집**: PNG를 읽는 과정에서 학생 필�
    사용자 확인 후 진행.
 4. 서브챕터 노트 파일 작성:
    - 경로: `tree/course-{slug}-ch{NN}-{SS}-{title-slug}.md`
-   - Frontmatter: `kind=source-record`, `form=prose`, `domains: []` (care --check 가 subject 에서 cache)
+   - Frontmatter: `kind=source-record`, `form=prose`, `domains: [<subject-top-level>]` (선택한 subject 에서 기계적으로 도출)
    - 본문: `§ Templates § 서브챕터 노트` 참조.
 5. **일반 개념 페이지 자율 생성** (`§ Schema autonomy` autonomy A): step 3 에서 식별된 추출 후보 — 사용자가 명시적으로 빼라고 한 것을 제외 — 를 이 시점에 별도 Write. frontmatter 5 facet 은 `ingest.md § 5` 규격. `topics` / `subject` 는 `.naite/ontology/` canonical 우선; 미등록 새 topic 이 입자도 가드 통과하면 `.naite/ontology/topics.md § canonical_topics` 에 직접 append (autonomy A); 새 narrower 가 자연스러우면 `.naite/ontology/subject-tree.md § narrower:` 에 candidate append + chapter-finish rings 의 surface 항목으로 기록 (autonomy B). 새 일반 페이지가 hub 후보면 (다른 페이지에서 자주 link 받을 만하면) `trunk.md § Knowledge domains § <domain>` 의 "주요" 라인에 추가 검토.
 6. `tree/trunk.md` 업데이트:
@@ -188,7 +188,7 @@ c. **학생 필기 인사이트 수집**: PNG를 읽는 과정에서 학생 필�
 
 1. 해당 챕터 서브챕터 노트 전부 존재 확인 (glob `tree/course-{slug}-ch{NN}-*` 에서 `-00-index` 제외).
 2. 누락 있으면 사용자 확인 — 의도적 스킵이면 진행, 실수면 해당 서브챕터 먼저 `subchapter-note`.
-3. 챕터 메타 파일 작성: `tree/course-{slug}-ch{NN}-00-index.md` (`kind=source-record`, `form=index`). `§ Templates § 챕터 메타`. `domains` 는 care --check cache.
+3. 챕터 메타 파일 작성: `tree/course-{slug}-ch{NN}-00-index.md` (`kind=source-record`, `form=index`). `§ Templates § 챕터 메타`. `domains` 는 선택한 `subject` 의 top-level 로 함께 작성.
 4. `tree/course-{slug}-00-index.md`의 Chapters 섹션 업데이트 (챕터 상태를 "완료"로, 요약 line refresh).
 5. **trunk.md 갱신 없음** (챕터 메타는 course 메타에서만 발견 — trunk 직접 등록 안 함).
 6. `tree/rings.md`:
@@ -327,7 +327,7 @@ form: index
 topics: []
 subject: [<path-from-.naite/ontology/subject-tree.md>]
 source-types: [course]
-domains: []
+domains: [<subject-top-level>]
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
@@ -369,7 +369,7 @@ form: index
 topics: []
 subject: [<과목과 동일 path 또는 narrower>]
 source-types: [course]
-domains: []
+domains: [<subject-top-level>]
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
@@ -443,7 +443,7 @@ form: prose
 topics: []
 subject: [<과목과 동일 path 또는 narrower>]
 source-types: [course]
-domains: []
+domains: [<subject-top-level>]
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---

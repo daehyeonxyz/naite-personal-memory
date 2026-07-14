@@ -134,9 +134,9 @@ Report: unresolved stubs + newly proposed stubs.
 
 ```
 python .naite/scripts/lint-ontology.py                # report only
-python .naite/scripts/lint-ontology.py --strip-bom    # also normalize BOM in-place
-python .naite/scripts/lint-ontology.py --refresh-domains   # domains cache 갱신 안내
 ```
+
+`--strip-bom` 과 `--refresh-domains` 는 파일을 쓰는 수선 플래그이므로 care-check 에서 실행하거나 안내하지 않는다. 발견 건수와 대상만 보고하고, 사용자가 수선을 승인하면 `/naite care` Repair 모드로 넘긴다.
 
 #### 3a. Frontmatter completeness
 
@@ -147,7 +147,7 @@ python .naite/scripts/lint-ontology.py --refresh-domains   # domains cache 갱�
 - `topics`: list (페이지당 0-5 entries, 빈 배열 OK)
 - `subject`: list (1+ SKOS-lite path)
 - `source-types`: list of enum values `course | conversation | paper | article | docs | book | essay | external` (single-element list OK, 항상 list)
-- `domains`: list (cached, care-check 가 derive)
+- `domains`: list (cached, `subject` top-level 에서 기계적으로 도출; care-check 는 stale 여부만 보고)
 - `created`, `updated`: `YYYY-MM-DD`
 
 미보유 / 잘못된 enum / 빈 subject 발견 시 surface (incomplete).
@@ -180,7 +180,7 @@ python .naite/scripts/lint-ontology.py --refresh-domains   # domains cache 갱�
 
 각 페이지의 `domains` cache 가 `subject` 로부터 정확히 derive 됐는지:
 - 기대값: `domains == derive_domains(subject)` — first-occurrence order, dedupe.
-- 불일치 → cache 갱신 필요. `python .naite/scripts/lint-ontology.py --refresh-domains` 안내를 따라 갱신.
+- 불일치 → cache 갱신이 필요한 repair candidate 로 surface. care-check 에서는 쓰지 않고, 사용자 승인 후 `/naite care` Repair 모드에서 갱신.
 
 #### 3e. Kind / form / source-types distribution
 
@@ -240,7 +240,7 @@ warn-only proxy check. `form=prose` 잎 페이지에 대해 두 가지를 감지
 
 UTF-8 BOM (`EF BB BF`) prefix 검출:
 - `tree/*.md` 어떤 페이지든 BOM 가지면 surface.
-- `python .naite/scripts/lint-ontology.py --strip-bom` 으로 in-place normalize.
+- 발견 파일을 in-place normalization 이 필요한 repair candidate 로 surface. care-check 에서는 쓰지 않고, 사용자 승인 후 `/naite care` Repair 모드에서 정규화.
 - 정상 운영 상태에선 0 이어야 함 (migration 시 strip 됨).
 
 #### 3g. Course / collection / source 명을 frontmatter 에 사용 (legacy drift)
@@ -269,9 +269,9 @@ blocker 아님 (secrets 만 blocker). report 는 candidate line 의 위치만 �
 | 3a frontmatter incomplete | N | fix per page |
 | 3b subject tree drift | N | resolve via altLabel or migrate |
 | 3c topic uncanonicalized | N | surface promotion / alias candidates |
-| 3d domain cache stale | N | run --refresh-domains |
+| 3d domain cache stale | N | route to care Repair |
 | 3e kind/form/source-types distribution | (table) | surface enum-add candidates |
-| 3f BOM-prefixed files | N | --strip-bom |
+| 3f BOM-prefixed files | N | route to care Repair |
 | 3g legacy collection/entity drift | N | manual migration |
 | 3h language-shape review candidates | N lines | manual review (false positive expected) |
 | 3i schema integrity (drift detector) | legacy N / mixed M | both must be 0; if > 0 fix pages to the new schema |

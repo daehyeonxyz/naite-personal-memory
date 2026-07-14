@@ -41,7 +41,7 @@ naite-app과 이 하네스는 한 제품의 두 면이라, 역할을 나눠 함�
 - **patch 증가 (예: 0.3.0 → 0.3.1)**: 버그 수정, 문서 개선, 스크립트 수정 등 하위 호환 변경 시.
 - **major 증가 (예: 0.x.y → 1.0.0)**: 하네스 구조가 전면 개편될 때 (1.0 전까지는 major 증가 없음).
 
-현재 버전: **0.8.5**
+현재 버전: **0.8.6**
 
 ---
 
@@ -106,3 +106,14 @@ naite-app 쪽의 `min-harness-version` 선언과 호환 판단 로직은 비공�
 | 0.8.3 | 앱과 버전 라인 동기화 (하네스 기능·스키마 변경 없음). 분리 규약 이전의 마지막 동기화 릴리스. |
 | 0.8.4 | 응답 출력 규약 강화 (patch). `SOUL.md § 응답 스타일` + `ask.md`: 적극적 구조화(두 단락 넘으면 H태그, 식별자 인라인 코드, 표·목록), 핵심 한 가지 콜아웃 승격(답변당 1~2개), 인용·참조는 문장 끝 고정(문장을 인용으로 시작하지 않음). |
 | 0.8.5 | 버전 규약 변경 (patch): 앱과 하네스 버전 라인 분리 (2026-07-10 사용자 결정). 하네스는 하네스 변경으로만 릴리스하고, 호환성은 `min-harness-version` 계약으로 판단. |
+| 0.8.6 | 응답 voice 규약 강화 (patch). 메타 프리앰블 금지: "이제 답하겠습니다"·"좋은 질문입니다" 같은 사고·전환 문장을 본문에서 배제하고 첫 문장을 곧장 결론으로 시작 (`SOUL.md § 응답 스타일` + `ask.md`). 시의성 질문(최신·오늘 기준·현재 버전)은 나무·학습지식 대신 웹 검색을 먼저 조회하고, 웹에서 가져온 내용은 tree 밖 정보로 구분. 데이터 안전: 새 page workflow 는 `domains` cache 를 `subject` 와 함께 도출하고, `care --check` 는 stale domain cache·BOM을 보고만 하며, 쓰기 플래그는 사용자 승인 후 `care` Repair 모드에서만 실행. 스키마 변경 없음. |
+
+### v0.8.6 vault migration
+
+`V_old <= 0.8.5` 에서 `V_new >= 0.8.6` 으로 올릴 때 `.naite/ontology/subject-tree.md` 의 `Cached domains derivation` 운영 문구를 확인한다. 기존 stock 문구가 care-check 의 자동 갱신과 `--refresh-domains` 직접 실행을 안내하면, 다음 계약으로 바꾸는 text-only vault migration 을 계획한다.
+
+- 새 page workflow 가 `subject` path 의 top-level 에서 `domains` cache 를 기계적으로 도출해 함께 작성한다.
+- `care --check` 는 stale cache 를 보고만 한다.
+- 실제 갱신은 사용자 승인 후 `/naite care` Repair 모드에서만 실행한다.
+
+이 migration 은 `.naite/ontology/subject-tree.md` 의 해당 설명 문단만 대상으로 하며 taxonomy YAML 과 `tree/**` 는 쓰지 않는다. 적용 전 exact diff 를 보여 주고 승인을 받는다. 문구가 사용자 커스텀 상태면 파일을 덮어쓰지 말고 위 세 문장만 반영하는 3-way 수동 병합안을 제시한다. 적용 후 care-check 를 실행해 stale cache 를 보고하되, 그 실행에서 `--refresh-domains` 를 안내하거나 실행하지 않는다.

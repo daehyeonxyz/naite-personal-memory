@@ -23,7 +23,7 @@ see `.claude/skills/naite/care-check.md` for the full workflow.
 Usage:
     python .naite/scripts/lint-ontology.py                    # report only
     python .naite/scripts/lint-ontology.py --strip-bom        # also normalize BOM in-place
-    python .naite/scripts/lint-ontology.py --refresh-domains  # list pages whose domains cache is stale
+    python .naite/scripts/lint-ontology.py --refresh-domains  # rewrite stale domains cache in-place
 
 Exit codes:
     0 — clean

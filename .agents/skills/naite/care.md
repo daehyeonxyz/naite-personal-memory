@@ -89,6 +89,15 @@ Step E. Append a coarse `tree/rings.md` entry with `updated: 0 tree content page
 
 When the user asks to fix, edit pages directly. Preserve source substance, existing good links, and frontmatter unless the defect is there. After editing, run the touched-page content guard and the relevant deterministic checks (care --check).
 
+When care-check reports stale `domains` caches or BOM-prefixed files and the user approves repair, use the matching deterministic write command in this mode:
+
+```powershell
+python .naite/scripts/lint-ontology.py --refresh-domains
+python .naite/scripts/lint-ontology.py --strip-bom
+```
+
+Run only the command needed for the approved finding, inspect `git diff HEAD -- tree/` immediately afterward, and report the exact pages changed before staging.
+
 **Minimal-intrusion first.** 가장 작은 수정으로 결함을 고친다. 확실한 버그라도 이번 turn 의 scope 밖이면 고치지 말고 defer 로 표기한다 (scope 규율 > 완벽주의). 구조 수술(파일 재구성, 대량 재작성)은 최소침습으로 해결이 안 되는 게 확실할 때만, 그리고 Sweep 의 무손실 증명을 동반할 때만 한다.
 
 After editing pages, rebuild `.naite/ontology/tree-manifest.json` when page coordinates changed and rebuild `.naite/ontology/tree-dependencies.json` when body links or soft relation idioms changed. Include both generated maps in the change if they changed.

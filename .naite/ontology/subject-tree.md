@@ -49,13 +49,13 @@ LLM 이 본문 보고 가장 자연스러운 narrower 선택. Migration 시 dry-
 
 ## Cached `domains` derivation
 
-Frontmatter 의 `domains:` field 는 **care-check 가 자동 갱신** — `subject` path 의 top-level 만 추출:
+Frontmatter 의 `domains:` field 는 `subject` path 의 top-level 만 추출한 **derived cache**다. 새 페이지를 쓰는 workflow 가 `subject` 와 함께 기계적으로 작성하고, care-check 는 stale 여부만 보고한다:
 
 - `subject: [ml/agents]` → `domains: [ml]`
 - `subject: [statistics/probability, ml/reasoning]` → `domains: [statistics, ml]`
 - `subject: [ml]` → `domains: [ml]` (broad-only also valid)
 
-`.naite/scripts/lint-ontology.py --refresh-domains` 가 idempotent 하게 cache 갱신. 사용자가 직접 `domains:` 작성 금지.
+사용자가 수선을 승인한 뒤 `/naite care` Repair 모드에서만 `.naite/scripts/lint-ontology.py --refresh-domains` 로 기존 stale cache 를 idempotent 하게 갱신한다. `domains` 값을 독립적으로 선택하지 않는다.
 
 ## Evolution rules
 

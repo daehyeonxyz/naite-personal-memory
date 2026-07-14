@@ -31,7 +31,7 @@ naite는 개인 지식 관리 하네스입니다. 외부 기여자는 하네스(
 5. Open a PR and fill in the PR template checklist fully.
 6. A maintainer reviews and squash-merges.
 
-CI runs three consistency gates on every PR (`.github/workflows/ci.yml`): ontology lint (`lint-ontology.py`), harness-lock freshness (`build-harness-lock.py --check` — version + file-hash embed, plus `plugin.json`/`marketplace.json` version parity and the committed `PUBLIC_STARTER` sentinel), and the `.claude` → `.agents` mirror sync. Run the same checks locally before opening the PR (see "Pre-PR local checks" below) so the gates pass. A maintainer still reviews and squash-merges; the PR template checklist covers what CI cannot (schema-governance intent, scope). The CI job is guarded to run only on the starter repo (`if: github.repository == 'daehyeonxyz/naite-personal-memory'`), so a personal vault created by cloning this repo does not inherit a permanently red Actions tab.
+CI runs four consistency gates on every PR (`.github/workflows/ci.yml`): the committed `PUBLIC_STARTER` sentinel (`test -f .naite/PUBLIC_STARTER`), ontology lint (`lint-ontology.py`), harness-lock freshness (`build-harness-lock.py --check` — version + file-hash embed, plus `plugin.json`/`marketplace.json` version parity), and the `.claude` → `.agents` mirror sync. Run the same checks locally before opening the PR (see "Pre-PR local checks" below) so the gates pass. A maintainer still reviews and squash-merges; the PR template checklist covers what CI cannot (schema-governance intent, scope). The CI job is guarded to run only on the starter repo (`if: github.repository == 'daehyeonxyz/naite-personal-memory'`), so a personal vault created by cloning this repo does not inherit a permanently red Actions tab.
 
 ---
 

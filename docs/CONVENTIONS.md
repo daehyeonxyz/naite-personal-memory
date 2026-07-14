@@ -80,7 +80,7 @@ subject: [<skos-path>]                            # SKOS-lite path. Multi-value 
 source-types: [course | conversation | paper |    # 8-enum, always a list
                article | docs | book |
                essay | external]
-domains: [<top-level>]                            # CACHED — care-check derives from subject top-level
+domains: [<top-level>]                            # CACHED — page workflow derives from subject top-level
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
@@ -95,7 +95,7 @@ updated: YYYY-MM-DD
 - `topics`: 0-5 per page. Canonical list (`.naite/ontology/topics.md`) preferred. Uncanonicalized topic → care-check warns (does not block — folksonomy philosophy). Empty array OK (e.g. `kind=entity`). Do not force topics. Topics are **re-usable concept/technique level** — not broad domain names.
 - `subject`: SKOS-lite path notation (`parent/child`, two levels, slash-separated — the validator blocks a third level; use `topics` for finer granularity). Single path is default; multi only for genuine cross-domain (`[a/x, b/y]`). Canonical tree: `.naite/ontology/subject-tree.md`. **Course / collection / institution / source names are NOT subjects** — `course`, `course-{slug}`, `anthropic-academy`, `ode`, `laplace-transform` are page slugs/entities, not subject paths. Course membership is carried by the `course-{slug}-*` filename prefix.
 - `source-types` (always list, 8 values): `course` (academic/online courses), `paper` (peer-reviewed academic), `article` (informal: blog / news / X thread / Substack), `docs` (official docs: Anthropic / OpenAI / library docs), `book` (book), `conversation` (user dialogue capture), `essay` (self-authored essay/long-form), `external` (fallback). A page can be informed by multiple sources — `source-types: [course, paper]` is valid. `legacy` is **not** a value — it's an import channel; staged legacy notes ingest with the source-types matching their content nature. Detail: `docs/ARCHITECTURE.md § 7`.
-- `domains` (CACHED, NOT a facet): top-level path component of `subject`. **care-check auto-derives** (`.naite/scripts/lint-ontology.py --refresh-domains`); never hand-write. Idempotent on schema change.
+- `domains` (CACHED, NOT a facet): top-level path component of `subject`. 새 page workflow 가 `subject` 와 함께 기계적으로 작성한다. care-check 는 stale cache 를 보고만 하고, 사용자 승인 후 `/naite care` Repair 모드가 `.naite/scripts/lint-ontology.py --refresh-domains` 로 기존 cache 를 갱신한다. 독립적으로 값을 선택하지 않는다. Idempotent on schema change.
 
 `trunk.md` and `rings.md` have no frontmatter (special files). Additional facet fields (`confidence`, `status`, `depends-on`, `contradicts`, `source-count`, `as-of`, etc.) are added only after care-check surfaces accumulated pressure → user decision. No arbitrary additions.
 
@@ -291,7 +291,7 @@ The user's environment may expose many external skills and agents. **Most are co
 | External (kind) | When to use |
 |---|---|
 | Knowledge-management skill | General KM moves; complement `/naite` skills. Check before inventing a workflow. |
-| Web deep-research skill | Fill identified tree gaps via web research. Result feeds `/naite grow` or `/naite ask --file`. |
+| Web deep-research skill | Fill identified tree gaps via web research. Result feeds `/naite grow` or `/naite ask`. |
 | Search-first skill | Search existing pages and web prior art before writing a new tree page. |
 | Official-docs lookup skill/agent | Consult official docs of a tool/library before summarizing. |
 | Long-form writing/export skill | Export tree content as a blog post or long-form piece. |

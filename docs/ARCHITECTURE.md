@@ -50,7 +50,7 @@ W3C 의 Simple Knowledge Organization System 표준의 *부분집합* 을 채택
 
 ### 2.4 Cached materialized view
 
-DB 의 materialized view 패턴이다. 매 query 재계산 (computed) 도, 박제 (cached) 도 각각 trade-off 가 있다. 본 tree 의 `domains` field 는 *cached + care-check refresh* — Obsidian graph view 호환성이 결정 변수. 패턴의 전체 맥락은 tree 의 `materialized-view` 개념 페이지를 참고한다.
+DB 의 materialized view 패턴이다. 매 query 재계산 (computed) 도, 박제 (cached) 도 각각 trade-off 가 있다. 본 tree 의 `domains` field 는 *producer-derived cache + approved repair* — 새 페이지 workflow 가 `subject` 와 함께 계산하고, care-check 는 drift 를 보고만 하며, 사용자 승인 후 Repair 가 기존 cache 를 갱신한다. Obsidian graph view 호환성이 결정 변수다. 패턴의 전체 맥락은 tree 의 `materialized-view` 개념 페이지를 참고한다.
 
 ### 2.5 LLM-as-curator
 
@@ -77,7 +77,7 @@ subject: [<skos-path>]                            # SKOS-lite path. 다축 가�
 source-types: [course | conversation | paper |    # 출처 (8-enum, 항상 list)
                article | docs | book |
                essay | external]
-domains: [<top-level>]                            # CACHED — subject 의 top-level. care-check 가 derive.
+domains: [<top-level>]                            # CACHED — page workflow 가 subject 에서 derive.
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
@@ -96,7 +96,7 @@ updated: YYYY-MM-DD
 | `topics` | 재사용 가능 키워드 | folksonomic emerge + 주기적 canonicalize |
 | `subject` | SKOS-lite tree 위치 | narrower 추가 자유, page 무변경 |
 | `source-types` | 출처 종류 (list, 8-enum) | 안정, 새 값 추가 시 C-level |
-| `domains` | **cache** — subject 의 top-level (facet 아님) | **care-check 자동 갱신** |
+| `domains` | **cache** — subject 의 top-level (facet 아님) | 새 page workflow 가 도출; care-check 는 stale 보고; 승인된 Repair 만 갱신 |
 
 핵심 invariant: **`kind` 는 페이지가 가리키는 *referent 의 본질*, `form` 은 그 본문이 *어떻게 제시되는가***. 두 차원 독립 — 같은 kind 가 다른 form 으로도 가능 (e.g., `kind=source-record, form=prose` = subchapter note; `kind=source-record, form=index` = chapter index hub). 미래 확장 시나리오: `kind=concept, form=index` (개념 hub), `kind=entity, form=index` (tool 카테고리 hub) 등.
 
@@ -191,10 +191,12 @@ updated: YYYY-MM-DD
 - `.naite/scripts/gen-subagents.py` — `.naite/ontology/forest-manifest.json` 이 있을 때 나무별 subagent 정의를 `.naite/agents/` 아래 생성한다. 보통 `forest-assign.py --write` 이후 선택적으로 실행한다.
 - `.naite/scripts/forest-*.py` — forest layer 진단 도구 (§ 9, report/manifest 생성만, tree content 미수정): `forest-communities.py` (분화 신호), `forest-assign.py` (개념 계보 배정), `forest-dashboard.py` (나이테 대시보드), `forest-retrieval-experiment.py` (숲 vs vault 효용 측정). 의존성: `.naite/scripts/requirements.txt` (`networkx>=3.0`, `numpy`, `scikit-learn`).
 
-### 5.2 care --check capability
+### 5.2 lint-ontology.py 보조 플래그
+
+이 절의 플래그는 `/naite care --check` 자체의 플래그가 아니라 `lint-ontology.py` 의 쓰기 플래그다 (`lint-ontology.py` § argparse). care-check 는 불일치를 보고만 하고, 사용자가 수선을 승인하면 `/naite care` Repair 모드에서 필요한 플래그만 실행한다.
 
 - `--strip-bom` — UTF-8 BOM normalize in-place.
-- `--refresh-domains` — `domains` cache 갱신 안내 (idempotent).
+- `--refresh-domains` — stale `domains` cache 를 `tree/*.md` frontmatter 에 **in-place 로 다시 쓴다** (idempotent). 보고 전용이 아니라 쓰기 플래그다 (`lint-ontology.py:857-866`).
 - § 14 autonomy garbage collector — 30 일 윈도우로 underused canonical / trivial narrower / orphan spawn 회수. 현재 LLM-driven (deterministic script 미구현 — § 7 future considerations).
 
 ---

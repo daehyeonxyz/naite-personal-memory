@@ -46,7 +46,7 @@ The guard resolves its mode in this order:
   PyPI, JWT, PEM private keys, …) **or** a generic `password` / `secret` / `api_key`
   key set to a real value (placeholders like `your-…`, `example`, `changeme`, `<…>`
   are excluded);
-- a Windows reserved device-name slug (`con`, `prn`, `aux`, `nul`, `com1`…, `lpt1`…)
+- a Windows reserved device-name slug (`con`, `prn`, `aux`, `nul`, `com1`–`com9`, `lpt1`–`lpt9`)
   that would break checkout on Windows — naite is cross-platform, so it is blocked
   on every OS;
 - any string listed in the local-only denylist (below);

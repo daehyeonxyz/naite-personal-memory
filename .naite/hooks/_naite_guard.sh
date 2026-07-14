@@ -111,7 +111,7 @@ naite_scan_paths() {  # $1 = newline paths, $2 = newline deleted paths, $3 = sta
     # Windows; naite is cross-platform, so block them on every platform.
     _b=$(basename "$f" | tr 'A-Z' 'a-z')
     case "${_b%.*}" in
-      con|prn|aux|nul|com[0-9]|lpt[0-9])
+      con|prn|aux|nul|com[1-9]|lpt[1-9])
         err "'$f' uses a Windows reserved device name — rename the slug (it breaks Windows checkout)" ;;
     esac
   done

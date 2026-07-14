@@ -83,7 +83,7 @@ Follow `docs/CONVENTIONS.md § Output quality contract`. The body is a self-cont
   topics: []                       # canonical from `.naite/ontology/topics.md`. 0-5개. 빈 배열 OK.
   subject: [<path>]                # SKOS-lite path from `.naite/ontology/subject-tree.md`
   source-types: [course | conversation | paper | article | docs | book | essay | external]   # 8-enum list (single-item OK)
-  domains: []                      # CACHED — care --check 가 채움 (subject 의 top-level)
+  domains: [<subject-top-level>]   # CACHED — 위 subject path 에서 기계적으로 도출
   created: YYYY-MM-DD
   updated: YYYY-MM-DD
   ---
@@ -171,7 +171,7 @@ Summarize what landed. Ask if anything should be revised. Only after confirmatio
 
 - Never mutates the *content* of files under `roots/`. Per-type cleanup (delete claim summary under `roots/conversations/`, legacy-copy creation) is the only allowed move.
 - Never creates an `_archive/` directory under `roots/articles/`, `roots/conversations/`, or `roots/legacy/`. The only archive path in the project is `roots/courses/_archive/` and it is grow branch 모드 `branch-finish`'s concern, not this module's.
-- **Autonomy A 외 schema 변경 금지.** Canonical topic / alias / 일반 개념 페이지는 입자도 가드 통과 시 자율 추가 (autonomy A). Subject narrower 는 candidate append + summary surface (autonomy B). **새 top-level domain, 새 enum 값 (`kind` / `form` / `source-types`), 새 facet field, subject deprecation 은 LLM 이 절대 추가 안 한다 (autonomy C — 사용자 결정).** `domains` cache 는 care --check 가 자동 도출하므로 grow 시점에 직접 작성 금지.
+- **Autonomy A 외 schema 변경 금지.** Canonical topic / alias / 일반 개념 페이지는 입자도 가드 통과 시 자율 추가 (autonomy A). Subject narrower 는 candidate append + summary surface (autonomy B). **새 top-level domain, 새 enum 값 (`kind` / `form` / `source-types`), 새 facet field, subject deprecation 은 LLM 이 절대 추가 안 한다 (autonomy C — 사용자 결정).** 새 페이지의 `domains` cache 는 선택한 `subject` path 의 top-level 에서 기계적으로 도출해 함께 작성한다. `care --check` 는 stale cache 를 보고만 한다.
 - **Never registers chapter/subchapter pages in `trunk.md`.** course meta 의 Chapters 섹션이 진실 단일 소스.
 - Never commits to git. The user commits on their own cadence.
 - Never "batch-grows" a directory without per-file user confirmation.

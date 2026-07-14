@@ -66,7 +66,7 @@ If the user accepts:
   - subject: <path>  (.naite/ontology/subject-tree.md 참조, cross-domain 일 때만 복수)
   - cited: [[a]], [[b]], [[c]]
   ```
-- **Filing a page is a tree mutation, so the same post-write duties apply as `grow`/`ingest`** (`docs/CONVENTIONS.md § Output quality contract`, `docs/CONTEXT.md § Verification`): run the content guard on the new page body (no raw/source-process voice, self-contained prose), then rebuild the generated maps that the new page changed — `python .naite/scripts/build-tree-manifest.py` (new page + coordinates) and, if it links to or from other pages, `python .naite/scripts/build-tree-dependencies.py`. Skipping this leaves the maps stale and the next orphan/inbound calculation wrong.
+- **Filing a page is a tree mutation, so the same post-write duties apply as `grow`/`ingest`** (`docs/CONVENTIONS.md § Output quality contract`, `docs/CONTEXT.md § Verification checklist`): run the content guard on the new page body (no raw/source-process voice, self-contained prose), then rebuild the generated maps that the new page changed — `python .naite/scripts/build-tree-manifest.py` (new page + coordinates) and, if it links to or from other pages, `python .naite/scripts/build-tree-dependencies.py`. Skipping this leaves the maps stale and the next orphan/inbound calculation wrong.
 
 If the user declines, do not write anything. The conversation stands.
 
