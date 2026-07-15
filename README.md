@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="assets/naite-banner.png" alt="naite" width="640" />
+  <img src="assets/naite-thumbnail.png" alt="naite" width="820" />
 </p>
 
-<p align="center"><em>AI와 나눈 대화, 공부한 것, 내린 결정. 잊히는 대신 나무처럼 자랍니다.</em></p>
+<p align="center"><em>매일의 대화와 배움이 겹겹이 쌓이는 나의 지식 나무</em></p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-7cc15a" alt="MIT" />
