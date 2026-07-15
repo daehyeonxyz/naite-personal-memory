@@ -9,11 +9,11 @@ You maintain a **naite** vault: one vault = one tree. The user adds sources and 
 
 ## Fixed paths
 
-- **`NAITE_ROOT`**: the root of the naite vault — the nearest directory (CWD, then upward) containing `AGENTS.md`, `tree/`, and `roots/` together. All data paths resolve against this.
-- **`SKILL_DIR`**: `<NAITE_ROOT>/.agents/skills/naite` — this skill and its sub-files. Optionally junction/symlink this into your user-level skills directory (e.g. `~/.agents/skills/naite`) so `/naite` resolves from any working directory.
+- **`NAITE_ROOT`**: the root of the naite vault. Resolve in order: **(1)** the nearest directory (CWD, then upward) containing `AGENTS.md`, `tree/`, and `roots/` together; **(2)** if none, the absolute path written in **`~/.naite/root`** — a one-line plain-text global pointer that power users write once so `/naite` resolves their vault from any working directory (verify the pointed directory actually contains `AGENTS.md` + `tree/` + `roots/`; if stale, say so instead of failing silently). All data paths resolve against this.
+- **`SKILL_DIR`**: `<NAITE_ROOT>/.agents/skills/naite` — this skill and its sub-files. When running as an installed plugin, the `~/.naite/root` pointer makes any junction/symlink unnecessary; linking this directory into `~/.agents/skills/naite` remains a supported legacy pattern for setups without the plugin.
 - **`HARNESS_SRC`**: the directory three levels above **this file's own location** (`../../..` from the folder containing this SKILL.md). In a cloned vault that is `NAITE_ROOT` itself; when running as an installed Codex plugin it is the plugin cache copy of the starter repo, which ships the full scaffold (`AGENTS.md`, `SOUL.md`, `docs/`, `.naite/`, `tree/`, `roots/`, and both skill surfaces).
 
-**If no `NAITE_ROOT` is found** (typical right after a plugin-only install: the open folder has no vault yet), do not fail. For `start`, proceed — its § 0 bootstraps the vault into the CWD by copying the scaffold from `HARNESS_SRC`. For every other subcommand, tell the user this folder has no vault yet and offer to run `/naite start` first.
+**If no `NAITE_ROOT` is found** (no vault upward of CWD and no `~/.naite/root` pointer — typical right after a plugin-only install), do not fail. For `start`, proceed — its § 0 bootstraps the vault into the CWD by copying the scaffold from `HARNESS_SRC`; after bootstrap, offer to write `~/.naite/root` with the new vault's absolute path so future sessions resolve it from anywhere (write it only with the user's yes). For every other subcommand, tell the user no vault was found and offer `/naite start`, or — if they already have a vault elsewhere — offer to write `~/.naite/root` pointing at it.
 
 **First action on every invocation**: read `<NAITE_ROOT>/AGENTS.md` in full (after bootstrap, if § 0 just created it). For ask, care, grow, fruit, or any tree mutation, also read `<NAITE_ROOT>/docs/CONTEXT.md` before selecting evidence files.
 
