@@ -12,135 +12,119 @@
   <img src="https://img.shields.io/badge/Obsidian-compatible-a9621f" alt="Obsidian" />
 </p>
 
-naite 는 내가 아는 것을 평문 Markdown 으로 쌓아 두는 개인용 지식 시스템입니다. 일을 대신 처리하는 도구가 아니라 내 지식을 모아 두고 가꾸는 곳입니다. 자료를 넣고 질문하면, 유지 관리자 역할을 맡은 에이전트(Claude Code·Codex)가 자료를 읽고 서로 연결된 페이지로 정리합니다. 이 지식이 담기는 폴더를 **vault** 라고 부릅니다.
+naite 는 내가 아는 것을 쌓아 두는 개인 지식 시스템입니다. 자료를 넣고 질문하면 에이전트가 읽고 정리해서, 서로 연결된 지식 페이지로 만들어 줍니다. 이 페이지들이 담기는 폴더를 vault 라고 부릅니다.
 
-넣을 수 있는 자료에 제한은 없습니다. AI 와 나눈 대화는 물론이고 강의 자료, 유튜브 영상, 뉴스, 논문, 발표, 데이터 분석, 프로젝트까지 내 지식이 될 만한 것이면 무엇이든 들어갑니다.
+무엇이든 넣을 수 있습니다. AI 와 나눈 대화, 강의 자료, 유튜브 영상, 뉴스, 논문, 프로젝트 기록까지 내 지식이 될 만한 것이면 전부 자료가 됩니다.
 
-특히 AI 와 나눈 대화와 거기 쌓인 메모리는 보통 그 서비스 안에 갇혀 있습니다. naite 는 그것을 꺼내 와 Markdown 으로 내가 온전히 소유하게 합니다. 어떤 AI 서비스에도 묶이지 않고, 전부 내 Git 저장소 안에 평문으로 남습니다.
+AI 와 나눈 대화는 보통 그 서비스 안에 갇혀 있습니다. naite 는 그것을 꺼내 와 평문 Markdown 으로 내 Git 저장소에 남깁니다. 어떤 서비스에도 묶이지 않고, 전부 내 것입니다.
 
-한 번 쌓아 두면 이 vault 를 여는 어떤 에이전트든 나를 아는 채로 대화를 시작합니다. 예를 들어 관심 있는 채용 공고를 하나 던지면 일반론이 아니라 내가 들은 과목, 해 본 프로젝트, 만든 성과를 근거로 무엇이 준비되어 있고 무엇이 비어 있는지 짚어 줍니다. 에이전트를 바꿔도, 세션이 끝나도 같은 기록 위에서 이어집니다.
+한 번 쌓아 두면 어떤 에이전트든 나를 아는 채로 대화를 시작합니다. 채용 공고를 하나 던지면 일반론이 아니라 내가 배운 것과 해 본 것을 근거로 답합니다. 에이전트를 바꿔도, 세션이 끝나도 같은 기록 위에서 이어집니다.
 
-이름은 나이테에서 왔습니다. 나무가 해마다 안쪽부터 테를 더하듯, 기록도 지우고 덮어쓰는 것이 아니라 안쪽에 쌓이며 자랍니다. 아이디어의 뿌리는 Andrej Karpathy 가 제안한 **LLM Wiki** 패턴입니다. LLM 을 유지 관리자로 두고, 서로 링크된 Markdown 으로 개인 지식 저장소를 점진적으로 짓는다는 생각입니다.
+이름은 나이테에서 왔습니다. 나무가 해마다 안쪽부터 테를 더하듯, 기록도 덮어쓰지 않고 쌓이며 자랍니다. Andrej Karpathy 가 제안한 LLM Wiki 패턴을 바탕으로 만들었습니다.
 
 <p align="center">
-  <img src="assets/app-forest.png" alt="데스크톱 앱의 숲 대시보드. 나무별 현황과 잎 활동, 정리 대기 목록이 보인다" width="820" />
+  <img src="assets/app-forest.png" alt="데스크톱 앱의 숲 대시보드" width="820" />
 </p>
-<p align="center"><em>데스크톱 앱에서 본 내 숲. 나무 17그루, 잎 1,400여 장이 어떻게 자라는지 한눈에 보입니다.</em></p>
+<p align="center"><em>내 지식이 얼마나 쌓였고 지금 어디가 자라는 중인지 한눈에 봅니다.</em></p>
 
 ## 어떻게 동작하나
 
-vault 는 결국 Markdown 파일이 담긴 폴더 하나입니다. 세 겹으로 나뉩니다.
+vault 는 Markdown 파일이 담긴 폴더 하나입니다. 전체 그림은 나무 한 그루입니다.
 
-- **원본 자료** (`roots/`): 강의, 논문, 영상, 뉴스, 발표, 데이터 분석, 프로젝트, AI 대화 기록처럼 밖에서 들어온 것
-- **지식 페이지** (`tree/`): 에이전트가 원본에서 추려 서로 연결해 둔, 내가 읽는 페이지
-- **구조** (`.naite/`): 페이지들을 묶고 잇는 약한 스키마. 평소에는 몰라도 됩니다
+| 나무 | 실제로는 |
+|---|---|
+| 뿌리 | 내가 넣은 원본 자료 (`roots/`) |
+| 잎 | 에이전트가 정리한 지식 페이지 (`tree/`) |
+| 맥 | 페이지 사이의 링크 (`[[wikilink]]`) |
+| 열매 | 결정과 인사이트처럼 다시 꺼내 쓰는 결과물 |
+| 나이테 | 시간순으로 남는 성장 기록 |
 
-예전 같으면 벡터 DB 가 필요한 일이지만, 개인이 벡터 DB 를 관리하기는 어렵습니다. 평문 Markdown 이면 비슷한 효과를 내면서 가볍고(전부 합쳐도 보통 1MB 가 되지 않습니다), Git 으로 그대로 옮기고 공유할 수 있습니다.
+자료를 넣으면 페이지가 생기고, 페이지끼리 이어지고, 결정이 열매로 남습니다. 쓰고 잇는 일은 에이전트가 합니다. 나는 자료를 고르고 질문하면 됩니다.
 
-전체 그림은 나무 한 그루입니다.
-
-| 나무 | 실제로는 | 위치 |
-|---|---|---|
-| 뿌리 | 원본 자료가 들어오는 곳 | `roots/` |
-| 줄기 | 전체 구조를 보여주는 진입점 | `tree/trunk.md` |
-| 잎 | 이해가 정리된 지식 페이지 | `tree/*.md` |
-| 맥 | 잎과 잎을 잇는 링크 | `[[wikilink]]` |
-| 열매 | 결정과 인사이트처럼 다시 꺼내 쓰는 결과물 | `kind=decision` 페이지 |
-| 나이테 | 시간순 성장 기록 | `tree/rings.md` |
-| 씨앗 | 앞으로 만들 페이지 후보 | `tree/seeds.md` |
-
-자료가 뿌리로 들어오면 줄기에서 구조가 뻗고, 잎이 달리고, 결정이 열매로 맺힙니다. 페이지를 쓰고 잇는 일은 에이전트가 맡습니다. 나는 자료를 고르고, 질문하고, 중요한 것을 짚기만 하면 됩니다.
+벡터 DB 같은 것은 필요 없습니다. 평문 Markdown 이라 가볍고, Git 으로 그대로 옮기고 공유할 수 있고, Obsidian 으로 열어 볼 수도 있습니다.
 
 ## 설치
 
-필요한 것은 Claude Code 하나입니다. vault 로 쓸 폴더를 하나 만들고(빈 폴더면 됩니다), 그 폴더에서 Claude Code 를 연 다음 아래 한 줄을 붙여넣으세요. 나머지는 에이전트가 이어서 안내합니다.
+Claude Code 만 있으면 됩니다. vault 로 쓸 폴더를 하나 만들고, 그 폴더에서 Claude Code 를 연 다음 아래 한 줄을 붙여넣으세요.
 
 ```text
 naite 를 설치하고 이 폴더를 내 vault 로 시작해줘. `claude plugin marketplace add daehyeonxyz/naite-personal-memory` 와 `claude plugin install naite@naite` 를 실행한 뒤, 설치된 naite 플러그인의 start 절차를 읽고 그대로 따라줘.
 ```
 
-이 한 줄이 하는 일은 넷입니다.
+이 한 줄로 설치와 첫 나무 만들기까지 끝납니다.
 
-1. naite 마켓플레이스를 등록하고 플러그인을 설치합니다. `naite-mcp` 서버도 함께 등록됩니다.
-2. 이 폴더에 vault 를 만듭니다. 문서, 스키마, 빈 나무가 담긴 starter 파일이 복사됩니다.
-3. 첫 나무 만들기를 안내합니다. ChatGPT 나 Gemini 에서 내보낸 대화 기록을 붙여넣으면 잎과 맥과 열매로 짜 줍니다. 데모용 예시가 아니라 내 기록이라 첫 세션부터 바로 쓸모가 있습니다.
-4. 원하면 전역 포인터 `~/.naite/root` 를 적어 둡니다. 이후 어느 폴더에서든 `/naite` 가 내 vault 를 찾습니다.
+1. naite 플러그인이 설치됩니다.
+2. 이 폴더가 내 vault 가 됩니다.
+3. ChatGPT 나 Gemini 에서 내보낸 대화 기록을 붙여넣으면 첫 지식 페이지들이 만들어집니다. 예시 데이터가 아니라 내 기록이라, 첫날부터 바로 쓸모가 있습니다.
 
-다음 세션부터는 어디서든 `/naite` 로 시작하면 됩니다. 환경에 따라 `/naite:naite` 처럼 플러그인 이름이 앞에 붙어 보일 수 있고, 명령이 헷갈리면 자연어로 "naite 시작하자" 라고만 해도 같은 흐름으로 이어집니다.
+다음부터는 어디서든 `/naite` 로 시작하면 됩니다. 명령이 헷갈리면 그냥 "naite 시작하자" 라고 해도 됩니다.
 
 <details>
-<summary>명령을 직접 치고 싶다면 (수동 2단계)</summary>
+<summary>명령을 직접 치고 싶다면</summary>
 
 ```text
 /plugin marketplace add daehyeonxyz/naite-personal-memory
 /plugin install naite
 ```
 
-설치 후 vault 폴더에서 `/naite start` 를 실행하면 위와 같은 흐름입니다.
+설치 후 vault 폴더에서 `/naite start` 를 실행하세요.
 
 </details>
 
 ### 이미 vault 가 있다면
 
-플러그인을 설치한 뒤 `~/.naite/root` 파일에 vault 의 절대 경로 한 줄만 적어 두세요. 어느 폴더에서 열어도 `/naite` 가 그 vault 로 연결됩니다. vault 안의 스킬 사본이 항상 우선이므로, 직접 다듬어 온 규칙은 그대로 살아 있습니다.
+`~/.naite/root` 파일에 vault 경로 한 줄만 적어 두세요. 어느 폴더에서 열어도 `/naite` 가 내 vault 로 연결됩니다.
 
 ### Codex 를 쓰거나 직접 설치하려면
 
-플러그인 마켓플레이스를 쓸 수 없는 환경이라면 저장소를 직접 복사해 시작합니다. 개인 기록이 담기니 **Private** 저장소를 권장합니다.
-
-1. GitHub 에서 새 저장소를 만들고, 클론한 폴더에서 에이전트를 실행합니다.
-2. 아래 프롬프트를 그대로 붙여넣습니다.
+플러그인 없이 저장소를 직접 복사해 시작할 수 있습니다. 개인 기록이 담기니 Private 저장소를 권장합니다. 새 저장소를 만들어 클론한 폴더에서 에이전트를 열고, 아래를 붙여넣으세요.
 
 ```text
 https://github.com/daehyeonxyz/naite-personal-memory 를 이 폴더에 설치해줘.
 
 1. 위 저장소를 임시 폴더에 클론한 다음, .git 을 제외한 모든 파일을 이 폴더 루트로 복사해.
-2. 복사가 끝나면 임시 폴더를 지우고, `.naite/PUBLIC_STARTER` 파일이 있으면 지워(공개 스타터 전용 표식이라 내 개인 vault 에는 없어야 해). 그다음 CLAUDE.md (Codex 라면 AGENTS.md) 를 읽어.
-3. `git config core.hooksPath .naite/hooks` 로 가드 훅을 켜(비밀키와 개인정보가 실수로 커밋되는 걸 막아. 내 tree·roots 기록은 그대로 정상 커밋돼).
+2. 복사가 끝나면 임시 폴더를 지우고, `.naite/PUBLIC_STARTER` 파일이 있으면 지워. 그다음 CLAUDE.md (Codex 라면 AGENTS.md) 를 읽어.
+3. `git config core.hooksPath .naite/hooks` 로 가드 훅을 켜.
 4. "naite install" 메시지로 첫 커밋을 만들어줘.
 5. 끝나면 내가 지금 바로 해볼 수 있는 것을 한두 가지 알려줘.
 ```
 
-가드 훅은 공개 스타터와 개인 vault 를 구분합니다. 위 2번처럼 `.naite/PUBLIC_STARTER` 표식이 사라지면 개인 vault 로 인식해 `tree/` 와 `roots/` 커밋을 막지 않습니다. 표식을 지우지 않고 쓰고 싶으면 `NAITE_HOOK_MODE=vault` 환경변수로 같은 효과를 냅니다. 어느 쪽이든 비밀키와 개인정보 스캔은 항상 돕니다.
+가드 훅은 비밀키나 개인정보가 실수로 커밋되는 것을 막아 주는 안전장치입니다.
 
 ## 데스크톱 앱
 
-나무를 보고, 찾고, 에이전트에게 일을 맡기는 뷰어입니다. 앱은 vault 에 쓰지 않습니다. 쓰는 일은 언제나 에이전트가 합니다.
+나무를 보고, 찾고, 에이전트에게 일을 맡기는 앱입니다.
 
 <p align="center">
-  <img src="assets/app-tree.png" alt="나무 그래프 화면. 잎과 잎이 맥으로 이어진 지식 그래프가 펼쳐져 있다" width="820" />
+  <img src="assets/app-tree.png" alt="나무 그래프 화면" width="820" />
 </p>
-<p align="center"><em>나무 화면. 잎과 잎이 맥으로 이어진 모습을 그대로 펼쳐 보여 줍니다.</em></p>
+<p align="center"><em>여러 페이지가 어떤 관계로 이어져 있는지를 그래프뷰로 볼 수 있습니다.</em></p>
 
 <p align="center">
-  <img src="assets/app-home.png" alt="홈 화면. 쌓인 나무를 아는 에이전트에게 무엇이든 맡기는 대화창" width="820" />
+  <img src="assets/app-home.png" alt="홈 화면" width="820" />
 </p>
-<p align="center"><em>홈 화면. 쌓인 나무를 아는 에이전트에게 무엇이든 맡깁니다.</em></p>
+<p align="center"><em>쌓인 지식을 아는 에이전트에게 무엇이든 맡길 수 있습니다.</em></p>
 
-[최신 릴리스](https://github.com/daehyeonxyz/naite-app-releases/releases/latest)에서 내려받습니다.
+[최신 릴리스](https://github.com/daehyeonxyz/naite-app-releases/releases/latest)에서 내려받습니다. 설치만 하면, 새 버전은 자동으로 업데이트됩니다.
 
 - Windows: `naite_*_x64-setup.exe`
-- macOS: `naite_*_universal.dmg` (Intel·Apple Silicon)
+- macOS: `naite_*_universal.dmg`
 - Linux: `naite_*_amd64.AppImage`
-
-설치하면 새 버전이 나올 때 앱이 알아서 업데이트합니다. 앱과 하네스(이 저장소의 스킬과 규칙 묶음)는 버전을 따로 관리하고, 호환성은 `min-harness-version` 계약으로 판단합니다.
 
 ## 명령어
 
 | 명령 | 언제 쓰나 |
 |---|---|
-| `/naite start` | 처음 시작할 때. 다른 AI 의 기록을 가져와 첫 나무를 짓는 1회성 안내 |
-| `/naite grow [path?]` | 공부한 것과 던져 둔 자료를 나무에 반영할 때. 대화 마무리부터 과목 단위까지 전부 |
-| `/naite grow backfill <slug>` | 학습이 끝난 과목이나 아카이브를 대화 없이 chapter 단위로 일괄 보강할 때 |
-| `/naite ask <질문>` | 쌓인 기록을 바탕으로 물을 때 |
-| `/naite fruit [topic?]` | 결정, trade-off, 실패 분석을 열매로 남길 때 |
-| `/naite care --check [scope?]` | 고치지 않고 건강 점검만 할 때. secrets scan 과 schema 보고서를 만든다 |
-| `/naite care [scope?]` | 점검 결과나 요청을 바탕으로 나무를 실제로 다듬을 때 |
-| `/naite upgrade` | naite 새 버전이 나왔을 때. 내 자료와 내가 고친 규칙은 보존하고, schema migration 은 미리보기와 승인 뒤에만 적용 |
+| `/naite start` | 처음 시작할 때 |
+| `/naite grow` | 공부한 내용과 보관해 놓은 자료를 나무에 반영할 때 |
+| `/naite grow backfill` | 예전에 공부했던 자료들을 한번에 노트로 정리하고 싶을 때 |
+| `/naite ask` | 쌓인 기록을 바탕으로 질문할 때 |
+| `/naite fruit` | 결정이나 고민의 결론을 남기고 싶을 때 |
+| `/naite care --check` | 나무 상태를 점검하고 싶을 때 |
+| `/naite care` | 나무를 다듬고 정리할 때 |
+| `/naite upgrade` | 새 버전이 업데이트됐을 때 |
 
-명령을 외울 필요는 없습니다. 자료를 붙여넣고 "반영해줘" 라고만 해도 에이전트가 알맞은 흐름을 찾아갑니다.
-
-`capture.md`, `ingest.md`, `grow-branch.md`, `care-check.md` 는 직접 부르는 명령이 아니라 위 명령들이 내부에서 읽는 절차 파일입니다. 예를 들어 대화 내용을 남기면 `/naite grow` 가 먼저 `capture.md` 로 `roots/conversations/` 에 임시 기록을 만들고, 승인하면 `ingest.md` 로 `tree/` 에 반영합니다.
+명령을 외울 필요는 없습니다. 자료를 붙여넣고 "반영해줘" 라고만 해도 에이전트가 알맞은 흐름을 찾아갑니다. `.claude/skills/naite/` 안의 나머지 파일들은 명령이 실행될 때 에이전트가 참고하는 문서입니다.
 
 ## 폴더 구조
 
@@ -148,42 +132,39 @@ https://github.com/daehyeonxyz/naite-personal-memory 를 이 폴더에 설치해
 
 ```text
 naite/
-  roots/   # 뿌리. 원본 자료가 들어오는 곳
-  tree/    # 나무. 에이전트가 쓰고 서로 잇는 지식 페이지
-  docs/    # 더 깊은 규칙이 궁금할 때 읽는 기술 문서
+  roots/   # 내가 넣은 원본 자료
+  tree/    # 에이전트가 정리한 지식 페이지
 ```
 
-나머지(`.naite/`, `.claude/`, `.agents/`)는 에이전트가 쓰는 내부 구현이라 몰라도 됩니다. 내부 스크립트를 직접 돌릴 일이 생기면, 명령의 `python` 은 macOS·Linux 에서 `python3`, Windows 에서 `python` 또는 `py -3` 입니다.
+나머지는 에이전트가 쓰는 내부 폴더라 몰라도 됩니다.
 
 ## 에이전트를 나에게 맞추기
 
-naite 는 세 파일로 나를 압니다. 모두 평범한 Markdown 이라 직접 고칠 수 있습니다.
+세 파일이 나를 기억합니다. 모두 평범한 Markdown 이라 직접 고칠 수 있습니다.
 
-- `SOUL.md`: 에이전트의 정체성과 말투. 기본값이 있고, 톤을 바꾸려면 이 파일을 고칩니다.
-- `USER.md`: 나의 응답 선호. 어떤 톤과 길이로 답할지. 비워 두고 시작해도 되고, `/naite start` 가 동의를 받아 채웁니다.
-- `MEMORY.md`: 진행 중인 작업과 운영 메모.
+- `SOUL.md`: 에이전트의 말투. 톤을 바꾸고 싶으면 이 파일을 고칩니다.
+- `USER.md`: 내가 선호하는 답변 방식. 비워 두고 시작해도 됩니다.
+- `MEMORY.md`: 진행 중인 작업 메모.
 
-`SOUL.md` 는 공개 기본값이라 함께 쓰지만, `USER.md` 와 `MEMORY.md` 는 개인 정보라 Git 에 올라가지 않습니다.
+`USER.md` 와 `MEMORY.md` 는 개인 정보라 Git 에 올라가지 않습니다.
 
 ### vault 를 다른 컴퓨터로 옮길 때
 
-vault 는 Git 저장소라 clone 으로 그대로 옮겨집니다. 다만 Git 에 올라가지 않는 것들이 있으니 새 컴퓨터에서 두 가지만 챙기면 됩니다.
+vault 는 Git 저장소라 clone 하면 그대로 옮겨집니다. 새 컴퓨터에서 두 가지만 챙기세요.
 
-1. **가드 훅 다시 켜기**: 훅 설정은 클론마다 새로 해야 합니다. 새 폴더에서 `git config core.hooksPath .naite/hooks` 를 한 번 실행하세요.
-2. **개인 파일 옮기기**: `USER.md`, `MEMORY.md`, `.naite/hooks/denylist.local`, 숲 설정 `.naite/forest/forest-config.json` 은 clone 에 담기지 않습니다. 계속 쓰려면 예전 폴더에서 직접 복사하세요.
+1. 새 폴더에서 `git config core.hooksPath .naite/hooks` 를 한 번 실행해 가드 훅을 다시 켭니다.
+2. `USER.md` 와 `MEMORY.md` 는 Git 에 없으니 예전 폴더에서 직접 복사합니다.
 
 ## 더 알아보기
 
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): 왜 이런 구조인지, 스키마 설계 근거
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): 왜 이런 구조인지
 - [docs/CONVENTIONS.md](docs/CONVENTIONS.md): 페이지가 지키는 규칙
-- [docs/CONTEXT.md](docs/CONTEXT.md): 에이전트가 무엇을 어떤 순서로 읽는지
-- [docs/agent-runtimes.md](docs/agent-runtimes.md): Claude Code, Codex, plugin, prompt caching 차이
-- [docs/connect-mcp.md](docs/connect-mcp.md): 나무를 Claude Desktop 과 Codex 에 MCP 로 붙이기
-- [docs/VERSIONING.md](docs/VERSIONING.md): 버전 규약과 앱 호환성
+- [docs/CONTEXT.md](docs/CONTEXT.md): 에이전트가 무엇을 읽는지
+- [docs/connect-mcp.md](docs/connect-mcp.md): Claude Desktop 과 Codex 에 MCP 로 붙이기
 
 ## 기여
 
-naite 하네스(스킬, 문서, 스크립트, 플러그인 설정)는 공개되어 있고 기여를 환영합니다. fork 해서 고친 뒤 PR 을 보내면 메인테이너가 검토해 반영합니다. 다만 `tree/` 와 `roots/` 는 각자의 개인 기록이라 기여 대상이 아닙니다. 자세한 흐름과 스키마 변경 규칙은 [CONTRIBUTING.md](CONTRIBUTING.md) 에 있습니다.
+naite 하네스는 공개되어 있고 기여를 환영합니다. fork 해서 고친 뒤 PR 을 보내 주세요. `tree/` 와 `roots/` 는 각자의 개인 기록이라 기여 대상이 아닙니다. 자세한 내용은 [CONTRIBUTING.md](CONTRIBUTING.md) 에 있습니다.
 
 ## License
 
