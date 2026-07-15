@@ -6,7 +6,7 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/license-MIT-7cc15a" alt="MIT" />
-  <img src="https://img.shields.io/badge/version-0.8.6-a9621f" alt="v0.8.6" />
+  <img src="https://img.shields.io/badge/version-0.8.7-a9621f" alt="v0.8.7" />
   <img src="https://img.shields.io/badge/Claude_Code-ready-a9621f" alt="Claude Code" />
   <img src="https://img.shields.io/badge/Codex-ready-7cc15a" alt="Codex" />
   <img src="https://img.shields.io/badge/Obsidian-compatible-a9621f" alt="Obsidian" />
@@ -23,6 +23,25 @@ naite 는 내가 아는 것을 평문 Markdown 으로 쌓아 두는 개인용 �
 이름은 나이테에서 왔습니다. 나무가 해마다 안쪽부터 테를 더하듯, 기록도 지우고 덮어쓰는 게 아니라 안쪽에 쌓이며 자랍니다.
 
 이 아이디어는 Andrej Karpathy 가 내놓은 **LLM Wiki** 패턴 위에 있습니다. LLM 을 유지 관리자로 두고, 구조화되고 서로 링크된 Markdown 으로 개인 지식 저장소를 점진적으로 짓는다는 생각입니다. 고정된 형식이 아니라, 각자에게 맞게 길들이는 틀입니다.
+
+## 한눈에 보기
+
+vault 는 평문 Markdown 폴더지만, [데스크톱 앱](#데스크톱-앱-보기-전용)으로 열면 이렇게 보입니다.
+
+<p align="center">
+  <img src="assets/app-forest.png" alt="숲 대시보드 — 나무별 현황, 잎 활동, 정리 대기와 돌봄 신호" width="820" />
+</p>
+<p align="center"><em>숲 — 나무 17그루, 잎 1,400여 장이 어떻게 자라고 있는지 한눈에. 정리할 것과 돌볼 곳은 에이전트에게 바로 맡깁니다.</em></p>
+
+<p align="center">
+  <img src="assets/app-tree.png" alt="나무 그래프 — 잎과 잎이 wikilink 맥으로 이어진 지식 그래프" width="820" />
+</p>
+<p align="center"><em>나무 — 잎과 잎이 맥(<code>[[wikilink]]</code>)으로 이어진 모습 그대로. 줄기·잎·결정이 색으로 구분됩니다.</em></p>
+
+<p align="center">
+  <img src="assets/app-home.png" alt="홈 — 에이전트에게 무엇이든 맡기는 대화 화면" width="820" />
+</p>
+<p align="center"><em>홈 — 쌓인 나무를 아는 에이전트에게 무엇이든 맡깁니다.</em></p>
 
 ## 어떻게 동작하나
 
@@ -49,30 +68,38 @@ naite 는 결국 Markdown 파일이 담긴 폴더 하나입니다. 세 겹으로
 
 쓰는 동안엔 이 폴더를 Obsidian 으로 열면 나무가 그래프로 보이고, naite 앱에서도 볼 수 있습니다.
 
-## 설치
+## 설치 — 한 줄이면 됩니다
 
-필요한 것은 GitHub 계정과 Claude Code 하나입니다. Codex 를 쓰거나 직접 설치하려면 아래 폴백 경로를 따릅니다.
+필요한 것은 Claude Code 하나입니다. vault 로 쓸 폴더(빈 폴더면 됩니다)를 하나 만들어 거기서 Claude Code 를 열고, 아래 **한 줄을 붙여넣으세요**. 설치부터 첫 나무까지 에이전트가 이어서 안내합니다.
 
-### Claude Code 플러그인 (권장)
+```text
+naite 를 설치하고 이 폴더를 내 vault 로 시작해줘 — `claude plugin marketplace add daehyeonxyz/naite-personal-memory` 와 `claude plugin install naite@naite` 를 실행한 뒤, 설치된 naite 플러그인의 start 절차를 읽고 그대로 따라줘.
+```
 
-Claude Code 에서 두 명령을 순서대로 실행합니다.
+이 한 줄이 하는 일:
+
+1. naite 마켓플레이스 등록과 플러그인 설치 (`naite-mcp` 서버도 함께 등록됩니다)
+2. 이 폴더에 vault 부트스트랩 — starter 파일(문서·스키마·빈 나무)을 복사해 vault 를 만듭니다
+3. 첫 나무 안내 — ChatGPT·Gemini 등에서 내보낸 대화 기록을 붙여넣으면 잎과 맥과 열매로 짜 줍니다. 데모용 예시가 아니라 내 기록이라, 첫 세션부터 바로 쓸모가 있습니다
+4. (원하면) 전역 포인터 `~/.naite/root` 작성 — 이후 어느 폴더에서든 `/naite` 가 내 vault 를 찾습니다
+
+다음 세션부터는 어디서든 `/naite` 로 시작합니다. 환경에 따라 `/naite:naite` 처럼 플러그인 이름이 앞에 붙어 보일 수 있고, 명령이 헷갈리면 자연어로 "naite 시작하자" 라고만 해도 같은 흐름으로 이어집니다.
+
+<details>
+<summary>명령을 직접 치고 싶다면 (수동 2단계)</summary>
 
 ```text
 /plugin marketplace add daehyeonxyz/naite-personal-memory
 /plugin install naite
 ```
 
-naite 하네스와 함께 `naite-mcp` 서버도 자동으로 등록됩니다.
+설치 후 vault 폴더에서 `/naite start` 를 실행하면 위와 같은 흐름입니다.
 
-설치하면 vault 로 쓸 폴더(빈 폴더면 됩니다)에서 `/naite start` 로 첫 세션을 시작하세요. 폴더에 아직 vault 가 없으면 start 가 먼저 starter 파일(문서·스키마·빈 나무)을 그 폴더에 복사해 vault 를 만들고, 이어서 다른 AI 에 쌓아 둔 대화 기록을 가져와 첫 나무를 짓는 안내를 시작합니다.
+</details>
 
-```text
-/naite start
-```
+### 이미 vault 가 있다면 (파워 유저)
 
-플러그인으로 설치된 스킬은 환경에 따라 `/naite:naite start` 처럼 플러그인 이름이 앞에 붙은 형태로 보일 수 있습니다. 명령 형태가 헷갈리면 그냥 자연어로 "naite 시작하자" 라고 해도 같은 흐름으로 이어집니다.
-
-ChatGPT·Gemini 같은 데서 대화 기록을 내보내 붙여넣으면, naite 가 그것을 가져와 잎과 맥과 열매로 짜서 첫 나무를 만듭니다. 데모용 예시가 아니라 내 기록이라, 첫 세션부터 바로 쓸모가 있습니다.
+vault 를 이미 갖고 있으면 플러그인 설치 후 `~/.naite/root` 에 vault 절대 경로 한 줄만 적어 두세요. 어느 폴더에서 열어도 `/naite` 가 그 vault 로 연결됩니다. vault 안의 스킬 사본이 계약으로 우선하므로, 직접 다듬어 온 규칙은 그대로 살아 있습니다.
 
 ### 직접 설치 (Codex·수동 클론)
 
