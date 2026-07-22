@@ -23,6 +23,17 @@ Then **answer from the index plus your own knowledge.** You are a capable model 
 
 Speed comes from **reading the index once and reasoning from it**, not from re-spelunking files every turn — and from keeping the model and effort steady across a conversation so the session's prompt cache stays warm (do not switch engine per question). This grounding is internal work: never narrate it in the answer ("trunk.md 를 먼저 읽겠습니다", 후보 페이지 목록). See `SOUL.md § 응답 스타일`.
 
+### 1b. Completeness questions — enumerate, don't estimate
+
+"몇 개야", "전부 나열해", "빠짐없이 보여줘", "어떤 것들이 있어" 류의 **열거 질문**은 index 를 훑어 답을 추정하는 위의 기본 경로로 처리하지 않는다. 하나라도 빠지면 답이 틀리기 때문에, 완전성을 증거로 확보하는 절차를 순서대로 따른다:
+
+1. **문자 검색 먼저.** `grep` 으로 tree 전체에서 후보를 뽑는다. 정확한 slug, 키워드, frontmatter 값을 문자 그대로 훑어 명백한 항목부터 확보한다.
+2. **의미 검색을 여러 번.** 같은 개념의 다른 표현, 동의어, 상위어와 하위어로 질의를 바꿔가며 여러 차례 찾는다. 한 번의 질의로 끝내지 않는다. 문자 검색이 놓친, 다르게 표기된 항목을 여기서 건진다.
+3. **중복 제거 표.** 두 경로에서 모인 후보를 한 표에 모아 같은 항목의 중복을 접는다. 각 항목의 slug 와 근거(어느 검색에서 나왔는지)를 표에 남긴다.
+4. **재검증.** 최종 목록의 각 항목이 실제로 질문 조건에 맞는지 페이지로 되짚어 확인하고, 빠졌을 만한 이웃(inbound/outbound 링크, 같은 subject 의 페이지)을 한 번 더 훑어 누락을 점검한다.
+
+이 절차의 목적은 속도가 아니라 완전성이다. 열거 질문에 index 추정만으로 답하면 조용히 항목을 빠뜨리게 된다. 이 네 단계는 내부 작업이므로 답변 본문에 과정으로 서술하지 않고, 완성된 목록만 사용자에게 보인다. (계보: honcho, plastic-labs/honcho AGPL @4f9a413. 개념만 증류했고 코드는 복사하지 않았다.)
+
 ### 2. If the index shows the tree is silent
 
 If nothing in the index (trunk, and the pages it points to) touches the question:
