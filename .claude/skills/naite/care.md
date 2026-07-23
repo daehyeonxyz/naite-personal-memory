@@ -102,6 +102,8 @@ Run only the command needed for the approved finding, inspect `git diff HEAD -- 
 
 **Minimal-intrusion first.** 가장 작은 수정으로 결함을 고친다. 확실한 버그라도 이번 turn 의 scope 밖이면 고치지 말고 defer 로 표기한다 (scope 규율 > 완벽주의). 구조 수술(파일 재구성, 대량 재작성)은 최소침습으로 해결이 안 되는 게 확실할 때만, 그리고 Sweep 의 무손실 증명을 동반할 때만 한다.
 
+**Change proportional to the source.** 원본 소스의 변경이 작으면 tree 반영도 작게 유지한다. 대략 다섯 파일 미만이 바뀐 소스 갱신은 위키 페이지도 한두 페이지만 손대는 것이 정상이며, 작은 원본 변경이 전면 재검토로 번지지 않게 한다. 검토 결과 실제로 고칠 것이 없으면 변경 없음(no-op)도 정당한 결과다. 손댈 이유가 없는 페이지를 완결성만을 위해 억지로 바꾸지 않는다. (계보: openwiki, langchain-ai/openwiki MIT @559788fe. 개념만 증류했고 코드는 복사하지 않았다.)
+
 After editing pages, rebuild `.naite/ontology/tree-manifest.json` when page coordinates changed and rebuild `.naite/ontology/tree-dependencies.json` when body links or soft relation idioms changed. Include both generated maps in the change if they changed.
 
 ### Sweep
