@@ -20,7 +20,7 @@ vault 경로는 `NAITE_ROOT` 환경변수 → `--root <경로>` 인자 → 현�
 연 프로젝트 디렉토리(`${CLAUDE_PROJECT_DIR}`)로 잡힌다.
 
 ```
-/plugin marketplace add daehyeonxyz/naite-personal-memory
+/plugin marketplace add https://github.com/daehyeonxyz/naite-personal-memory
 /plugin install naite
 ```
 

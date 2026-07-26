@@ -63,7 +63,7 @@ naite 를 설치하고 이 폴더를 내 vault 로 시작해줘. `claude plugin 
 <summary>명령을 직접 치고 싶다면</summary>
 
 ```text
-/plugin marketplace add daehyeonxyz/naite-personal-memory
+/plugin marketplace add https://github.com/daehyeonxyz/naite-personal-memory
 /plugin install naite
 ```
 
