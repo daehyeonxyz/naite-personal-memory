@@ -2,15 +2,15 @@
 
 naite 를 처음 켠 사용자의 **첫 세션을 안내한다**. 빈 나무에는 보여줄 게 없으므로, 사용자가 이미 다른 AI(ChatGPT, Gemini, claude.ai) 에 쌓아둔 기록과(또는) 가지고 있는 원본 자료로 첫 나무를 짓고, 그 나무를 그래프로 보며 모델을 납득하게 한다.
 
-모든 데이터 경로는 NAITE_ROOT 기준으로, 하위 스킬 참조는 SKILL_DIR (`<NAITE_ROOT>/.claude/skills/naite`) 기준으로 푼다. 맥락은 SKILL.md 를 본다. 사용자 대면 카피와 export 품질 기준은 `docs/QUALITY.md` 가 단일 진실원이다.
+모든 데이터 경로는 NAITE_ROOT 기준으로, 하위 스킬 참조는 SKILL_DIR (`<NAITE_ROOT>/.claude/skills/naite`) 기준으로 푼다. 맥락은 SKILL.md 를 본다. 사용자 대면 카피와 export 품질 기준은 `docs/QUALITY.md` 가 단일 소스다.
 
-## When to use
+## 사용 시점
 
 - 설치 직후이고 vault 가 비어 있을 때 (`tree/` 에 `trunk.md`/`rings.md`/`seeds.md` 외 페이지가 없음).
 - 사용자가 "어떻게 시작해?", "처음인데" 같은 신호를 줄 때.
 - **1회성 온보딩 진입점이다.** 한 번 나무가 생긴 뒤의 일반 자료 반영은 `/naite grow` 로 간다. 메모리를 다시 가져오고 싶으면 `/naite start` 를 다시 불러도 되며, 이때는 서비스별 보존본을 갱신한다.
 
-## Hard rules (inherited)
+## 강행 규칙 (상속)
 
 - `roots/` 는 source of truth. import 한 export 는 `roots/conversations/` 에만 쓴다. `tree/` 를 직접 편집하지 않는다.
 - `roots/conversations/` 에 쓰기 전 `capture.md § 4` secrets pre-check 를 돌린다. 적중 시 쓰지 않고 사용자에게 알리고 redact 를 제안한다. 우회하지 않는다.
@@ -130,10 +130,10 @@ export 에서 `[있음]` 으로 표시된 주제는, 그 원본 자료로 골격
 
 사용자가 원치 않으면 만들지 않는다. 표면이 없으면 bootloader 가 자동으로 건너뛴다. 이 단계는 `tree/` 를 건드리지 않는다.
 
-## What this command never does
+## 이 명령이 절대 하지 않는 것
 
 - `§ 0` vault 스캐폴드 복사, `roots/` 의 import 기록, (동의 시) 루트 instruction surface (`USER.md`/`MEMORY.md`) 외에는 직접 쓰지 않는다. `tree/` 변환은 `ingest`/`grow` 에 위임한다.
 - secrets pre-check 를 건너뛰지 않는다.
 - 게이트를 통과하지 못한 얕은 export 를 ingest 하지 않는다.
 - 새 rings op 를 만들지 않는다.
-- Never commits to git.
+- git 커밋을 하지 않는다.
