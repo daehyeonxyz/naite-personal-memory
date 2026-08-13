@@ -1,37 +1,38 @@
-# capture — grow internal module
+# capture — grow 내부 모듈
 
-사용자 노출 명령이 아니다. /naite grow 가 위임하는 내부 모듈이다.
+이 파일은 사용자 노출 명령이 아니다. `/naite grow` 가 위임하는 내부 모듈이다.
 
-Snapshot knowledge from the **current conversation** into `roots/conversations/`. Does not touch `tree/`. Merging into the tree happens in a separate grow ingest step, user-initiated.
+capture 는 현재 대화의 지식을 `roots/conversations/` 로 스냅샷한다. `tree/` 는 건드리지 않는다. 나무로 접는 병합은 사용자가 시작하는 별도의 grow ingest 단계가 담당한다.
 
-## When to use
+## 사용 시점
 
-The user is in a learning conversation with the agent (desktop chat, cowork, or code surface) and says something like "tree 업데이트해줘", "capture this", or "save what we just covered." This is the trigger.
+사용자가 에이전트와 학습 대화(데스크톱 채팅, cowork, 코드 표면)를 하다가 "tree 업데이트해줘"나 "capture this"나 "방금 다룬 것 저장해줘"라고 말하면 이 모듈이 켜진다.
 
-## Hard rules
+## 강행 규칙
 
-- **Write only under `roots/conversations/`.** Never create or modify pages under `tree/`. Never edit `trunk.md`, `rings.md`, or `seeds.md`.
-- **Two files per capture**, with different lifetimes:
-  - **Claim summary** at `roots/conversations/YYYY-MM-DD-<slug>.md` — **ephemeral staging**. The grow ingest step deletes it after successful grow (see `ingest.md § 8`). Think of this file as a handoff envelope for the ingester, not a long-term artifact.
-  - **Verbatim transcript twin** at `roots/conversations/_transcripts/YYYY-MM-DD-<slug>.md` — **permanent insurance copy**. Never deleted by any skill. If the claim summary's extraction was lossy, the transcript enables re-capture.
-  Both files are required — the transcript alone is not a capture.
-- **Filename slug**: `YYYY-MM-DD-<topic-kebab>.md`. If the slug already exists for today, append `-2`, `-3`, …
-- **Tell the user the follow-up step** at the end: "run `/naite grow roots/conversations/<file>` to fold this in."
+- 쓰기는 `roots/conversations/` 아래에만 한다.
+  - `tree/` 아래의 페이지를 만들거나 고치지 않는다. `trunk.md` 와 `rings.md` 와 `seeds.md` 를 편집하지 않는다.
+- capture 하나는 수명이 다른 두 파일을 만든다.
+  - claim 요약: `roots/conversations/YYYY-MM-DD-<slug>.md`. 일시적 staging 파일이다. grow ingest 단계가 grow 성공 후 이 파일을 삭제한다 (`ingest.md` 8절). 이 파일은 ingester 에게 넘기는 전달 봉투이지 장기 보존물이 아니다.
+  - 원문 전사 쌍둥이: `roots/conversations/_transcripts/YYYY-MM-DD-<slug>.md`. 영구 보험 사본이다. 어느 스킬도 삭제하지 않는다. claim 요약의 추출이 손실됐으면 이 전사본이 재캡처를 가능하게 한다.
+  - 두 파일 모두 필수다. 전사본 하나만으로는 capture 가 아니다.
+- 파일명 slug 는 `YYYY-MM-DD-<topic-kebab>.md` 다. 오늘 날짜에 같은 slug 가 이미 있으면 `-2`, `-3` 을 붙인다.
+- 끝에는 후속 단계를 사용자에게 알린다: "run `/naite grow roots/conversations/<file>` to fold this in."
 
 ## Workflow
 
 > [!IMPORTANT]
-> Run **§ 4 (Secrets + PII pre-check) on the conversation content BEFORE writing anything in § 2 or § 3.** The section numbers are the write order, but the scan is a gate that precedes both writes: once text is on disk (especially the permanent `_transcripts/` twin) a secret is already leaked. Decide the slug (§ 1), scan (§ 4), then write (§ 2, § 3).
+> 2절과 3절에서 무엇이든 쓰기 전에, 대화 내용에 4절(비밀과 PII 사전 검사)을 먼저 실행해야 한다. 절 번호는 쓰기 순서이지만 검사는 두 쓰기 모두에 앞서는 관문이다. 텍스트가 한번 디스크에 오르면(특히 영구 보존되는 `_transcripts/` 쌍둥이) 비밀은 이미 유출된 것이다. slug 를 정하고(1절), 검사하고(4절), 그 다음에 쓴다(2절, 3절).
 
-### 1. Decide the topic slug
+### 1. 주제 slug 결정
 
-If the user named a topic (`/naite grow transformer-attention`), kebab-case it and use it directly. Otherwise, propose a slug based on the conversation's focus and confirm with the user in one line before writing.
+사용자가 주제를 지정했으면(`/naite grow transformer-attention`) kebab-case 로 바꿔 그대로 쓴다. 지정하지 않았으면 대화의 초점에서 slug 를 제안하고, 쓰기 전에 한 줄로 사용자의 확인을 받는다.
 
-### 2. Write the claim-level summary
+### 2. claim 수준 요약 작성
 
-Path: `roots/conversations/YYYY-MM-DD-<topic-kebab>.md`
+경로: `roots/conversations/YYYY-MM-DD-<topic-kebab>.md`
 
-Frontmatter:
+frontmatter:
 
 ```yaml
 ---
@@ -42,7 +43,7 @@ topic: <natural language topic>
 ---
 ```
 
-Body structure:
+본문 구조:
 
 ```markdown
 # <Topic>
@@ -63,40 +64,43 @@ One or two sentences on what the user was doing or thinking about.
 - update: `[[existing-slug]]` — what changes
 ```
 
-Keep claims **atomic and source-attributable** — a claim should be something that could live on its own in a tree page. Skip small talk, tool-use logs, and anything you couldn't cite later.
+claim 은 원자적이고 출처를 붙일 수 있게 유지한다. claim 하나는 tree 페이지에서 홀로 살 수 있는 내용이어야 한다. 잡담과 도구 호출 로그와 나중에 인용할 수 없는 내용은 건너뛴다.
 
-### 3. Write the verbatim transcript twin
+### 3. 원문 전사 쌍둥이 작성
 
-Path: `roots/conversations/_transcripts/YYYY-MM-DD-<topic-kebab>.md` (same slug as step 2).
+경로: `roots/conversations/_transcripts/YYYY-MM-DD-<topic-kebab>.md` (2절과 같은 slug).
 
-This is the insurance file. If your claim extraction is lossy or wrong, the full transcript is preserved for re-capture later.
+이 파일이 보험이다. claim 추출이 손실됐거나 틀렸어도 전체 전사본이 보존되어 있으면 나중에 재캡처할 수 있다.
 
-Content: the conversation as raw prose, labeled `**User:**` and `**Codex:**` turns. Collapse tool-call output unless it carried substantive signal the user cared about. A few-thousand-word paste is fine; don't truncate.
+내용은 대화를 raw 산문으로 담고 `**User:**` 와 `**Codex:**` 턴 라벨을 붙인다. 도구 호출 출력은 사용자가 중요하게 여긴 실질 신호가 아니면 접는다. 수천 단어 분량의 붙여넣기도 괜찮고, 자르지 않는다.
 
-### 4. Secrets + PII pre-check
+### 4. 비밀과 PII 사전 검사
 
-Run this **before writing either file** (both the claim summary and the verbatim transcript twin — the twin is permanent, so an unscanned secret there is permanent). Scan the content for:
+이 검사는 두 파일 중 어느 것이든 쓰기 전에 실행한다 (claim 요약과 원문 전사 쌍둥이 모두. 쌍둥이는 영구 보존이라 검사 없이 들어간 비밀도 영구가 된다). 내용에서 다음을 찾는다.
 
-- **API keys / tokens / private keys** — the same families the guard hook blocks (`.naite/hooks/pre-commit` part 2 is the single source of truth; keep this list in step with it): `sk-...` (Anthropic `sk-ant-...`, OpenAI `sk-proj-...`), GitHub `ghp_`/`gho_`/`ghs_`/`github_pat_`, GitLab `glpat-`, Slack `xox[baprs]-`, AWS `AKIA...`, Google `AIza...`, JWT (`eyJ....eyJ...`), PEM `-----BEGIN ... PRIVATE KEY-----`. Also Stripe `sk_live_`, HuggingFace `hf_`, npm `npm_`, SendGrid `SG.`, and Slack webhook URLs when present.
-- **Credential lines**: `password:`, `api_key:`, `token:`, `Authorization: Bearer ...` with a real-looking value (not `xxx` / `<redacted>` / `your-key-here`).
-- **High-entropy 40+ char strings** that don't look like URLs or hashes.
-- **PII** (personal identifiers): Korean RRN (`######-#######`), phone numbers, credit-card-shaped 16-digit runs, full street addresses, national ID numbers. The deterministic guard hook does **not** catch PII, so this LLM-judgment pass is the primary PII gate — do not assume a downstream layer will catch it.
+- API 키·토큰·개인 키: guard 훅이 차단하는 것과 같은 계열이다 (`.naite/hooks/pre-commit` part 2 가 단일 소스이고 이 목록은 그것과 동기화를 유지한다).
+  - `sk-...`(Anthropic `sk-ant-...`, OpenAI `sk-proj-...`), GitHub `ghp_`·`gho_`·`ghs_`·`github_pat_`, GitLab `glpat-`, Slack `xox[baprs]-`, AWS `AKIA...`, Google `AIza...`, JWT(`eyJ....eyJ...`), PEM `-----BEGIN ... PRIVATE KEY-----`.
+  - Stripe `sk_live_` 와 HuggingFace `hf_` 와 npm `npm_` 와 SendGrid `SG.` 와 Slack webhook URL 도 발견되면 포함한다.
+- 자격 증명 줄: `password:` 나 `api_key:` 나 `token:` 이나 `Authorization: Bearer ...` 뒤에 실제처럼 보이는 값이 붙은 경우 (`xxx` 나 `<redacted>` 나 `your-key-here` 는 제외).
+- URL 이나 해시처럼 보이지 않는 40자 이상의 고엔트로피 문자열.
+- PII(개인 식별 정보): 한국 주민등록번호(`######-#######`), 전화번호, 신용카드 모양의 16자리 연속 숫자, 전체 도로명 주소, 국가 신분증 번호.
+  - 결정론 guard 훅은 PII 를 잡지 못하므로 이 LLM 판단 검사가 1차 PII 관문이다. 하류 층이 잡아 줄 것이라고 가정하지 않는다.
 
-If anything matches: **do not write**. Report to the user and offer to redact. If a secret has **already reached a prior commit** (past this gate, or committed with `--no-verify`), tell the user that redacting the file now does not remove it from git history or from the permanent `_transcripts/` twin, and that the safe response is to **rotate/revoke the exposed credential** and, if needed, rewrite history (`git filter-repo`) before any push to a shared remote.
+무엇이든 걸리면 쓰지 않는다. 사용자에게 보고하고 삭제 처리를 제안한다. 비밀이 이미 이전 커밋에 들어갔으면(이 관문을 지나쳤거나 `--no-verify` 로 커밋된 경우), 지금 파일을 고쳐도 git 이력과 영구 `_transcripts/` 쌍둥이에서는 제거되지 않는다는 사실을 알리고, 안전한 대응은 노출된 자격 증명의 rotate·revoke 와 필요하면 공유 원격에 push 하기 전의 이력 재작성(`git filter-repo`)이라고 안내한다.
 
-### 5. Tell the user the follow-up
+### 5. 후속 안내
 
-Finish with exactly one sentence:
+정확히 한 문장으로 끝낸다.
 
 > roots/conversations/YYYY-MM-DD-<topic>.md 에 기록해 두었습니다. 나무에 심으려면 /naite grow roots/conversations/YYYY-MM-DD-<topic>.md 를 실행해 주세요 (전부 심으려면 /naite grow roots/conversations/).
 
-### 6. No rings entry
+### 6. rings 기록 없음
 
-The capture step does **not** write to `tree/rings.md`. The rings log belongs to tree-layer mutations. The subsequent grow ingest step is what gets logged.
+capture 단계는 `tree/rings.md` 에 쓰지 않는다. rings 기록은 tree 층 변경의 몫이다. 뒤따르는 grow ingest 단계가 기록된다.
 
-## What this command never does
+## 이 모듈이 절대 하지 않는 것
 
-- Never writes under `tree/`.
-- Never commits to git.
-- Never decides on its own to grow — only captures.
-- Never overwrites an existing file with the same slug — it appends `-2`, `-3` to disambiguate.
+- `tree/` 아래에 쓰지 않는다.
+- git 커밋을 하지 않는다.
+- 스스로 grow 를 결정하지 않는다. capture 만 한다.
+- 같은 slug 의 기존 파일을 덮어쓰지 않는다. `-2`, `-3` 을 붙여 구분한다.

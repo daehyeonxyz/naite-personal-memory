@@ -1,95 +1,115 @@
 # /naite ask
 
-Answer a question from the tree. Cite pages. Offer to file the answer.
+나무에서 답을 합성하는 절차다. 에이전트는 질문에 답하면서 페이지를 인용하고, 답이 남길 가치가 있으면 페이지로 기록할지 제안한다.
 
-## 언제 켜는가 (그리고 언제 켜지 않는가)
+## 언제 켜는가
 
-이 절차는 **tree 내용 (개념·entity·decision·source·rings·trunk·page) 의 조회나 추론이 필요한 질문**, 또는 사용자가 명시적으로 `/naite ask` 를 호출했을 때만 실행한다.
+이 절차는 tree 내용(개념·entity·decision·source·rings·trunk·page)의 조회나 추론이 필요한 질문이거나 사용자가 명시적으로 `/naite ask` 를 호출했을 때만 실행한다.
 
-정체성·말투·선호·라우팅·단순 operational 질문 ("너는 누구야?", "네 역할이 뭐야?", "어떻게 답해?") 은 `/naite ask` 로 처리하지 않는다. tree 를 읽지 말고, `CLAUDE.md § 기본 정체성과 라우팅` 과 `SOUL.md § 보이는 정체성과 런타임` 의 기본 정체성으로 바로 답한다.
+정체성과 말투와 선호와 라우팅과 단순 운영 질문("너는 누구야?", "네 역할이 뭐야?", "어떻게 답해?")은 `/naite ask` 로 처리하지 않는다. tree 를 읽지 말고 `CLAUDE.md` 의 기본 정체성과 라우팅 절과 `SOUL.md` 의 보이는 정체성과 런타임 절이 정한 기본 정체성으로 바로 답한다.
 
 ## Workflow
 
-### 1. Grasp the index once, then answer from what you know — read page bodies only on demand
+### 1. 색인을 한 번 파악하고 아는 것으로 답한다. 페이지 본문은 필요할 때만 연다
 
-The tree **index** tells you what the tree covers. It is small and cheap. Read it **once, early** in a conversation — in a continuing thread it is already in your context, so do **not** re-read it:
+tree 의 색인은 나무가 무엇을 다루는지 알려 준다. 색인은 작고 저렴하므로 대화 초반에 한 번 읽는다. 이어지는 대화에서는 색인이 이미 컨텍스트에 있으므로 다시 읽지 않는다.
 
-- `tree/trunk.md` — the map: domains, hub pages, one-line summaries. This is the primary index.
-- For status / progress questions ("오늘 뭘 공부할까", "뭐가 진행 중이지", "다음은 뭐야", "최근 활동") also read the **recent tail of `tree/rings.md`** (it is append-chronological — the newest entries are at the bottom; read the tail, not the whole file). Use `.naite/ontology/subject-tree.md` or `.naite/ontology/tree-manifest.json` only when you specifically need the subject structure or per-domain counts.
+- `tree/trunk.md` 가 1차 색인이다. domain 과 hub 페이지와 한 줄 요약의 지도다.
+- 상태·진행 질문("오늘 뭘 공부할까", "뭐가 진행 중이지", "다음은 뭐야", "최근 활동")에는 `tree/rings.md` 의 최근 꼬리도 읽는다. rings 는 시간순 append 라 최신 항목이 아래에 있으므로 전체가 아니라 꼬리만 읽는다.
+- `.naite/ontology/subject-tree.md` 나 `.naite/ontology/tree-manifest.json` 은 subject 구조나 domain 별 개수가 특별히 필요할 때만 쓴다.
 
-Then **answer from the index plus your own knowledge.** You are a capable model — for navigational questions, overviews, recommendations, and any topic the index shows the tree already covers, reason from the map and your own understanding, and cite the relevant pages by `[[slug]]` (you know the slugs from the index). This is the **fast default and it is enough for most asks.**
+그 다음에는 색인과 자기 지식으로 답한다. 에이전트는 유능한 모델이므로, 길 찾기 질문과 개요와 추천과 색인이 이미 다루고 있다고 보여 주는 주제에는 지도와 자기 이해로 추론하고 관련 페이지를 `[[slug]]` 로 인용한다 (slug 는 색인에서 알 수 있다). 이것이 빠른 기본 경로이고 대부분의 ask 에 충분하다.
 
-**Open an individual page's body only when the answer genuinely needs its specifics** — an exact definition, number, or wording the tree recorded; the actual content to compare what two pages say; or detail the index and your own knowledge don't already give. Then read just those pages, following `[[wikilinks]]` only as far as the answer actually uses. Never open a page "to be safe".
+개별 페이지의 본문은 답이 그 페이지의 구체 내용을 정말로 요구할 때만 연다. tree 가 기록한 정확한 정의나 수치나 문구가 필요할 때, 두 페이지의 실제 내용을 비교해야 할 때, 색인과 자기 지식이 주지 못하는 세부가 필요할 때다. 그때도 그 페이지들만 읽고, `[[wikilink]]` 는 답이 실제로 쓰는 만큼만 따라간다. "혹시 몰라서" 페이지를 열지 않는다.
 
-Speed comes from **reading the index once and reasoning from it**, not from re-spelunking files every turn — and from keeping the model and effort steady across a conversation so the session's prompt cache stays warm (do not switch engine per question). This grounding is internal work: never narrate it in the answer ("trunk.md 를 먼저 읽겠습니다", 후보 페이지 목록). See `SOUL.md § 응답 스타일`.
+속도는 색인을 한 번 읽고 그로부터 추론하는 데서 나오지, 매 턴 파일을 다시 뒤지는 데서 나오지 않는다. 대화 내내 모델과 effort 를 일정하게 유지해야 세션의 prompt cache 가 따뜻하게 유지된다 (질문마다 엔진을 바꾸지 않는다). 이 grounding 은 내부 작업이므로 답변에 그 과정("trunk.md 를 먼저 읽겠습니다", 후보 페이지 목록)을 서술하지 않는다. 상세는 `SOUL.md` 응답 스타일 절이 담당한다.
 
-### 1b. Completeness questions — enumerate, don't estimate
+### 1b. 완전성 질문 — 추정하지 말고 열거한다
 
-"몇 개야", "전부 나열해", "빠짐없이 보여줘", "어떤 것들이 있어" 류의 **열거 질문**은 index 를 훑어 답을 추정하는 위의 기본 경로로 처리하지 않는다. 하나라도 빠지면 답이 틀리기 때문에, 완전성을 증거로 확보하는 절차를 순서대로 따른다:
+"몇 개야"와 "전부 나열해"와 "빠짐없이 보여줘"와 "어떤 것들이 있어" 류의 열거 질문은 색인을 훑어 추정하는 위의 기본 경로로 처리하지 않는다. 하나라도 빠지면 답이 틀리므로, 완전성을 증거로 확보하는 절차를 순서대로 따른다.
 
-1. **문자 검색 먼저.** `grep` 으로 tree 전체에서 후보를 뽑는다. 정확한 slug, 키워드, frontmatter 값을 문자 그대로 훑어 명백한 항목부터 확보한다.
-2. **의미 검색을 여러 번.** 같은 개념의 다른 표현, 동의어, 상위어와 하위어로 질의를 바꿔가며 여러 차례 찾는다. 한 번의 질의로 끝내지 않는다. 문자 검색이 놓친, 다르게 표기된 항목을 여기서 건진다.
-3. **중복 제거 표.** 두 경로에서 모인 후보를 한 표에 모아 같은 항목의 중복을 접는다. 각 항목의 slug 와 근거(어느 검색에서 나왔는지)를 표에 남긴다.
-4. **재검증.** 최종 목록의 각 항목이 실제로 질문 조건에 맞는지 페이지로 되짚어 확인하고, 빠졌을 만한 이웃(inbound/outbound 링크, 같은 subject 의 페이지)을 한 번 더 훑어 누락을 점검한다.
+1. 문자 검색을 먼저 한다. `grep` 으로 tree 전체에서 후보를 뽑는다. 정확한 slug 와 키워드와 frontmatter 값을 문자 그대로 훑어 명백한 항목부터 확보한다.
+2. 의미 검색을 여러 번 한다. 같은 개념의 다른 표현과 동의어와 상위어와 하위어로 질의를 바꿔 가며 여러 차례 찾는다. 한 번의 질의로 끝내지 않는다. 문자 검색이 놓친, 다르게 표기된 항목을 여기서 건진다.
+3. 중복 제거 표를 만든다. 두 경로에서 모인 후보를 한 표에 모아 같은 항목의 중복을 접는다. 각 항목의 slug 와 근거(어느 검색에서 나왔는지)를 표에 남긴다.
+4. 재검증한다. 최종 목록의 각 항목이 실제로 질문 조건에 맞는지 페이지로 되짚어 확인하고, 빠졌을 만한 이웃(inbound·outbound 링크, 같은 subject 의 페이지)을 한 번 더 훑어 누락을 점검한다.
 
-이 절차의 목적은 속도가 아니라 완전성이다. 열거 질문에 index 추정만으로 답하면 조용히 항목을 빠뜨리게 된다. 이 네 단계는 내부 작업이므로 답변 본문에 과정으로 서술하지 않고, 완성된 목록만 사용자에게 보인다. (계보: honcho, plastic-labs/honcho AGPL @4f9a413. 개념만 증류했고 코드는 복사하지 않았다.)
+이 절차의 목적은 속도가 아니라 완전성이다. 열거 질문에 색인 추정만으로 답하면 조용히 항목을 빠뜨리게 된다. 이 네 단계는 내부 작업이므로 답변 본문에 과정으로 서술하지 않고 완성된 목록만 사용자에게 보인다. (계보: honcho, plastic-labs/honcho AGPL @4f9a413. 개념만 증류했고 코드는 복사하지 않았다.)
 
-### 2. If the index shows the tree is silent
+### 2. 색인이 나무의 침묵을 보여 줄 때
 
-If nothing in the index (trunk, and the pages it points to) touches the question:
-- Say so explicitly ("nothing in the tree covers this yet").
-- Offer two options:
-  1. Answer from general knowledge, clearly labeled as outside-tree.
-  2. Suggest a source to grow first (if the user has one in mind).
+색인(trunk 와 trunk 가 가리키는 페이지)의 어느 것도 질문에 닿지 않으면 다음처럼 처리한다.
 
-Do **not** silently answer from general knowledge as if it were tree-grounded. That corrupts the tree's value proposition.
+- "나무가 아직 이 주제를 다루지 않았습니다"라고 명시적으로 말한다.
+- 두 가지 선택지를 제안한다.
+  1. 일반 지식으로 답하되 나무 밖 지식이라고 명확히 표시한다.
+  2. 사용자가 염두에 둔 소스가 있으면 먼저 grow 할 소스를 제안한다.
 
-**Current or time-sensitive external facts need the web, not stale memory.** If the question turns on something recent or live — today's or the latest updates, current versions, release news, prices, "오늘 기준", "최신", "요즘", "방금 나온" — neither the tree nor your own training knowledge is current. Use the web search tool to fetch the actual current facts first, then answer and label the web-sourced parts as outside-tree. Never answer a "what changed today / latest version" question from memory as if it were current; that silently ships stale claims dressed as fact.
+나무에 근거한 것처럼 일반 지식으로 조용히 답하지 않는다. 그렇게 하면 나무의 가치가 오염된다.
 
-### 3. Synthesize
+최신이거나 시간에 민감한 외부 사실에는 낡은 기억이 아니라 웹이 필요하다. 질문이 최근이나 실시간 정보(오늘이나 최신 업데이트, 현재 버전, 릴리스 소식, 가격, "오늘 기준", "최신", "요즘", "방금 나온")에 달려 있으면, 나무도 학습 지식도 최신이 아니다. 웹 검색 도구로 실제 최신 사실을 먼저 가져온 뒤 답하고, 웹에서 온 부분을 나무 밖 지식으로 표시한다. "오늘 뭐가 바뀌었나"나 "최신 버전" 질문에 기억으로 답하면 낡은 주장을 사실처럼 내보내게 된다.
 
-Write the answer as the finished, user-facing result, not a log of how it was found. Voice and format (this is the working copy of `SOUL.md § 응답 스타일` — follow it inline, no need to open SOUL.md for a normal answer): **존댓말** by default (English if the user writes in English); **no emoji, no em-dash (`—`), no process narration, no meta-preamble, no naite-internal jargon** ("나무 기준", "개인 hub", "/naite ask 절차"). **Open with the answer itself — never a thinking or transition sentence** ("이제 답하겠습니다", "좋은 질문입니다", "Now I have solid grounding. Let me answer."); those belong in the collapsed thinking lane, and an English meta-sentence must never leak into the first line of a Korean answer. **Do not wrap the answer body in a ```markdown code fence** — the app renders it as markdown, so a fence would show the reader raw symbols.
+### 3. 합성
 
-**Use markdown actively — this is a rendered document, not a chat blob:**
-- Any answer longer than two paragraphs gets `##`/`###` headings that name its sections. Do not pour long prose without structure.
-- Wrap identifiers, commands, file names, terms of art, and values in **inline code** (`` `like-this` ``). Code or command blocks get a language-tagged fence.
-- Comparisons → GFM table. Enumerations → lists. Quoted source lines → blockquote.
-- Promote the single key takeaway to a callout when the answer teaches or warns: GFM alert syntax only (`> [!IMPORTANT]` / `[!TIP]` / `[!WARNING]`; also `[!NOTE]` / `[!CAUTION]`), one or two per answer, never one per paragraph.
+답은 찾은 과정의 기록이 아니라 완성된 사용자 대면 결과로 쓴다. 문체와 형식은 `SOUL.md` 응답 스타일 절의 작업용 요약을 그대로 따른다 (일반 답변에서 SOUL.md 를 다시 열 필요는 없다).
 
-- **Citations** as `[[page-slug]]`, placed **only at the end of the sentence or clause** the page supports — a trailing source marker. **Never open a sentence with a citation**; if a reference wants to lead, bold the sentence's key phrase instead and move the citation to the end. Natural inline wikilinks (mentioning a concept by name mid-sentence) are fine. Reuse the same `[[slug]]` for the same page.
-- **Conflicts surfaced**: if two tree pages disagree, quote both and flag the disagreement.
-- **Gaps named**: if the answer depends on something the tree doesn't yet cover, say so and consider proposing a stub.
+- 기본은 존댓말이다 (사용자가 영어로 쓰면 영어로 답한다).
+- 이모지와 em dash(`—`)와 과정 서술과 메타 프리앰블과 naite 내부 용어("나무 기준", "개인 hub", "/naite ask 절차")를 쓰지 않는다.
+- 답의 첫 문장은 답 그 자체로 시작한다. "이제 답하겠습니다"나 "좋은 질문입니다"나 "Now I have solid grounding. Let me answer." 같은 사고·전환 문장은 접힌 생각 영역의 몫이고, 한국어 답의 첫 줄에 영어 메타 문장이 새어 나오면 안 된다.
+- 답 본문을 ```` ```markdown ```` 코드펜스로 감싸지 않는다. 앱이 마크다운으로 렌더하므로 감싸면 독자에게 원본 기호가 보인다.
 
-### 4. Offer to file
+마크다운은 적극적으로 쓴다. 답은 렌더되는 문서이지 채팅 덩어리가 아니다.
 
-At the end of any non-trivial answer, ask:
+- 두 단락을 넘는 답에는 절 이름을 붙인 `##` 와 `###` 제목을 단다. 구조 없는 긴 산문을 쏟아내지 않는다.
+- 식별자와 명령과 파일명과 전문 용어와 값은 인라인 코드로 감싼다. 코드와 명령 덩어리는 언어 태그가 있는 펜스에 담는다.
+- 비교는 GFM 표로, 열거는 목록으로, 인용한 소스 줄은 blockquote 로 적는다.
+- 답이 가르치거나 경고할 때는 핵심 하나를 콜아웃으로 승격한다. GFM alert 문법(`> [!IMPORTANT]`, `[!TIP]`, `[!WARNING]`, 그 밖에 `[!NOTE]` 와 `[!CAUTION]`)만 쓰고, 답변당 한두 개로 제한한다.
 
-> This looks like it's worth keeping. File as a tree page? Proposed: `[[<slug>]]` under domain `<x>`, kind `<concept|entity|source-record|decision|insight|comparison|project|essay|personal>`.
+- 인용은 `[[page-slug]]` 로 적고, 그 페이지가 뒷받침하는 문장이나 절의 끝에만 둔다. 인용은 문장 끝에 붙는 출처 표기다.
+  - 문장을 인용으로 시작하지 않는다. 참조를 앞세우고 싶으면 문장의 핵심 구절을 강조하고 인용을 끝으로 보낸다.
+  - 개념 이름을 문장 중간에 자연스럽게 언급하는 인라인 wikilink 는 허용된다. 같은 페이지에는 같은 `[[slug]]` 를 재사용한다.
+- 충돌은 드러낸다. 두 tree 페이지가 서로 어긋나면 둘 다 인용하고 어긋남을 표시한다.
+- 빈 곳은 이름을 붙인다. 답이 나무가 아직 다루지 않은 것에 의존하면 그 사실을 말하고 stub 제안을 검토한다.
 
-If the user accepts:
-- Create `tree/<slug>.md` with full ontology frontmatter (5 facets + cached domains) per `docs/CONVENTIONS.md § Ontology`. `subject` 는 `.naite/ontology/subject-tree.md` 의 path 1개 (cross-domain 진짜일 때만 multi). `source-types` 는 거의 항상 `[conversation]` (ask 가 대화에서 발생) — 단 ask 가 외부 자료를 cite 한 답이면 `[paper]` / `[article]` / `[docs]` / `[book]` / `[external]` 사용 가능, multi-source 일 때 list 로 합쳐 `[conversation, paper]` 같이 표현. Page-shape 이 A-vs-B 비교면 `kind: comparison`, 결정 thread 면 `kind: decision` (decision page 는 파일명 `decision-YYYY-MM-DD-<slug>.md` 형식). `form` 은 거의 항상 `prose` (ask 산출물은 산문). Page provenance ("from an ask, not a grow") 는 본문 첫 paragraph 또는 `## Provenance` 헤딩에 prose 로.
-- Rewrite the answer as a page body that passes `docs/CONVENTIONS.md § Study-note quality dimensions` and `§ Page-kind quality contracts`; do not paste a conversational answer unchanged. Make the H hierarchy expose the reasoning sequence, keep examples and formulas interpretable, clean up citations so they become load-bearing `[[...]]` links or source-record provenance, and preserve uncertainty from the answer.
-- **Update `tree/trunk.md` only if the new page is a hub candidate** (likely to receive multiple inbound links). hub 자격 없으면 trunk 미등재 (`docs/CONVENTIONS.md § trunk.md discipline` 참조).
-- Append to `tree/rings.md`:
+### 4. 기록 제안
+
+사소하지 않은 답의 끝에는 다음처럼 묻는다.
+
+> 남겨 둘 가치가 있어 보입니다. tree 페이지로 기록할까요? 제안: `[[<slug>]]`, domain `<x>`, kind `<concept|entity|source-record|decision|insight|comparison|project|essay|personal>`.
+
+사용자가 수락하면 다음을 수행한다.
+
+- `docs/CONVENTIONS.md` 의 Ontology 절에 따라 완전한 frontmatter(5 facet 과 cached domains)로 `tree/<slug>.md` 를 만든다.
+  - `subject` 는 `.naite/ontology/subject-tree.md` 의 경로 하나를 쓰고, 진짜 cross-domain 일 때만 복수로 둔다.
+  - `source-types` 는 거의 항상 `[conversation]` 이다 (ask 가 대화에서 발생하므로). ask 가 외부 자료를 인용한 답이면 `[paper]`·`[article]`·`[docs]`·`[book]`·`[external]` 을 쓸 수 있고, 소스가 여럿이면 `[conversation, paper]` 처럼 리스트로 합친다.
+  - 페이지 형태가 A-vs-B 비교면 `kind: comparison` 을, 결정 thread 면 `kind: decision` 을 쓴다 (decision 페이지의 파일명은 `decision-YYYY-MM-DD-<slug>.md` 형식이다).
+  - `form` 은 거의 항상 `prose` 다 (ask 산출물은 산문이다).
+  - 페이지의 출처("grow 가 아니라 ask 에서 나왔다")는 본문 첫 문단이나 `## Provenance` heading 에 산문으로 적는다.
+- 답을 `docs/CONVENTIONS.md` 의 학습 노트 품질 축과 kind 별 품질 계약을 통과하는 페이지 본문으로 다시 쓴다. 대화형 답변을 그대로 붙여 넣지 않는다.
+  - H 계층이 추론 순서를 드러내게 하고, 예시와 수식을 해석 가능하게 유지하고, 인용을 무게 있는 `[[...]]` 링크나 source-record 출처로 정리하고, 답에 있던 불확실성을 보존한다.
+- 새 페이지가 hub 후보(여러 inbound 링크를 받을 가능성이 큰 페이지)일 때만 `tree/trunk.md` 를 갱신한다. hub 자격이 없으면 trunk 에 올리지 않는다 (`docs/CONVENTIONS.md` 의 trunk.md 규율 절 참조).
+- `tree/rings.md` 에 다음을 덧붙인다.
   ```
   ## [YYYY-MM-DD] ask-filed | <topic>
   - filed: [[new-slug]]
   - subject: <path>  (.naite/ontology/subject-tree.md 참조, cross-domain 일 때만 복수)
   - cited: [[a]], [[b]], [[c]]
   ```
-- **Filing a page is a tree mutation, so the same post-write duties apply as `grow`/`ingest`** (`docs/CONVENTIONS.md § Output quality contract`, `§ Study-note quality dimensions`, `§ Page-kind quality contracts`, `docs/CONTEXT.md § Verification checklist`): self-check the selected kind's claim spine and the four study-note axes, run the content guard on the new page body (no raw/source-process voice, self-contained prose), then rebuild the generated maps that the new page changed — `python .naite/scripts/build-tree-manifest.py` (new page + coordinates) and, if it links to or from other pages, `python .naite/scripts/build-tree-dependencies.py`. Skipping this leaves the maps stale and the next orphan/inbound calculation wrong.
+- 페이지 기록은 tree 변경이므로 `grow`·`ingest` 와 같은 사후 의무가 적용된다 (`docs/CONVENTIONS.md` 의 출력 품질 계약과 학습 노트 품질 축과 kind 별 품질 계약, `docs/CONTEXT.md` 의 검증 체크리스트).
+  - 선택한 kind 의 claim spine 과 학습 노트 네 축을 자기 점검하고, 새 페이지 본문에 content guard 를 실행하고(원자료·공정 화법 없음, 자립 산문), 새 페이지가 바꾼 생성 지도를 재생성한다.
+  - 재생성 명령은 `python .naite/scripts/build-tree-manifest.py`(새 페이지와 좌표)이고, 다른 페이지와 링크로 이어지면 `python .naite/scripts/build-tree-dependencies.py` 도 실행한다.
+  - 이 단계를 건너뛰면 지도가 낡은 채 남고 다음 orphan·inbound 계산이 틀리게 된다.
 
-If the user declines, do not write anything. The conversation stands.
+사용자가 거절하면 아무것도 쓰지 않는다. 대화는 그대로 남는다.
 
-### 5. Update an existing page, optionally
+### 5. 기존 페이지의 갱신 제안
 
-If the ask produced material new content that belongs in an existing page (e.g. clarified trade-offs on `[[k-means]]`), propose an edit to that page instead of a new one. The same log entry applies, just with `- updated:` instead of `- filed:`.
+ask 가 기존 페이지에 속하는 실질적인 새 내용을 만들었으면(예: `[[k-means]]` 의 trade-off 를 명확히 한 경우), 새 페이지 대신 그 페이지의 편집을 제안한다. rings 항목은 동일하되 `- filed:` 대신 `- updated:` 로 적는다.
 
-## What this command never does
+## 이 명령이 절대 하지 않는 것
 
-- Never answers a tree question without at least grasping `trunk.md` (the index) — but grasping the index once is enough; it does not require reading every candidate page.
-- Never opens a tree page whose content the answer doesn't actually use. The index is the default; page bodies are on demand.
-- Never re-reads the index or `SOUL.md` on a follow-up turn when they are already in the conversation's context.
-- Never writes to the tree without explicit user consent.
-- Never mixes tree-grounded and out-of-tree claims without labeling which is which.
-- Never commits to git.
+- 색인(`trunk.md`)을 파악하지 않고 tree 질문에 답하지 않는다. 다만 색인을 한 번 파악하면 충분하고, 모든 후보 페이지를 읽을 필요는 없다.
+- 답이 실제로 쓰지 않는 tree 페이지를 열지 않는다. 색인이 기본이고 페이지 본문은 필요할 때만 연다.
+- 이어지는 턴에서 이미 컨텍스트에 있는 색인이나 `SOUL.md` 를 다시 읽지 않는다.
+- 사용자의 명시적 동의 없이 tree 에 쓰지 않는다.
+- 나무 근거 주장과 나무 밖 주장을 어느 쪽인지 표시하지 않은 채 섞지 않는다.
+- git 커밋을 하지 않는다.
