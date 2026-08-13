@@ -215,3 +215,45 @@ For changes to tree pages:
 3. Run `python .naite/scripts/build-tree-dependencies.py` if wikilinks or body relations changed.
 4. Inspect inbound dependents for touched slugs.
 5. Run the relevant care-check before claiming completion.
+
+---
+
+## Verification invalidation and completion discipline
+
+Verification is attached to a stable snapshot and an explicit scope. A check that passed does not become invalid merely because work continued elsewhere. It becomes invalid only when a later edit changes a file, generated dependency, or claim that the check owns.
+
+### Invalidation matrix
+
+| Later change | Re-run | Keep valid |
+|---|---|---|
+| Report wording, count, or link only | Report arithmetic and link resolution; `git diff --check` | Tree content review, ontology lint, maps, harness tests |
+| Tree prose or trailing Source path only | Touched-page content guard; Source existence when applicable; ontology lint; `git diff --check` | Manifest; dependency map when wikilinks and soft relation idioms did not change; unrelated review lanes |
+| Frontmatter, title, or alias | Ontology lint; tree manifest; affected scope accounting; `git diff --check` | Dependency map when body relations did not change |
+| Wikilink or soft relation idiom | Touched-page guard; dependency map; affected inbound review; ontology lint; `git diff --check` | Manifest when coordinates, title, and aliases did not change |
+| Canonical workflow or operating contract | Claude-to-Codex mirror sync; semantic mirror review; directly related workflow checks; `git diff --check` | Tree maps and content reviews unless the contract edit also changed tree files |
+| Validator, guard, test, or harness-lock input | Explicit test path; normal CLI path and one invalid-input path when applicable; harness lock rebuild and check; `git diff --check` | Tree content review and generated maps unless their inputs changed |
+| Generated artifact only | Its documented producer and semantic reproduction check; `git diff --check` | Unrelated validators and reviews |
+
+When one edit spans several rows, take the union of their required checks. Do not take the union of every check in the repository.
+
+### Stable-snapshot review contract
+
+- Record or otherwise identify the reviewed file set before the final pass. A commit SHA is ideal for committed work; for a dirty worktree, use the exact changed-file set and confirm it did not change during review.
+- A PASS remains valid while its owned files and dependencies remain unchanged. Re-run one affected lane, not the entire review stack.
+- A read-only verifier does not edit files or run generators. Check a command's documented behavior before using an assumed `--check`, `--dry-run`, or `--help` mode.
+- A blocking finding is reproducible and prevents a requested outcome or safety invariant. Report file and line, expected and actual state, reproduction evidence, and the smallest repair boundary.
+- Improvement ideas, stylistic preferences, known historical debt, and unrelated dirty files are residuals unless they invalidate the requested result. Secrets and data-loss risks remain blocking regardless of scope.
+
+### Completion gate
+
+Stop the run when all applicable conditions hold:
+
+1. Every requested artifact exists in its intended location.
+2. Scope accounting is exact when a ledger or sweep is required: no missing, duplicate, or wrong-owner item.
+3. Every check invalidated by the final edit passes.
+4. `git diff --check` passes for the requested change.
+5. Staging, commit, push, and other external actions match the user's authorization.
+6. Unrelated user work remains untouched.
+7. No reproducible blocker remains.
+
+After the gate passes, report the result and stop. Do not add a new audit, cleanup, refactor, or optional improvement unless the user starts a new scope.

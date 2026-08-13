@@ -106,6 +106,33 @@ Run only the command needed for the approved finding, inspect `git diff HEAD -- 
 
 After editing pages, rebuild `.naite/ontology/tree-manifest.json` when page coordinates changed and rebuild `.naite/ontology/tree-dependencies.json` when body links or soft relation idioms changed. Include both generated maps in the change if they changed.
 
+#### Organizing pass
+
+When the user asks to 정리, 재구성, 다듬기, or make notes easier to learn from, apply `docs/CONVENTIONS.md § Organizing style for useful notes` before polishing sentences.
+
+1. Identify the page's organizing question, `kind`, `form`, and source-fidelity ceiling.
+2. Preserve the strongest existing reasoning and user-authored voice. Remove repetition and process narration before adding new structure.
+3. Arrange the body by the reader's reasoning path: problem or context, claim, mechanism, formalism or procedure when needed, worked example, boundary, and consequence or connection. Use only the units supported by the source and page kind.
+4. Choose Markdown by semantic job. Use prose for causality, tables for shared-axis comparison, lists for parallel items or sequence, formulas for formal relations, and code blocks only for executable or literal material.
+5. Finish by checking whether a later reader can reconstruct the subject without reopening the source. Do not force a standard heading template, a target word count, or a decorative summary section.
+
+The visible result should feel deliberately organized, not merely cleaned up. A shorter page is better only when it preserves the claim spine, mechanism, evidence, uncertainty, and application boundary.
+
+#### Completion and revalidation discipline
+
+Before a large repair, state the concrete completion set in the working report or ledger. For a whole-tree sweep, every in-scope page must appear exactly once with no missing, duplicate, or wrong-owner row. For a focused repair, the completion set is the named page plus only the dependencies explicitly admitted by the workflow.
+
+After edits, follow `docs/CONTEXT.md § Verification invalidation and completion discipline`:
+
+- A passing check remains valid for the same snapshot until a later edit touches a file or dependency that check owns.
+- Re-run only the checks invalidated by the later edit. Do not restart passed content, code, security, or report reviews from zero.
+- A report-only edit reopens report integrity and diff checks, not tree content or generated-map checks.
+- A body or Source-path edit reopens the touched-page guard, path existence when applicable, ontology lint, and dependency generation only if wikilinks or semantic relations changed.
+- A frontmatter, title, alias, wikilink, workflow, validator, or test edit follows the matching row in the invalidation matrix.
+- Treat a finding as blocking only when it is reproducible and within the active completion contract. Improvement ideas and disclosed residual debt stay non-blocking.
+
+Completion requires: requested artifacts present, scope accounting exact when applicable, relevant deterministic checks passing, `git diff --check` passing, staging and external actions matching user authorization, unrelated work preserved, and zero unresolved reproducible blockers. Once these conditions hold, report the result and stop. Do not add another audit, cleanup, refactor, or optional improvement in the same run.
+
 ### Sweep
 
 For large scopes, first gather repeatable signals:

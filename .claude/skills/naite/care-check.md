@@ -75,6 +75,17 @@ Each non-zero finding should carry one of these labels when the distinction affe
 
 For `--daily`, the report should end with **우선 검토 후보 3개**. These are not automatic fixes. They are the three most useful items for a human or later `/naite care --daily` review.
 
+## Review evidence and revalidation discipline
+
+The first care-check for a requested scope gathers the full required check set once. A later repair does not justify repeating every lane. Use `docs/CONTEXT.md § Verification invalidation and completion discipline` to re-run only checks whose owned files or dependencies changed.
+
+- Bind every PASS to the reviewed snapshot and scope. It stays valid until an affecting file changes.
+- A FAIL must include a reproducible command or inspection, exact file and line when applicable, expected state, actual state, and the smallest repair boundary. A preference, possible improvement, or unverified suspicion is not a blocker.
+- Do not promote `false-positive`, `intentional-debt`, `repair-candidate`, `source-risk`, or disclosed out-of-scope residue to `blocker` without new evidence that it prevents the requested outcome or creates a safety risk.
+- A read-only reviewer must not edit files, rebuild maps, refresh locks, sync mirrors, or run commands that mutate repository state. If a script does not document a dry-run or check mode, inspect its interface or source before invoking it; never assume `--check`, `--dry-run`, or `--help` is side-effect free.
+- Run at most one review pass for each invalidated lane on a stable snapshot. Add another independent pass only when the user requests it, the change is safety-critical, or the first pass reports evidence that cannot be resolved within its lane.
+- Once the requested artifacts, exact scope accounting, relevant deterministic checks, diff check, authorization boundary, and blocker closure all pass, report completion and stop. Do not open new audit scopes after the completion contract is satisfied.
+
 ## Checks
 
 Run all of these in one pass. Don't short-circuit on failures; gather everything.
@@ -407,6 +418,15 @@ Apply `docs/CONVENTIONS.md § Study-note quality dimensions` to every page in th
 - **Study effectiveness**: the reader can recover definition, problem, mechanism, formal terms, a worked interpretation or application, limits, likely confusion, and conceptual connections without reopening the source. Not every item requires its own heading, but absent reasoning is a defect.
 - **Content composition**: definition, intuition, formalism, example, and boundary each add a distinct unit; prerequisites are linked while the page's own mechanism is explained locally; source claim, observation, interpretation, and hypothesis stay distinguishable.
 - **Writing manner**: Korean lecture-note prose explains why and therefore, not only what; transitions expose causal, conditional, comparative, or extension relations; the page avoids dictionary stubs, marketing voice, repetitive importance claims, translationese, and rubric-shaped bullet dumps.
+
+Also apply `docs/CONVENTIONS.md § Organizing style for useful notes`:
+
+- **Organizing question**: the opening makes clear what question the page answers and why the reader would return to it.
+- **Reasoning sequence**: sections follow the understanding path supported by the source and kind instead of a repeated generic template.
+- **Section responsibility**: each section contributes a distinct definition, mechanism, formalism, example, comparison, boundary, or consequence without repeating the same claim.
+- **Semantic Markdown**: prose, tables, lists, formulas, code blocks, quotes, and callouts are used for their actual information relationship.
+- **Recoverable compression**: repetition and production narration are removed without erasing evidence, conditions, uncertainty, failure signals, or user-authored tension.
+- **Usable ending**: the final movement exposes application boundary, consequence, conceptual connection, or revisit condition rather than adding a decorative summary.
 
 For a concept page, compare the learning sequence to the strongest course-note pages in the same tree, not merely to the shortest acceptable leaf. The target is reconstructible understanding, not uniform length or a copied heading template.
 

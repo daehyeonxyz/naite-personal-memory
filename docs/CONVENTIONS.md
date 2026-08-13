@@ -341,6 +341,20 @@ Leaf-page depth rules (thin-leaf demotion, lint thresholds) live in `docs/QUALIT
 - 전문용어는 정확성을 위해 쓰되 처음 등장할 때 한국어 의미나 역할을 함께 준다. 번역투와 불필요한 영어 sentence spine은 피한다.
 - 사용자가 직접 쓴 essay와 personal voice는 보존한다. 다른 kind에서도 source의 강조와 문제 풀이 순서는 살리되, source를 가리키는 메타 문장은 제거한다.
 
+### Organizing style for useful notes
+
+사용자가 "정리해 달라"고 요청했을 때의 목표는 source를 짧게 줄이거나 정해진 template에 끼워 넣는 것이 아니다. 나중에 다시 읽는 사람이 원자료 없이도 핵심 질문, 작동 방식, 판단 경계, 다음 연결을 복원할 수 있는 **재사용 가능한 사고 단위**로 바꾸는 것이 목표다.
+
+1. **정리 질문을 먼저 정한다.** 페이지가 답해야 하는 질문 하나와 독자가 이 페이지를 다시 찾을 이유를 식별한다. 첫 문단은 주제 이름만 소개하지 않고 그 질문에 대한 답 또는 문제의식을 제시한다.
+2. **설명 순서는 이해 비용을 따른다.** 기본 흐름은 문제와 맥락에서 출발해 핵심 주장, 메커니즘, 형식화나 절차, 작동하는 예시, 성립 조건과 경계, 연결과 귀결로 간다. Source나 kind가 다른 순서를 요구하면 그 논리를 보존하며, 모든 페이지에 같은 heading을 강제하지 않는다.
+3. **절마다 한 가지 일을 맡긴다.** 정의, 원인, 비교, 계산, 예시, 한계가 서로 다른 절에서 중복 없이 기능하게 한다. 같은 내용을 lead, bullet, summary에서 반복하지 않는다.
+4. **관계에 맞는 Markdown을 고른다.** 인과와 해석은 산문, 같은 축의 비교는 표, 순서와 조건은 목록, 계산과 표기는 수식, 원형 보존이 필요한 입력은 코드블록을 사용한다. 보기 좋게 만들기 위해 의미와 맞지 않는 요소를 쓰지 않는다.
+5. **예시는 메커니즘을 재생한다.** 이름만 나열하지 않고 입력이나 상황에서 어떤 판단과 계산을 거쳐 결과가 나오는지 한 번 보여 준다.
+6. **압축하면서 판단 근거를 지우지 않는다.** 중복, 장식, source-process 설명은 줄이되 조건, 예외, 불확실성, 실패 신호, 사용자가 직접 강조한 긴장은 보존한다. 짧음보다 복원 가능성이 우선이다.
+7. **끝은 요약문이 아니라 사용 경계로 닫는다.** 결론이 언제 적용되고 무엇과 연결되며 어떤 신호에서 다시 확인해야 하는지를 남긴다. `kind` 계약이 요구하는 귀결이나 재검토 조건이 있으면 그 역할을 우선한다.
+
+좋은 정리는 문서마다 표면 구조가 달라도 읽는 흐름이 선명하다. 나쁜 정리는 모든 문서가 같은 목차를 갖지만 질문, 메커니즘, 근거, 경계가 분리되지 않는다.
+
 이 네 축은 `kind`별 claim spine을 대체하지 않는다. Markdown이 단정해도 decision의 검증 상태가 없거나, 내용이 풍부해도 insight의 근거와 범위가 섞여 있으면 그 페이지는 미달이다.
 
 ---
@@ -373,6 +387,17 @@ Across all kinds:
 - Preserve uncertainty. `unknown`, `not yet observed`, and a concrete verification need are valid; invented completeness is not.
 - On update, preserve still-valid reasoning and record what changed. Do not silently rewrite a past decision or insight as if the new view had always been true.
 
+### Verification status vocabulary
+
+지식 항목의 검증 상태를 산문으로 구분하라는 위 요구("관찰, 근거, 해석, 가설을 구분한다")는 그대로 유지된다. 그 구분을 더 또렷하게 표기하고 싶을 때 쓸 수 있는 4단 어휘를 둔다. 이 라벨은 기존 산문 요구를 대체하지 않고, 그 요구를 표현하는 수단으로만 제공된다.
+
+- **confirmed (확인됨)** — 사용자가 직접 확인했거나 신뢰할 근거로 교차 검증된 항목.
+- **source-backed (출처 있음)** — 특정 source 가 뒷받침하지만 아직 독립 확인은 없는 항목.
+- **watchlist (지켜보는 중)** — 아직 검증하지 않은 가설이거나, 변할 수 있어 다시 확인해야 하는 항목.
+- **saved-context (맥락 저장)** — 판단을 붙이지 않고 맥락 보존을 위해 남겨 둔 항목.
+
+라벨은 선택 수단이다. 검증 상태가 애초에 모호하지 않은 페이지에 억지로 붙이지 않는다. 이 어휘는 산문이나 표에서 상태를 가리키는 용도이며, 새 frontmatter facet 을 신설하는 것이 아니다 (facet 신설은 여전히 `§ Schema evolution` 의 C-level 사용자 결정이다). (계보: openwiki, langchain-ai/openwiki MIT @559788fe. 개념만 증류했고 코드는 복사하지 않았다.)
+
 ---
 
 ## External skills — tree-relevant kinds
@@ -386,17 +411,6 @@ The user's environment may expose many external skills and agents. **Most are co
 | Search-first skill | Search existing pages and web prior art before writing a new tree page. |
 | Official-docs lookup skill/agent | Consult official docs of a tool/library before summarizing. |
 | Long-form writing/export skill | Export tree content as a blog post or long-form piece. |
-
-### Verification status vocabulary
-
-지식 항목의 검증 상태를 산문으로 구분하라는 위 요구("관찰, 근거, 해석, 가설을 구분한다")는 그대로 유지된다. 그 구분을 더 또렷하게 표기하고 싶을 때 쓸 수 있는 4단 어휘를 둔다. 이 라벨은 기존 산문 요구를 대체하지 않고, 그 요구를 표현하는 수단으로만 제공된다.
-
-- **confirmed (확인됨)** — 사용자가 직접 확인했거나 신뢰할 근거로 교차 검증된 항목.
-- **source-backed (출처 있음)** — 특정 source 가 뒷받침하지만 아직 독립 확인은 없는 항목.
-- **watchlist (지켜보는 중)** — 아직 검증하지 않은 가설이거나, 변할 수 있어 다시 확인해야 하는 항목.
-- **saved-context (맥락 저장)** — 판단을 붙이지 않고 맥락 보존을 위해 남겨 둔 항목.
-
-라벨은 선택 수단이다. 검증 상태가 애초에 모호하지 않은 페이지에 억지로 붙이지 않는다. 이 어휘는 산문이나 표에서 상태를 가리키는 용도이며, 새 frontmatter facet 을 신설하는 것이 아니다 (facet 신설은 여전히 `§ Schema evolution` 의 C-level 사용자 결정이다). (계보: openwiki, langchain-ai/openwiki MIT @559788fe. 개념만 증류했고 코드는 복사하지 않았다.)
 | Planning agent | Non-trivial multi-step tree tasks (large legacy migration). |
 | Conversation-analysis agent | During the grow capture step or grow conversation mode — improves claim extraction. |
 | Quality-review agent | During `/naite care --check` — catches quality issues regex misses. |
